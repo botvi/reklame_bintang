@@ -10,7 +10,7 @@ body {
 	font-size: 14px;
 	color: #4c5258;
 	letter-spacing: .5px;
-	background: #f7f7ff;
+	background: #f2f2f2 url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhhc0QfA2HxsJqBdH2L1SdSZQHOjsrYMJsDBqvweDkBDrAvZoiC1R4-wzM1sFI5OJXzwQ&usqp=CAU') repeat;
 	overflow-x: hidden;
 	font-family: Roboto, sans-serif
 }
@@ -29,10 +29,11 @@ a {
 	height: 100%;
 	position: fixed;
 	top: 0;
+	color: #fff;
 	bottom: 0;
 	left: 0;
-	background: #fff;
-	border-right: 0 solid #e4e4e4;
+	background: #82b5e5;
+	border-right: 0 solid #82b5e5;
 	z-index: 11;
 	box-shadow: 0 2px 6px 0 rgb(218 218 253 / 65%), 0 2px 6px 0 rgb(206 206 238 / 54%)!important;
 	transition: all .2s ease-out
@@ -48,9 +49,9 @@ a {
 	bottom: 0;
 	padding: 0 15px;
 	z-index: 5;
-	background: #fff;
+	background: #82b5e5;
 	background-clip: padding-box;
-	border-bottom: 1px solid #e4e4e4
+	border-bottom: 1px solid #82b5e5
 }
 
 .logo-icon {
@@ -77,7 +78,7 @@ a {
 	left: 250px;
 	right: 0;
 	height: 60px;
-	background: #fff;
+	background: #82b5e5;
 	border-bottom: 1px solid rgb(228 228 228 / 0%);
 	z-index: 10;
 	-webkit-box-shadow: 0 2px 6px 0 rgb(218 218 253 / 65%), 0 0px 6px 0 rgb(206 206 238 / 54%);
@@ -111,7 +112,7 @@ a {
 	text-align: center;
 	padding: 7px;
 	font-size: 14px;
-	border-top: 1px solid #e4e4e4;
+	border-top: 1px solid #82b5e5;
 	z-index: 3
 }
 
@@ -584,7 +585,7 @@ a {
 
 .user-groups img {
 	margin-left: -14px;
-	border: 1px solid #e4e4e4;
+	border: 1px solid #82b5e5;
 	padding: 2px;
 	cursor: pointer
 }
@@ -1776,11 +1777,8 @@ a {
 }
 
 .bg-login {
-	background-image: url(../images/login-images/bg-login-img.jpg);
-	background-size: cover;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-attachment: fixed
+	background: #82b5e5 url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhhc0QfA2HxsJqBdH2L1SdSZQHOjsrYMJsDBqvweDkBDrAvZoiC1R4-wzM1sFI5OJXzwQ&usqp=CAU') repeat;
+
 }
 
 .bg-forgot {
