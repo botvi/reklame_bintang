@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Models\RegPosyandu;
+use App\Models\BarangMasuk;
+
+
 use Illuminate\Routing\Controller;
 
 class LoginController extends Controller
@@ -18,7 +21,11 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        return view('auth.login');
+        $barang_kadaluarsa = BarangMasuk::where('tanggal_kadaluarsa', '<=', now()->addDays(30))
+            ->where('tanggal_kadaluarsa', '>=', now())
+            ->count();
+        
+        return view('auth.login', compact('barang_kadaluarsa'));
     }
 
     /**

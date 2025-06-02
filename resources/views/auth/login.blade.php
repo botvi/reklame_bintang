@@ -52,6 +52,13 @@
                                         <img src="{{ asset('env') }}/logo_text.png" width="300" alt="Logo Nadia Bangunan"
                                             class="img-fluid">
                                     </div>
+                                    @if(isset($barang_kadaluarsa) && $barang_kadaluarsa > 0)
+                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                        <i class="bx bx-error-circle me-2"></i>
+                                        Terdapat {{ $barang_kadaluarsa }} barang yang akan kadaluarsa dalam waktu dekat!
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                    @endif
                                     <div class="login-separater text-center mb-4">
                                         <span>MASUK MENGGUNAKAN USERNAME DAN PASSWORD</span>
                                         <hr />
