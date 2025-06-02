@@ -55,7 +55,7 @@
                                     @if(isset($barang_kadaluarsa) && $barang_kadaluarsa > 0)
                                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
                                         <i class="bx bx-error-circle me-2"></i>
-                                        Terdapat {{ $barang_kadaluarsa }} barang yang akan kadaluarsa dalam waktu dekat!
+                                        Terdapat {{ $barang_kadaluarsa }} barang yang akan kadaluarsa dalam 30 hari ke depan!
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
                                     @endif
