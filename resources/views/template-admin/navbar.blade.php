@@ -59,6 +59,12 @@
                 <div class="menu-title text-white">TRANSAKSI BARANG KELUAR</div>
             </a>
         </li>
+        <li>
+            <a href="/data_barang_keluar">
+                <div class="parent-icon"><i class='bx bx-down-arrow-alt text-danger'></i></div>
+                <div class="menu-title text-white">DATA BARANG KELUAR</div>
+            </a>
+        </li>
         <li class="menu-label text-white">LAPORAN</li>
         <li>
             <a href="/laporan">

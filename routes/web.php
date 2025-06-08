@@ -15,7 +15,8 @@ use App\Http\Controllers\admin\{
     SatuanController,
     SupplierController,
     LaporanController,
-    MasterAkunPemilikController,
+    MasterAkunPemilikController,    
+    DataBarangKeluarController,
 };
 /*
 |--------------------------------------------------------------------------
@@ -59,4 +60,6 @@ Route::group(['middleware' => ['role:admin,pemilik_toko']], function () {
     Route::get('/laporan/barang_keluar_per_bulan', [LaporanController::class, 'laporan_barang_keluar_per_bulan'])->name('laporan.barang_keluar_per_bulan');
     Route::get('/laporan/stok_sebelum_seminggu', [LaporanController::class, 'laporan_stok_sebelum_seminggu'])->name('laporan.stok_sebelum_seminggu');
     Route::get('/laporan/stok_habis', [LaporanController::class, 'laporan_stok_habis'])->name('laporan.stok_habis');
+
+    Route::get('/data_barang_keluar', [DataBarangKeluarController::class, 'index'])->name('data_barang_keluar');
 });

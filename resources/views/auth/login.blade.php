@@ -31,6 +31,10 @@
         img.img-fluid {
             max-height: 300px;
         }
+
+        .login-container {
+            margin: 0 auto;
+        }
     </style>
 
 </head>
@@ -44,7 +48,7 @@
                 <div class="row align-items-center">
                 
                     <!-- Form -->
-                    <div class="col-lg-12">
+                    <div class="login-container col-lg-4">
                         <div class="card">
                             <div class="card-body">
                                 <div class="border p-4 rounded">
