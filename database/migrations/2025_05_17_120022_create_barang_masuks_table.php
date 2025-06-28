@@ -13,21 +13,16 @@ return new class extends Migration
     {
         Schema::create('barang_masuks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('supplier_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('kode_barang');
-            $table->foreignId('satuan_id');
-            $table->foreignId('supplier_id');
             $table->string('nama_barang');
-            $table->string('harga_satuan');
-            $table->integer('stok_barang');
-            $table->string('total_harga');
-            $table->date('tanggal_kadaluarsa');
+            $table->float('stok_awal'); // jumlah dalam satuan asli
+            $table->float('harga_persatuan');
+            $table->foreignId('satuan_id')->constrained('satuans')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->date('tanggal_kadaluarsa')->nullable();
             $table->string('gambar')->nullable();
             $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('satuan_id')->references('id')->on('satuans')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('supplier_id')->references('id')->on('suppliers')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

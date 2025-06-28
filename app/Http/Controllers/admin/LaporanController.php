@@ -10,6 +10,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use RealRashid\SweetAlert\Facades\Alert;
+
 class LaporanController extends Controller
 {
     public function index()
@@ -17,75 +18,374 @@ class LaporanController extends Controller
         return view('pageadmin.laporan.index');
     }
 
-
-    public function laporan_semua_barang_masuk()
+    public function laporanBarangMasuk(Request $request)
     {
-        $laporan = BarangMasuk::with('supplier', 'satuan')->get();
-        if($laporan->isEmpty()) {
-            Alert::error('Error', 'Data barang masuk tidak ditemukan');
-            return redirect()->back();
-        }
+        $bulan = $request->get('bulan', Carbon::now()->month);
+        $tahun = $request->get('tahun', Carbon::now()->year);
+        
+        $barangMasuk = BarangMasuk::with(['supplier', 'satuan', 'user'])
+            ->whereMonth('created_at', $bulan)
+            ->whereYear('created_at', $tahun)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        $data = User::where('role', 'pemilik_toko')->first();
-        return view('pageadmin.laporan.laporan_barang_masuk', compact('laporan', 'data'));
+        $totalBarang = $barangMasuk->count();
+        $totalNilai = $barangMasuk->sum(function($item) {
+            return $item->stok_awal * $item->harga_persatuan;
+        });
+
+        $bulanList = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+
+        $tahunList = range(Carbon::now()->year - 5, Carbon::now()->year + 1);
+
+        return view('pageadmin.laporan.laporan_barang_masuk', compact(
+            'barangMasuk', 
+            'bulan', 
+            'tahun', 
+            'bulanList', 
+            'tahunList',
+            'totalBarang',
+            'totalNilai'
+        ));
     }
 
-    public function laporan_semua_barang_keluar()
+    public function printLaporanBarangMasuk(Request $request)
     {
-        $laporan = BarangKeluar::with('barang_masuk')->get();
-        if($laporan->isEmpty()) {
-            Alert::error('Error', 'Data barang keluar tidak ditemukan');
-            return redirect()->back();
+        $bulan = $request->get('bulan', Carbon::now()->month);
+        $tahun = $request->get('tahun', Carbon::now()->year);
+        
+        $barangMasuk = BarangMasuk::with(['supplier', 'satuan', 'user'])
+            ->whereMonth('created_at', $bulan)
+            ->whereYear('created_at', $tahun)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $totalBarang = $barangMasuk->count();
+        $totalNilai = $barangMasuk->sum(function($item) {
+            return $item->stok_awal * $item->harga_persatuan;
+        });
+
+        // Ambil data pemilik toko
+        $pemilikToko = User::where('role', 'pemilik_toko')->first();
+        
+        // Jika tidak ada pemilik toko, buat data default
+        if (!$pemilikToko) {
+            $pemilikToko = (object) [
+                'nama' => 'Pemilik Toko',
+                'no_wa' => '-'
+            ];
         }
-        $data = User::where('role', 'pemilik_toko')->first();
-        return view('pageadmin.laporan.laporan_barang_keluar', compact('laporan', 'data'));
+
+        $bulanList = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+
+        return view('pageadmin.laporan.print.print_laporan_barang_masuk', compact(
+            'barangMasuk', 
+            'bulan', 
+            'tahun', 
+            'bulanList',
+            'totalBarang',
+            'totalNilai',
+            'pemilikToko'
+        ));
     }
 
-    public function laporan_barang_masuk_per_bulan()
+    public function laporanBarangKeluar(Request $request)
     {
-        $laporan = BarangMasuk::where('created_at', '>=', Carbon::now()->subMonth())->with('supplier', 'satuan')->get();
-        if($laporan->isEmpty()) {
-            Alert::error('Error', 'Data barang masuk bulan ini tidak ditemukan');
-            return redirect()->back();
-        }
-        $data = User::where('role', 'pemilik_toko')->first();
-        return view('pageadmin.laporan.laporan_barang_masuk_per_bulan', compact('laporan', 'data'));
+        $bulan = $request->get('bulan', Carbon::now()->month);
+        $tahun = $request->get('tahun', Carbon::now()->year);
+        
+        $barangKeluar = BarangKeluar::with(['barang_masuk', 'satuan', 'user'])
+            ->whereMonth('created_at', $bulan)
+            ->whereYear('created_at', $tahun)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $totalBarang = $barangKeluar->count();
+        $totalNilai = $barangKeluar->sum('total_harga');
+
+        $bulanList = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+
+        $tahunList = range(Carbon::now()->year - 5, Carbon::now()->year + 1);
+
+        return view('pageadmin.laporan.laporan_barang_keluar', compact(
+            'barangKeluar', 
+            'bulan', 
+            'tahun', 
+            'bulanList', 
+            'tahunList',
+            'totalBarang',
+            'totalNilai'
+        ));
     }
 
-    public function laporan_barang_keluar_per_bulan()
+    public function printLaporanBarangKeluar(Request $request)
     {
-        $laporan = BarangKeluar::where('created_at', '>=', Carbon::now()->subMonth())->with('barang_masuk')->get();
-        if($laporan->isEmpty()) {
-            Alert::error('Error', 'Data barang keluar bulan ini tidak ditemukan');
-            return redirect()->back();
+        $bulan = $request->get('bulan', Carbon::now()->month);
+        $tahun = $request->get('tahun', Carbon::now()->year);
+        
+        $barangKeluar = BarangKeluar::with(['barang_masuk', 'satuan', 'user'])
+            ->whereMonth('created_at', $bulan)
+            ->whereYear('created_at', $tahun)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $totalBarang = $barangKeluar->count();
+        $totalNilai = $barangKeluar->sum('total_harga');
+
+        // Ambil data pemilik toko
+        $pemilikToko = User::where('role', 'pemilik_toko')->first();
+        
+        // Jika tidak ada pemilik toko, buat data default
+        if (!$pemilikToko) {
+            $pemilikToko = (object) [
+                'nama' => 'Pemilik Toko',
+                'no_wa' => '-'
+            ];
         }
-        $data = User::where('role', 'pemilik_toko')->first();
-        return view('pageadmin.laporan.laporan_barang_keluar_per_bulan', compact('laporan', 'data'));
+
+        $bulanList = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+
+        return view('pageadmin.laporan.print.print_laporan_barang_keluar', compact(
+            'barangKeluar', 
+            'bulan', 
+            'tahun', 
+            'bulanList',
+            'totalBarang',
+            'totalNilai',
+            'pemilikToko'
+        ));
     }
 
-    public function laporan_stok_sebelum_seminggu()
+    public function laporanStokHabis(Request $request)
     {
-        $laporan = BarangMasuk::where('tanggal_kadaluarsa', '<=', Carbon::now()->addWeek())->with('supplier', 'satuan')->get();
-        if($laporan->isEmpty()) {
-            Alert::error('Error', 'Tidak ada barang yang kadaluarsa dalam seminggu terakhir');
-            return redirect()->back();
-        }
-        $data = User::where('role', 'pemilik_toko')->first();
-        return view('pageadmin.laporan.laporan_stok_sebelum_seminggu', compact('laporan', 'data'));
+        $bulan = $request->get('bulan', Carbon::now()->month);
+        $tahun = $request->get('tahun', Carbon::now()->year);
+        
+        // Ambil semua barang masuk yang stoknya habis
+        $barangMasuk = BarangMasuk::with(['supplier', 'satuan', 'user', 'barangKeluar'])
+            ->get()
+            ->filter(function($item) {
+                // Hitung total barang keluar untuk item ini
+                $totalKeluar = $item->barangKeluar->sum('jumlah');
+                // Stok habis jika stok_awal - total_keluar <= 0
+                return ($item->stok_awal - $totalKeluar) <= 0;
+            })
+            ->filter(function($item) use ($bulan, $tahun) {
+                // Filter berdasarkan bulan dan tahun barang keluar terakhir
+                $barangKeluarTerakhir = $item->barangKeluar()
+                    ->whereMonth('created_at', $bulan)
+                    ->whereYear('created_at', $tahun)
+                    ->first();
+                
+                // Jika ada barang keluar di bulan/tahun tersebut yang menyebabkan stok habis
+                if ($barangKeluarTerakhir) {
+                    return true;
+                }
+                
+                // Atau jika barang masuk di bulan/tahun tersebut dan stoknya habis
+                return $item->created_at->month == $bulan && $item->created_at->year == $tahun;
+            });
+
+        $totalBarang = $barangMasuk->count();
+        $totalNilai = $barangMasuk->sum(function($item) {
+            $totalKeluar = $item->barangKeluar->sum('jumlah');
+            $stokHabis = max(0, $item->stok_awal - $totalKeluar);
+            return $stokHabis * $item->harga_persatuan;
+        });
+
+        $bulanList = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+
+        $tahunList = range(Carbon::now()->year - 5, Carbon::now()->year + 1);
+
+        return view('pageadmin.laporan.laporan_stok_habis', compact(
+            'barangMasuk', 
+            'bulan', 
+            'tahun', 
+            'bulanList', 
+            'tahunList',
+            'totalBarang',
+            'totalNilai'
+        ));
     }
 
-    public function laporan_stok_habis()
+    public function printLaporanStokHabis(Request $request)
     {
-        $laporan = BarangMasuk::where('stok_barang', '<=', 0)->with('supplier', 'satuan')->get();
-        if($laporan->isEmpty()) {
-            Alert::error('Error', 'Tidak ada barang dengan stok habis');
-            return redirect()->back();
+        $bulan = $request->get('bulan', Carbon::now()->month);
+        $tahun = $request->get('tahun', Carbon::now()->year);
+        
+        // Ambil semua barang masuk yang stoknya habis
+        $barangMasuk = BarangMasuk::with(['supplier', 'satuan', 'user', 'barangKeluar'])
+            ->get()
+            ->filter(function($item) {
+                $totalKeluar = $item->barangKeluar->sum('jumlah');
+                return ($item->stok_awal - $totalKeluar) <= 0;
+            })
+            ->filter(function($item) use ($bulan, $tahun) {
+                // Filter berdasarkan bulan dan tahun barang keluar terakhir
+                $barangKeluarTerakhir = $item->barangKeluar()
+                    ->whereMonth('created_at', $bulan)
+                    ->whereYear('created_at', $tahun)
+                    ->first();
+                
+                // Jika ada barang keluar di bulan/tahun tersebut yang menyebabkan stok habis
+                if ($barangKeluarTerakhir) {
+                    return true;
+                }
+                
+                // Atau jika barang masuk di bulan/tahun tersebut dan stoknya habis
+                return $item->created_at->month == $bulan && $item->created_at->year == $tahun;
+            });
+
+        $totalBarang = $barangMasuk->count();
+        $totalNilai = $barangMasuk->sum(function($item) {
+            $totalKeluar = $item->barangKeluar->sum('jumlah');
+            $stokHabis = max(0, $item->stok_awal - $totalKeluar);
+            return $stokHabis * $item->harga_persatuan;
+        });
+
+        // Ambil data pemilik toko
+        $pemilikToko = User::where('role', 'pemilik_toko')->first();
+        
+        // Jika tidak ada pemilik toko, buat data default
+        if (!$pemilikToko) {
+            $pemilikToko = (object) [
+                'nama' => 'Pemilik Toko',
+                'no_wa' => '-'
+            ];
         }
-        $data = User::where('role', 'pemilik_toko')->first();
-        return view('pageadmin.laporan.laporan_stok_habis', compact('laporan', 'data'));
+
+        $bulanList = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+
+        return view('pageadmin.laporan.print.print_laporan_stok_habis', compact(
+            'barangMasuk', 
+            'bulan', 
+            'tahun', 
+            'bulanList',
+            'totalBarang',
+            'totalNilai',
+            'pemilikToko'
+        ));
     }
-    
-    
-    
-    
+
+    public function laporanMendekatiKadaluarsa()
+    {
+        $hariIni = Carbon::now();
+        $satuMingguKedepan = Carbon::now()->addWeek();
+        
+        // Ambil semua barang masuk yang memiliki tanggal kadaluarsa
+        $barangMasuk = BarangMasuk::with(['supplier', 'satuan', 'user', 'barangKeluar'])
+            ->whereNotNull('tanggal_kadaluarsa')
+            ->get()
+            ->filter(function($item) use ($hariIni, $satuMingguKedepan) {
+                $tanggalKadaluarsa = Carbon::parse($item->tanggal_kadaluarsa);
+                
+                // Filter barang yang kadaluarsa dalam 1 minggu ke depan atau sudah kadaluarsa
+                return $tanggalKadaluarsa->lte($satuMingguKedepan);
+            })
+            ->map(function($item) {
+                // Hitung sisa stok
+                $totalKeluar = $item->barangKeluar->sum('jumlah');
+                $sisaStok = max(0, $item->stok_awal - $totalKeluar);
+                
+                // Hitung sisa hari sebelum kadaluarsa
+                $tanggalKadaluarsa = Carbon::parse($item->tanggal_kadaluarsa);
+                $hariIni = Carbon::now();
+                $sisaHari = $hariIni->diffInDays($tanggalKadaluarsa, false);
+                
+                $item->sisa_stok = $sisaStok;
+                $item->sisa_hari = $sisaHari;
+                $item->total_nilai = $sisaStok * $item->harga_persatuan;
+                
+                return $item;
+            })
+            ->sortBy('sisa_hari'); // Urutkan berdasarkan sisa hari (yang paling dekat kadaluarsa di atas)
+
+        $totalBarang = $barangMasuk->count();
+        $totalNilai = $barangMasuk->sum('total_nilai');
+
+        return view('pageadmin.laporan.laporan_mendekati_kadaluarsa', compact(
+            'barangMasuk',
+            'totalBarang',
+            'totalNilai'
+        ));
+    }
+
+    public function printLaporanMendekatiKadaluarsa()
+    {
+        $hariIni = Carbon::now();
+        $satuMingguKedepan = Carbon::now()->addWeek();
+        
+        // Ambil semua barang masuk yang memiliki tanggal kadaluarsa
+        $barangMasuk = BarangMasuk::with(['supplier', 'satuan', 'user', 'barangKeluar'])
+            ->whereNotNull('tanggal_kadaluarsa')
+            ->get()
+            ->filter(function($item) use ($hariIni, $satuMingguKedepan) {
+                $tanggalKadaluarsa = Carbon::parse($item->tanggal_kadaluarsa);
+                
+                // Filter barang yang kadaluarsa dalam 1 minggu ke depan atau sudah kadaluarsa
+                return $tanggalKadaluarsa->lte($satuMingguKedepan);
+            })
+            ->map(function($item) {
+                // Hitung sisa stok
+                $totalKeluar = $item->barangKeluar->sum('jumlah');
+                $sisaStok = max(0, $item->stok_awal - $totalKeluar);
+                
+                // Hitung sisa hari sebelum kadaluarsa
+                $tanggalKadaluarsa = Carbon::parse($item->tanggal_kadaluarsa);
+                $hariIni = Carbon::now();
+                $sisaHari = $hariIni->diffInDays($tanggalKadaluarsa, false);
+                
+                $item->sisa_stok = $sisaStok;
+                $item->sisa_hari = $sisaHari;
+                $item->total_nilai = $sisaStok * $item->harga_persatuan;
+                
+                return $item;
+            })
+            ->sortBy('sisa_hari'); // Urutkan berdasarkan sisa hari (yang paling dekat kadaluarsa di atas)
+
+        $totalBarang = $barangMasuk->count();
+        $totalNilai = $barangMasuk->sum('total_nilai');
+
+        // Ambil data pemilik toko
+        $pemilikToko = User::where('role', 'pemilik_toko')->first();
+        
+        // Jika tidak ada pemilik toko, buat data default
+        if (!$pemilikToko) {
+            $pemilikToko = (object) [
+                'nama' => 'Pemilik Toko',
+                'no_wa' => '-'
+            ];
+        }
+
+        return view('pageadmin.laporan.print.print_laporan_mendekati_kadaluarsa', compact(
+            'barangMasuk',
+            'totalBarang',
+            'totalNilai',
+            'pemilikToko'
+        ));
+    }
 }

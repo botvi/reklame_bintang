@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('barang_keluars', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
-            $table->foreignId('barang_masuk_id');
-            $table->integer('jumlah_keluar');
-            $table->string('total_harga');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('barang_masuk_id')->constrained('barang_masuks')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->float('jumlah_beli'); // dalam satuan yang digunakan saat keluar
+            $table->float('harga_persatuan');
+            $table->float('total_harga');
+            $table->foreignId('satuan_id')->constrained('satuans')->cascadeOnDelete()->cascadeOnUpdate(); // satuan saat keluar
             $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

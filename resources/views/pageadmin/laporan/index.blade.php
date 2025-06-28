@@ -12,29 +12,21 @@
                             </div>
                             <div class="card-body">
                                 <div class="d-grid gap-3">
-                                    <a href="{{ route('laporan.barang_masuk') }}" class="btn btn-primary btn-lg">
-                                        <i class="bx bx-download me-2"></i>
-                                        Laporan Semua Barang Masuk
+                                    <a href="{{ route('laporan.barang_masuk') }}" class="btn btn-outline-primary btn-lg">
+                                        <i class="bx bx-package me-2"></i>
+                                        Laporan Barang Masuk
                                     </a>
-                                    <a href="{{ route('laporan.barang_keluar') }}" class="btn btn-success btn-lg">
-                                        <i class="bx bx-upload me-2"></i>
-                                        Laporan Semua Barang Keluar
+                                    <a href="{{ route('laporan.barang_keluar') }}" class="btn btn-outline-warning btn-lg">
+                                        <i class="bx bx-exit me-2"></i>
+                                        Laporan Barang Keluar
                                     </a>
-                                    <a href="{{ route('laporan.barang_masuk_per_bulan') }}" class="btn btn-info btn-lg">
-                                        <i class="bx bx-calendar me-2"></i>
-                                        Laporan Barang Masuk Per Bulan
+                                    <a href="{{ route('laporan.stok_habis') }}" class="btn btn-outline-danger btn-lg">
+                                        <i class="bx bx-x-circle me-2"></i>
+                                        Laporan Stok Habis
                                     </a>
-                                    <a href="{{ route('laporan.barang_keluar_per_bulan') }}" class="btn btn-warning btn-lg">
-                                        <i class="bx bx-calendar-check me-2"></i>
-                                        Laporan Barang Keluar Per Bulan
-                                    </a>
-                                    <a href="{{ route('laporan.stok_habis') }}" class="btn btn-danger btn-lg">
-                                        <i class="bx bx-error-circle me-2"></i>
-                                        Laporan Stok Barang Habis
-                                    </a>
-                                    <a href="{{ route('laporan.stok_sebelum_seminggu') }}" class="btn btn-secondary btn-lg">
-                                        <i class="bx bx-time me-2"></i>
-                                        Laporan Kadaluarsa Sebelum Seminggu
+                                    <a href="{{ route('laporan.mendekati_kadaluarsa') }}" class="btn btn-outline-info btn-lg">
+                                        <i class="bx bx-calendar-x me-2"></i>
+                                        Laporan Mendekati Kadaluarsa
                                     </a>
                                 </div>
                             </div>

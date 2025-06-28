@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Laporan Barang Masuk Per Bulan {{ \Carbon\Carbon::parse($laporan->first()->created_at)->locale('id')->isoFormat('MMMM Y') }}
-    </title>
+    <title>Laporan Barang Masuk {{ $bulanList[$bulan] }} {{ $tahun }}</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
 
     <style>
@@ -125,61 +124,65 @@
     <div class="pages">
         <div class="header">
             <div>
-                <h3 class="fw-bold">LAPORAN BARANG MASUK PER BULAN
-                    {{ strtoupper(\Carbon\Carbon::parse($laporan->first()->created_at)->locale('id')->isoFormat('MMMM')) }}
+                <h3 class="fw-bold">LAPORAN BARANG MASUK {{ strtoupper($bulanList[$bulan]) }}
                     NADYA BANGUNAN</h3>
-                <h4>Telp : {{ $data->no_wa ?? '-' }}</h4>
+                <h4>Telp : {{ $pemilikToko->no_wa ?? '-' }}</h4>
                 <h4>Aur Duri, Kecamatan Kuantan Mudik</h4>
-                <h4>Tahun : {{ \Carbon\Carbon::parse($laporan->first()->created_at)->locale('id')->isoFormat('Y') }}</h4>
+                <h4>Tahun : {{ $tahun }}</h4>
                 <hr>
             </div>
         </div>
         <div class="info">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Kode Barang</th>
-                        <th>Nama Barang</th>
-                        <th>Satuan</th>
-                        <th>Supplier</th>
-                        <th>Stok Barang</th>
-                        <th>Tanggal Kadaluarsa</th>
-                        <th>Total Harga</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($laporan as $key => $item)
+            @if($barangMasuk->count() > 0)
+                <table class="table table-bordered">
+                    <thead>
                         <tr>
-                            <td>{{ $key + 1 }}</td>
-                            <td>{{ $item->kode_barang }}</td>
-                            <td>{{ $item->nama_barang }}</td>
-                            <td>{{ $item->satuan->nama_satuan }}</td>
-                            <td>{{ $item->supplier->nama_supplier }}</td>
-                            <td>{{ $item->stok_barang }}</td>
-                            <td>{{ \Carbon\Carbon::parse($item->tanggal_kadaluarsa)->locale('id')->isoFormat('D MMMM Y') ?? '-' }}
-                            </td>
-                            <td>Rp. {{ number_format($item->total_harga, 0, ',', '.') ?? '-' }}</td>
-
-
+                            <th>No</th>
+                            <th>Kode Barang</th>
+                            <th>Nama Barang</th>
+                            <th>Satuan</th>
+                            <th>Supplier</th>
+                            <th>Stok Barang</th>
+                            <th>Tanggal Kadaluarsa</th>
+                            <th>Total Harga</th>
                         </tr>
-                    @endforeach
-                    <tr class="very-bold">
-                        <td colspan="6" style="text-align: right;">Total
-                            {{ \Carbon\Carbon::parse($laporan->first()->created_at)->locale('id')->isoFormat('MMMM Y') }}:
-                        </td>
-                        <td>Rp. {{ number_format($laporan->sum('total_harga'), 0, ',', '.') }}</td>
-                    </tr>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($barangMasuk as $key => $item)
+                            <tr>
+                                <td>{{ $key + 1 }}</td>
+                                <td>{{ $item->kode_barang }}</td>
+                                <td>{{ $item->nama_barang }}</td>
+                                <td>{{ $item->satuan->nama_satuan }}</td>
+                                <td>{{ $item->supplier->nama_supplier }}</td>
+                                <td>{{ $item->stok_awal }} {{ $item->satuan->nama_satuan }}</td>
+                                <td>{{ \Carbon\Carbon::parse($item->tanggal_kadaluarsa)->locale('id')->isoFormat('D MMMM Y') ?? '-' }}
+                                </td>
+                                <td>Rp. {{ number_format($item->stok_awal * $item->harga_persatuan, 0, ',', '.') }}</td>
+                            </tr>
+                        @endforeach
+                            <tr class="very-bold">
+                                <td colspan="7" style="text-align: right;">Total
+                                    {{ $bulanList[$bulan] }} {{ $tahun }}:
+                                </td>
+                                <td>Rp. {{ number_format($totalNilai, 0, ',', '.') }}</td>
+                            </tr>
+                    </tbody>
+                </table>
+            @else
+                <div style="text-align: center; padding: 50px;">
+                    <h4>Tidak ada data barang masuk</h4>
+                    <p>Untuk periode {{ $bulanList[$bulan] }} {{ $tahun }}</p>
+                </div>
+            @endif
         </div>
         <hr>
         <div style="text-align: right; margin-top: 50px;">
             <p>Aur Duri, {{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM Y') }}</p>
             <br><br>
-            <img src="{{ asset('env/ttd.png') }}" alt="Tanda Tangan" style="width: 150px; height: auto; margin-bottom: -30px; margin-top: -50px;">
+            {{-- <img src="{{ asset('env/ttd.png') }}" alt="Tanda Tangan" style="width: 150px; height: auto; margin-bottom: -30px; margin-top: -50px;"> --}}
             <br><br>
-            <p style="text-decoration: underline;">{{ $data->nama ?? '-' }}</p>
+            <p style="text-decoration: underline;">{{ $pemilikToko->nama ?? '-' }}</p>
             <p>Pemilik Nadya Bangunan</p>
         </div>
     </div>

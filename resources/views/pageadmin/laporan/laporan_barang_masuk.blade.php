@@ -1,191 +1,155 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('template-admin.layout')
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Laporan Semua Barang Masuk {{ \Carbon\Carbon::parse($laporan->first()->created_at)->locale('id')->isoFormat('Y') }}
-    </title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+@section('content')
+<div class="page-wrapper">
+    <div class="page-content">
+        <div class="container-fluid">
+            <!-- Breadcrumb -->
+            <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                <div class="breadcrumb-title pe-3">Laporan</div>
+                <div class="ps-3">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0 p-0">
+                            <li class="breadcrumb-item"><a href="{{ route('laporan') }}">Menu Laporan</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Laporan Barang Masuk</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            font-family: "Times New Roman", Times, serif;
-        }
+            <!-- Filter Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Filter Laporan Barang Masuk</h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{{ route('laporan.barang_masuk') }}" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="bulan" class="form-label">Bulan</label>
+                            <select class="form-select" id="bulan" name="bulan" required>
+                                @foreach($bulanList as $key => $namaBulan)
+                                    <option value="{{ $key }}" {{ $bulan == $key ? 'selected' : '' }}>
+                                        {{ $namaBulan }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="tahun" class="form-label">Tahun</label>
+                            <select class="form-select" id="tahun" name="tahun" required>
+                                @foreach($tahunList as $tahunOption)
+                                    <option value="{{ $tahunOption }}" {{ $tahun == $tahunOption ? 'selected' : '' }}>
+                                        {{ $tahunOption }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="bx bx-search"></i> Tampilkan
+                            </button>
+                            <a href="{{ route('laporan.barang_masuk.print', ['bulan' => $bulan, 'tahun' => $tahun]) }}" 
+                               class="btn btn-success" target="_blank">
+                                <i class="bx bx-printer"></i> Cetak
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-        .very-bold {
-            font-weight: 1000;
-        }
+            <!-- Summary Cards -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <h4 class="mb-0">{{ $totalBarang }}</h4>
+                                    <p class="mb-0">Total Barang Masuk</p>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <i class="bx bx-package fs-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <h4 class="mb-0">Rp {{ number_format($totalNilai, 0, ',', '.') }}</h4>
+                                    <p class="mb-0">Total Nilai Barang</p>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <i class="bx bx-money fs-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        @page {
-            margin: 2.54cm;
-            box-sizing: border-box;
-        }
-
-        /* Gaya untuk memastikan gambar di kiri dan teks di tengah */
-        .header {
-            display: flex;
-            /* Menggunakan flexbox untuk tata letak */
-            align-items: center;
-            /* Mengatur agar elemen sejajar secara vertikal */
-            justify-content: flex-start;
-            /* Mengatur konten ke kiri */
-            margin-bottom: 20px;
-            /* Jarak bawah untuk pemisah */
-        }
-
-        .header img {
-            max-width: 100px;
-            /* Atur ukuran maksimum gambar */
-            margin-right: 20px;
-            /* Jarak antara gambar dan teks */
-        }
-
-        .header div {
-            flex-grow: 1;
-            /* Mengizinkan div teks untuk mengambil ruang yang tersisa */
-            text-align: center;
-            /* Mengatur teks di tengah */
-        }
-
-        .header h3,
-        .header p {
-            margin: 0;
-            /* Menghapus margin default */
-        }
-
-        .info {
-            margin-bottom: 20px;
-            /* Jarak bawah untuk informasi */
-        }
-
-        .info p {
-            margin: 0;
-            /* Menghapus margin default */
-        }
-
-        .info span {
-            display: inline-block;
-            /* Menjaga span pada baris yang sama */
-            width: 150px;
-            /* Lebar span untuk penataan */
-        }
-
-        .table-container {
-            margin-bottom: 20px;
-            /* Jarak bawah untuk tabel */
-        }
-
-        .table-container table {
-            width: 100%;
-            /* Memastikan tabel mengambil lebar penuh */
-            border-collapse: collapse;
-            /* Menghapus jarak antara border tabel */
-        }
-
-        .table-container th,
-        .table-container td {
-            border: 1px solid black;
-            /* Border untuk sel tabel */
-            padding: 8px;
-            /* Jarak dalam sel */
-            text-align: left;
-            /* Teks rata kiri */
-        }
-
-        .table-container th {
-            background-color: #f2f2f2;
-            /* Warna latar belakang untuk header tabel */
-        }
-
-        .line {
-            border-left: 2px solid black;
-            display: inline-block;
-            margin: 0 10px;
-        }
-
-        .line-short {
-            height: 500px;
-        }
-
-        .line-long {
-            height: 700px;
-        }
-
-        .page-break {
-            page-break-after: always;
-            /* Ensures the content after this class starts on a new page */
-        }
-    </style>
-</head>
-
-<body>
-    <div class="pages">
-        <div class="header">
-            <div>
-                <h3 class="fw-bold">LAPORAN SEMUA BARANG MASUK</h3>
-                <h4>Telp : {{ $data->no_wa ?? '-' }}</h4>
-                <h4>Aur Duri, Kecamatan Kuantan Mudik</h4>
-                <h4>Tahun : {{ \Carbon\Carbon::parse($laporan->first()->created_at)->locale('id')->isoFormat('Y') }}</h4>
-                <hr>
+            <!-- Data Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        Laporan Barang Masuk - {{ $bulanList[$bulan] }} {{ $tahun }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if($barangMasuk->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Tanggal</th>
+                                        <th>Kode Barang</th>
+                                        <th>Nama Barang</th>
+                                        <th>Supplier</th>
+                                        <th>Stok</th>
+                                        <th>Satuan</th>
+                                        <th>Harga Satuan</th>
+                                        <th>Total Nilai</th>
+                                        <th>Tanggal Kadaluarsa</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($barangMasuk as $index => $item)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}</td>
+                                            <td>{{ $item->kode_barang }}</td>
+                                            <td>{{ $item->nama_barang }}</td>
+                                            <td>{{ $item->supplier->nama_supplier }}</td>
+                                            <td>{{ number_format($item->stok_awal) }}</td>
+                                            <td>{{ $item->satuan->nama_satuan }}</td>
+                                            <td>Rp {{ number_format($item->harga_persatuan, 0, ',', '.') }}</td>
+                                            <td>Rp {{ number_format($item->stok_awal * $item->harga_persatuan, 0, ',', '.') }}</td>
+                                            <td>{{ Carbon\Carbon::parse($item->tanggal_kadaluarsa)->format('d/m/Y') }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot class="table-dark">
+                                    <tr>
+                                        <th colspan="8" class="text-end">Total Nilai:</th>
+                                        <th colspan="2">Rp {{ number_format($totalNilai, 0, ',', '.') }}</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    @else
+                        <div class="text-center py-4">
+                            <i class="bx bx-package fs-1 text-muted"></i>
+                            <h5 class="text-muted mt-2">Tidak ada data barang masuk</h5>
+                            <p class="text-muted">Untuk periode {{ $bulanList[$bulan] }} {{ $tahun }}</p>
+                        </div>
+                    @endif
+                </div>
             </div>
         </div>
-        <div class="info">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Kode Barang</th>
-                        <th>Nama Barang</th>
-                        <th>Satuan</th>
-                        <th>Supplier</th>
-                        <th>Stok Barang</th>
-                        <th>Tanggal Kadaluarsa</th>
-                        <th>Total Harga</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($laporan as $key => $item)
-                        <tr>
-                            <td>{{ $key + 1 }}</td>
-                            <td>{{ $item->kode_barang }}</td>
-                            <td>{{ $item->nama_barang }}</td>
-                            <td>{{ $item->satuan->nama_satuan }}</td>
-                            <td>{{ $item->supplier->nama_supplier }}</td>
-                            <td>{{ $item->stok_barang }}</td>
-                            <td>{{ \Carbon\Carbon::parse($item->tanggal_kadaluarsa)->locale('id')->isoFormat('D MMMM Y') ?? '-' }}
-                            </td>
-                            <td>Rp. {{ number_format($item->total_harga, 0, ',', '.') ?? '-' }}</td>
-
-
-                        </tr>
-                    @endforeach
-                        <tr class="very-bold">
-                            <td colspan="6" style="text-align: right;">Total
-                                {{ \Carbon\Carbon::parse($laporan->first()->created_at)->locale('id')->isoFormat('MMMM Y') }}:
-                            </td>
-                            <td>Rp. {{ number_format($laporan->sum('total_harga'), 0, ',', '.') }}</td>
-                        </tr>
-                </tbody>
-            </table>
-        </div>
-        <hr>
-        <div style="text-align: right; margin-top: 50px;">
-            <p>Aur Duri, {{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM Y') }}</p>
-            <br><br>
-            {{-- <img src="{{ asset('env/ttd.png') }}" alt="Tanda Tangan" style="width: 150px; height: auto; margin-bottom: -30px; margin-top: -50px;"> --}}
-            <br><br>
-            <p style="text-decoration: underline;">{{ $data->nama ?? '-' }}</p>
-            <p>Pemilik Nadya Bangunan</p>
-        </div>
     </div>
-    <script>
-        window.onload = function() {
-            window.print();
-        };
-    </script>
-</body>
-
-</html>
+</div>
+@endsection

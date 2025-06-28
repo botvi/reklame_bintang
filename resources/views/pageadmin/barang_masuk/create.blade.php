@@ -58,6 +58,35 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                
+                              
+                                <div class="col-md-12">
+                                    <input type="file" class="form-control" id="gambar" name="gambar">
+                                    <small class="text-danger">
+                                        @foreach ($errors->get('gambar') as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </small>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="tanggal_kadaluarsa" class="form-label">Tanggal Kadaluarsa</label>
+                                    <p class="text-muted small">Kosongkan jika tidak ada tanggal kadaluarsa</p>
+                                    <input type="date" class="form-control" placeholder="Kosongkan jika tidak ingin mengubah tanggal kadaluarsa" id="tanggal_kadaluarsa" name="tanggal_kadaluarsa">
+                                    <small class="text-danger">
+                                        @foreach ($errors->get('tanggal_kadaluarsa') as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </small>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="stok_awal" class="form-label">Stok Awal</label>
+                                    <input type="number" step="0.01" class="form-control" id="stok_awal" name="stok_awal" required>
+                                    <small class="text-danger">
+                                        @foreach ($errors->get('stok_awal') as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </small>
+                                </div>
                                 <div class="col-md-12">
                                     <label for="satuan_id" class="form-label">Satuan</label>
                                     <select class="form-control" id="satuan_id" name="satuan_id">
@@ -67,45 +96,10 @@
                                     </select>
                                 </div>
                                 <div class="col-md-12">
-                                    <label for="harga_satuan" class="form-label">Harga Satuan</label>
-                                    <input type="number" class="form-control" id="harga_satuan" name="harga_satuan" required oninput="hitungTotal()">
+                                    <label for="harga_persatuan" class="form-label">Harga Persatuan</label>
+                                    <input type="number" step="0.01" class="form-control" id="harga_persatuan" name="harga_persatuan" required>
                                     <small class="text-danger">
-                                        @foreach ($errors->get('harga_satuan') as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </small>
-                                </div>
-                                <div class="col-md-12">
-                                    <label for="stok_barang" class="form-label">Stok Barang</label>
-                                    <input type="number" class="form-control" id="stok_barang" name="stok_barang" required oninput="hitungTotal()">
-                                    <small class="text-danger">
-                                        @foreach ($errors->get('jumlah_barang') as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </small>
-                                </div>
-                                <div class="col-md-12">
-                                    <label for="total_harga" class="form-label">Total Harga</label>
-                                    <input type="number" class="form-control" id="total_harga" name="total_harga" readonly required>
-                                    <small class="text-danger">
-                                        @foreach ($errors->get('total_harga') as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </small>
-                                </div>
-                                <div class="col-md-12">
-                                    <label for="tanggal_kadaluarsa" class="form-label">Tanggal Kadaluarsa</label>
-                                    <input type="date" class="form-control" id="tanggal_kadaluarsa" name="tanggal_kadaluarsa" required>
-                                    <small class="text-danger">
-                                        @foreach ($errors->get('tanggal_kadaluarsa') as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </small>
-                                </div>
-                                <div class="col-md-12">
-                                    <input type="file" class="form-control" id="gambar" name="gambar">
-                                    <small class="text-danger">
-                                        @foreach ($errors->get('gambar') as $error)
+                                        @foreach ($errors->get('harga_persatuan') as $error)
                                             <li>{{ $error }}</li>
                                         @endforeach
                                     </small>
@@ -121,15 +115,4 @@
         </div>
     </div>
 
-    @section('script')
-    <script>
-        function hitungTotal() {
-            const hargaSatuan = document.getElementById('harga_satuan').value;
-            const stokBarang = document.getElementById('stok_barang').value;
-            const totalHarga = hargaSatuan * stokBarang;
-            
-            document.getElementById('total_harga').value = totalHarga;
-        }
-    </script>
-    @endsection
 @endsection

@@ -27,13 +27,11 @@
                             <tr>
                                 <th>Kode Barang</th>
                                 <th>Nama Barang</th>
-                                <th>Satuan</th>
                                 <th>Supplier</th>
-                                <th>Harga Satuan</th>
-                                <th>Stok Barang</th>
-                                <th>Total Harga</th>
-                                <th>Tanggal Kadaluarsa</th>
                                 <th>Gambar</th>
+                                <th>Tanggal Kadaluarsa</th>
+                                <th>Stok Awal</th>
+                                <th>Harga Persatuan</th>
                                 <th>Aksi</th>
                               
                             </tr>
@@ -43,13 +41,11 @@
                             <tr>
                                 <td>{{ $barang_masuk->kode_barang }}</td>
                                 <td>{{ $barang_masuk->nama_barang }}</td>
-                                <td>{{ $barang_masuk->satuan->nama_satuan }}</td>
                                 <td>{{ $barang_masuk->supplier->nama_supplier }}</td>
-                                <td>Rp. {{ number_format($barang_masuk->harga_satuan, 0, ',', '.') }}</td>
-                                <td>{{ $barang_masuk->stok_barang }}</td>
-                                <td>Rp. {{ number_format($barang_masuk->total_harga, 0, ',', '.') }}</td>
-                                <td>{{ \Carbon\Carbon::parse($barang_masuk->tanggal_kadaluarsa)->locale('id')->isoFormat('D MMMM Y') }}</td>
                                 <td><img src="{{ asset('uploads/barang_masuk/' . $barang_masuk->gambar) }}" alt="Gambar" style="width: 100px; height: 100px;"></td>
+                                <td>{{ $barang_masuk->tanggal_kadaluarsa }}</td>
+                                <td>{{ $barang_masuk->stok_awal }}</td>
+                                <td>Rp. {{ number_format($barang_masuk->harga_persatuan, 0, ',', '.') }} / {{ $barang_masuk->satuan->nama_satuan }}</td>
                                 <td>
                                     <a href="{{ route('barang_masuk.edit', $barang_masuk->id) }}" class="btn btn-sm btn-warning">Edit</a>
                                     <form action="{{ route('barang_masuk.destroy', $barang_masuk->id) }}" method="POST" style="display:inline;" class="delete-form">
@@ -65,13 +61,11 @@
                             <tr>
                                 <th>Kode Barang</th>
                                 <th>Nama Barang</th>
-                                <th>Satuan</th>
                                 <th>Supplier</th>
-                                <th>Harga Satuan</th>
-                                <th>Stok Barang</th>
-                                <th>Total Harga</th>
-                                <th>Tanggal Kadaluarsa</th>
                                 <th>Gambar</th>
+                                <th>Tanggal Kadaluarsa</th>
+                                <th>Stok Awal</th>
+                                <th>Harga Persatuan</th>
                                 <th>Aksi</th>
                             </tr>
                         </tfoot>

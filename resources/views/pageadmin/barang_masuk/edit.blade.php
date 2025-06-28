@@ -33,8 +33,7 @@
                                 @method('PUT')
                                 <div class="col-md-12">
                                     <label for="kode_barang" class="form-label">Kode Barang</label>
-                                    <input type="text" class="form-control" id="kode_barang" name="kode_barang"
-                                        value="{{ old('kode_barang', $barang_masuk->kode_barang) }}" required>
+                                    <input type="text" class="form-control" id="kode_barang" name="kode_barang" value="{{ $barang_masuk->kode_barang }}" required>
                                     <small class="text-danger">
                                         @foreach ($errors->get('kode_barang') as $error)
                                             <li>{{ $error }}</li>
@@ -43,65 +42,51 @@
                                 </div>
                                 <div class="col-md-12">
                                     <label for="nama_barang" class="form-label">Nama Barang</label>
-                                    <input type="text" class="form-control" id="nama_barang" name="nama_barang"
-                                        value="{{ old('nama_barang', $barang_masuk->nama_barang) }}" required>
+                                    <input type="text" class="form-control" id="nama_barang" name="nama_barang" value="{{ $barang_masuk->nama_barang }}" required>
                                     <small class="text-danger">
                                         @foreach ($errors->get('nama_barang') as $error)
                                             <li>{{ $error }}</li>
                                         @endforeach
                                     </small>
                                 </div>
-                             
+                               
                                 <div class="col-md-12">
                                     <label for="supplier_id" class="form-label">Supplier</label>
-                                    <select class="form-control" id="supplier_id" name="supplier_id">
+                                    <select class="form-control" id="supplier_id" name="supplier_id" required>
+                                        <option value="">Pilih Supplier</option>
                                         @foreach ($suppliers as $supplier)
-                                            <option value="{{ $supplier->id }}" {{ $barang_masuk->supplier_id == $supplier->id ? 'selected' : '' }}>{{ $supplier->nama_supplier }}</option>
+                                            <option value="{{ $supplier->id }}" {{ $barang_masuk->supplier_id == $supplier->id ? 'selected' : '' }}>
+                                                {{ $supplier->nama_supplier }}
+                                            </option>
                                         @endforeach
                                     </select>
-                                </div>
-                                <div class="col-md-12">
-                                    <label for="satuan_id" class="form-label">Satuan</label>
-                                    <select class="form-control" id="satuan_id" name="satuan_id">
-                                        @foreach ($satuans as $satuan)
-                                            <option value="{{ $satuan->id }}" {{ $barang_masuk->satuan_id == $satuan->id ? 'selected' : '' }}>{{ $satuan->nama_satuan }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-12">
-                                    <label for="harga_satuan" class="form-label">Harga Satuan</label>
-                                    <input type="number" class="form-control" id="harga_satuan" name="harga_satuan" 
-                                        value="{{ old('harga_satuan', $barang_masuk->harga_satuan) }}" required oninput="hitungTotal()">
                                     <small class="text-danger">
-                                        @foreach ($errors->get('harga_satuan') as $error)
+                                        @foreach ($errors->get('supplier_id') as $error)
                                             <li>{{ $error }}</li>
                                         @endforeach
                                     </small>
                                 </div>
+                                
                                 <div class="col-md-12">
-                                    <label for="stok_barang" class="form-label">Stok Barang</label>
-                                    <input type="number" class="form-control" id="stok_barang" name="stok_barang" 
-                                        value="{{ old('stok_barang', $barang_masuk->stok_barang) }}" required oninput="hitungTotal()">
+                                    <label for="gambar" class="form-label">Gambar Barang</label>
+                                    @if($barang_masuk->gambar)
+                                        <div class="mb-2">
+                                            <img src="{{ asset('uploads/barang_masuk/' . $barang_masuk->gambar) }}" alt="Gambar Barang" class="img-thumbnail" style="max-width: 200px;">
+                                            <p class="text-muted small">Gambar saat ini: {{ $barang_masuk->gambar }}</p>
+                                        </div>
+                                    @endif
+                                    <input type="file" class="form-control" id="gambar" name="gambar">
+                                    <small class="text-muted">Kosongkan jika tidak ingin mengubah gambar</small>
                                     <small class="text-danger">
-                                        @foreach ($errors->get('stok_barang') as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </small>
-                                </div>
-                                <div class="col-md-12">
-                                    <label for="total_harga" class="form-label">Total Harga</label>
-                                    <input type="number" class="form-control" id="total_harga" name="total_harga" 
-                                        value="{{ old('total_harga', $barang_masuk->total_harga) }}" readonly required>
-                                    <small class="text-danger">
-                                        @foreach ($errors->get('total_harga') as $error)
+                                        @foreach ($errors->get('gambar') as $error)
                                             <li>{{ $error }}</li>
                                         @endforeach
                                     </small>
                                 </div>
                                 <div class="col-md-12">
                                     <label for="tanggal_kadaluarsa" class="form-label">Tanggal Kadaluarsa</label>
-                                    <input type="date" class="form-control" id="tanggal_kadaluarsa" name="tanggal_kadaluarsa" 
-                                        value="{{ old('tanggal_kadaluarsa', $barang_masuk->tanggal_kadaluarsa) }}" required>
+                                    <p class="text-muted small">Kosongkan jika tidak ada tanggal kadaluarsa</p>
+                                    <input type="date" class="form-control" id="tanggal_kadaluarsa" name="tanggal_kadaluarsa" value="{{ $barang_masuk->tanggal_kadaluarsa }}">
                                     <small class="text-danger">
                                         @foreach ($errors->get('tanggal_kadaluarsa') as $error)
                                             <li>{{ $error }}</li>
@@ -109,21 +94,41 @@
                                     </small>
                                 </div>
                                 <div class="col-md-12">
-                                    <label for="gambar" class="form-label">Gambar</label>
-                                    @if($barang_masuk->gambar)
-                                        <div class="mb-2">
-                                            <img src="{{ asset('uploads/barang_masuk/' . $barang_masuk->gambar) }}" alt="Gambar Barang Masuk" class="img-thumbnail" style="max-height: 200px">
-                                        </div>
-                                    @endif
-                                    <input type="file" class="form-control" id="gambar" name="gambar">
+                                    <label for="stok_awal" class="form-label">Stok Awal</label>
+                                    <input type="number" step="0.01" class="form-control" id="stok_awal" name="stok_awal" value="{{ $barang_masuk->stok_awal }}" required>
                                     <small class="text-danger">
-                                        @foreach ($errors->get('gambar') as $error)
+                                        @foreach ($errors->get('stok_awal') as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </small>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="satuan_id" class="form-label">Satuan</label>
+                                    <select class="form-control" id="satuan_id" name="satuan_id">
+                                        @foreach ($satuans as $satuan)
+                                            <option value="{{ $satuan->id }}" {{ $barang_masuk->satuan_id == $satuan->id ? 'selected' : '' }}>
+                                                {{ $satuan->nama_satuan }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-danger">
+                                        @foreach ($errors->get('satuan_id') as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </small>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="harga_persatuan" class="form-label">Harga Persatuan</label>
+                                    <input type="number" step="0.01" class="form-control" id="harga_persatuan" name="harga_persatuan" value="{{ $barang_masuk->harga_persatuan }}" required>
+                                    <small class="text-danger">
+                                        @foreach ($errors->get('harga_persatuan') as $error)
                                             <li>{{ $error }}</li>
                                         @endforeach
                                     </small>
                                 </div>
                                 <div class="col-12">
                                     <button type="submit" class="btn btn-primary px-5">Update</button>
+                                    <a href="{{ route('barang_masuk.index') }}" class="btn btn-secondary px-5">Kembali</a>
                                 </div>
                             </form>
                         </div>
@@ -133,15 +138,4 @@
         </div>
     </div>
 
-    @section('script')
-    <script>
-        function hitungTotal() {
-            const hargaSatuan = document.getElementById('harga_satuan').value;
-            const stokBarang = document.getElementById('stok_barang').value;
-            const totalHarga = hargaSatuan * stokBarang;
-            
-            document.getElementById('total_harga').value = totalHarga;
-        }
-    </script>
-    @endsection
 @endsection

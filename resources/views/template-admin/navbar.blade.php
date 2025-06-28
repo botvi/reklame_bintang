@@ -2,7 +2,7 @@
     @if(auth()->user()->role == 'pemilik_toko')
         <li class="menu-label text-white">DASHBOARD</li>
         <li>
-            <a href="/">
+            <a href="/dashboard">
                 <div class="parent-icon"><i class='bx bx-home-circle text-white'></i></div>
                 <div class="menu-title text-white">DASHBOARD</div>
             </a>
@@ -23,7 +23,7 @@
     @else
         <li class="menu-label text-white">DASHBOARD</li>
         <li>
-            <a href="/">
+            <a href="/dashboard">
                 <div class="parent-icon"><i class='bx bx-home-circle text-white'></i></div>
                 <div class="menu-title text-white">DASHBOARD</div>
             </a>

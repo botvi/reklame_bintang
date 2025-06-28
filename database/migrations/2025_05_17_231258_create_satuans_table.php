@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('satuans', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_satuan');
+            $table->string('nama_satuan'); // Contoh: kg, ons, pcs
+            $table->integer('konversi_ke_dasar'); // Misal: 1000 gram untuk kg
+            $table->enum('jenis', ['berat', 'volume', 'unit']); // berat = gram, volume = ml, unit = pcs
             $table->timestamps();
         });
     }

@@ -20,13 +20,14 @@
             <hr/>
             <div class="card">
                 <div class="card-body">
-                    <a href="{{ route('satuan.create') }}" class="btn btn-primary mb-3">Tambah Data</a>
+                    <a href="/get-satuan" class="btn btn-primary mb-3">Ambil Data Satuan</a>
                     <div class="table-responsive">
                         <table id="example2" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
                                     <th>Nama Satuan</th>
-                                    <th>Aksi</th>
+                                    <th>Konversi Ke Dasar</th>
+                                    <th>Jenis</th>
                                 
                                 </tr>
                             </thead>
@@ -34,21 +35,17 @@
                                 @foreach($satuans as $index => $satuan)
                                 <tr>
                                     <td>{{ $satuan->nama_satuan }}</td>
-                                    <td>
-                                        <a href="{{ route('satuan.edit', $satuan->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                        <form action="{{ route('satuan.destroy', $satuan->id) }}" method="POST" style="display:inline;" class="delete-form">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
-                                        </form>
-                                    </td>
+                                    <td>{{ $satuan->konversi_ke_dasar }}</td>
+                                    <td>{{ $satuan->jenis }}</td>
+                                  
                                 </tr>
                                 @endforeach
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <th>Nama Satuan</th>
-                                    <th>Aksi</th>
+                                    <th>Konversi Ke Dasar</th>
+                                    <th>Jenis</th>
                                 </tr>
                             </tfoot>
                         </table>

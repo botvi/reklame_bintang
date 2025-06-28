@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Models\RegPosyandu;
 use App\Models\BarangMasuk;
-
+use App\Models\User;
+use Carbon\Carbon;
 
 use Illuminate\Routing\Controller;
 
@@ -21,11 +22,57 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        $barang_kadaluarsa = BarangMasuk::where('tanggal_kadaluarsa', '<=', now()->addDays(30))
-            ->where('tanggal_kadaluarsa', '>=', now())
-            ->count();
+        $hariIni = Carbon::now();
+        $satuMingguKedepan = Carbon::now()->addWeek();
         
-        return view('auth.login', compact('barang_kadaluarsa'));
+        // Ambil semua barang masuk yang memiliki tanggal kadaluarsa
+        $barangMasuk = BarangMasuk::with(['supplier', 'satuan', 'user', 'barangKeluar'])
+            ->whereNotNull('tanggal_kadaluarsa')
+            ->get()
+            ->filter(function($item) use ($hariIni, $satuMingguKedepan) {
+                $tanggalKadaluarsa = Carbon::parse($item->tanggal_kadaluarsa);
+                
+                // Filter barang yang kadaluarsa dalam 1 minggu ke depan atau sudah kadaluarsa
+                return $tanggalKadaluarsa->lte($satuMingguKedepan);
+            })
+            ->map(function($item) {
+                // Hitung sisa stok
+                $totalKeluar = $item->barangKeluar->sum('jumlah');
+                $sisaStok = max(0, $item->stok_awal - $totalKeluar);
+                
+                // Hitung sisa hari sebelum kadaluarsa
+                $tanggalKadaluarsa = Carbon::parse($item->tanggal_kadaluarsa);
+                $hariIni = Carbon::now();
+                $sisaHari = $hariIni->diffInDays($tanggalKadaluarsa, false);
+                
+                $item->sisa_stok = $sisaStok;
+                $item->sisa_hari = $sisaHari;
+                $item->total_nilai = $sisaStok * $item->harga_persatuan;
+                
+                return $item;
+            })
+            ->sortBy('sisa_hari'); // Urutkan berdasarkan sisa hari (yang paling dekat kadaluarsa di atas)
+
+        $totalBarang = $barangMasuk->count();
+        $totalNilai = $barangMasuk->sum('total_nilai');
+
+        // Ambil data pemilik toko
+        $pemilikToko = User::where('role', 'pemilik_toko')->first();
+        
+        // Jika tidak ada pemilik toko, buat data default
+        if (!$pemilikToko) {
+            $pemilikToko = (object) [
+                'nama' => 'Pemilik Toko',
+                'no_wa' => '-'
+            ];
+        }
+
+        // Tampilkan alert jika ada barang yang mendekati kadaluarsa
+        if ($totalBarang > 0) {
+            Alert::warning('Peringatan Kadaluarsa', "Ada {$totalBarang} barang yang mendekati atau sudah kadaluarsa dengan total nilai Rp " . number_format($totalNilai, 0, ',', '.'));
+        }
+
+        return view('auth.login', compact('totalBarang', 'totalNilai', 'barangMasuk', 'pemilikToko'));
     }
 
     /**

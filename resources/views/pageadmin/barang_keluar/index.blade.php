@@ -32,8 +32,8 @@
                                 <div class="col-md-6 mb-3 barang-card">
                                     <div class="card barang-item" data-id="{{ $barang->id }}" 
                                         data-nama="{{ $barang->nama_barang }}"
-                                        data-harga="{{ $barang->harga_satuan }}"
-                                        data-stok="{{ $barang->stok_barang }}">
+                                        data-harga="{{ $barang->harga_persatuan }}"
+                                        data-satuan="{{ $barang->satuan_id }}">
                                         <div class="position-relative">
                                             <img src="{{ asset('uploads/barang_masuk/'.$barang->gambar) }}" 
                                                 class="card-img-top" alt="{{ $barang->nama_barang }}"
@@ -41,10 +41,7 @@
                                         </div>
                                         <div class="card-body">
                                             <h6 class="card-title">{{ $barang->nama_barang }}</h6>
-                                            <p class="card-text">
-                                                Stok: {{ $barang->stok_barang }}<br>
-                                                Harga: Rp {{ number_format($barang->harga_satuan, 0, ',', '.') }}
-                                            </p>
+                                            <p class="card-text">STOK : {{ $barang->stok_awal }} {{ $barang->satuan->nama_satuan }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -73,14 +70,39 @@
                             <h5>Form Transaksi Barang Keluar</h5>
                             <form action="{{ route('barang_keluar.store') }}" method="POST" id="formBarangKeluar">
                                 @csrf
+                                <input type="hidden" name="user_id" value="{{ Auth::id() }}">
+
                                 <div class="mb-3">
                                     <label class="form-label">Nama Barang</label>
                                     <input type="text" class="form-control" id="nama_barang" readonly>
                                     <input type="hidden" id="barang_masuk_id" name="barang_masuk_id">
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Jumlah Keluar</label>
-                                    <input type="number" class="form-control" id="jumlah_keluar" name="jumlah_keluar" min="1">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Harga Persatuan</label>
+                                            <input type="number" class="form-control" id="harga_persatuan" name="harga_persatuan" min="1">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Jumlah Beli</label>
+                                            <input type="number" class="form-control" id="jumlah_beli" name="jumlah_beli" min="1">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Satuan</label>
+                                            <select class="form-control" id="satuan_id" name="satuan_id">
+                                                @foreach($satuans as $satuan)
+                                                    <option value="{{ $satuan->id }}">
+                                                        {{ $satuan->nama_satuan }} ({{ $satuan->jenis }})
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Total Harga</label>
@@ -100,7 +122,8 @@
                             <thead>
                                 <tr>
                                     <th>Nama Barang</th>
-                                    <th>Jumlah Keluar</th>
+                                    <th>Jumlah Beli</th>
+                                    <th>Harga Persatuan</th>
                                     <th>Total Harga</th>
                                 </tr>
                             </thead>
@@ -108,7 +131,8 @@
                                 @foreach($barang_keluars as $index => $barang_keluar)
                                 <tr>
                                     <td>{{ $barang_keluar->barang_masuk->nama_barang }}</td>
-                                    <td>{{ $barang_keluar->jumlah_keluar }}</td>
+                                    <td>{{ $barang_keluar->jumlah_beli }}</td>
+                                    <td>Rp {{ number_format($barang_keluar->harga_persatuan, 0, ',', '.') }} / {{ $barang_keluar->satuan->nama_satuan }}</td>
                                     <td>Rp {{ number_format($barang_keluar->total_harga, 0, ',', '.') }}</td>
                                   
                                 </tr>
@@ -117,7 +141,8 @@
                             <tfoot>
                                 <tr>
                                     <th>Nama Barang</th>
-                                    <th>Jumlah Keluar</th>
+                                    <th>Jumlah Beli</th>
+                                    <th>Harga Persatuan</th>
                                     <th>Total Harga</th>
                                 </tr>
                             </tfoot>
@@ -133,6 +158,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        document.getElementById('harga_persatuan').addEventListener('input', function() {
+    hitungTotal();
+});
+
     document.addEventListener('DOMContentLoaded', function() {
         // Menangani klik pada card menggunakan event delegation
         document.addEventListener('click', function(e) {
@@ -148,42 +177,34 @@
             const id = card.dataset.id;
             const nama = card.dataset.nama;
             const harga = card.dataset.harga;
-            const stok = card.dataset.stok;
-            
+            const satuan = card.dataset.satuan;
             // Isi form dengan data barang yang dipilih
             document.getElementById('barang_masuk_id').value = id;
             document.getElementById('nama_barang').value = nama;
-            document.getElementById('jumlah_keluar').max = stok;
-            document.getElementById('jumlah_keluar').value = 1;
+            document.getElementById('harga_persatuan').value = harga;
+            document.getElementById('satuan_id').value = satuan;
+            document.getElementById('jumlah_beli').value = 1;
             
             // Hitung total harga awal
-            hitungTotal(1, harga);
+            hitungTotal();
             
             // Scroll ke form
             document.getElementById('formBarangKeluar').scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
         
         // Hitung total saat jumlah berubah
-        document.getElementById('jumlah_keluar').addEventListener('input', function() {
-            const selectedCard = document.querySelector('.barang-item.selected');
-            if (!selectedCard) return;
-            
-            const jumlah = parseInt(this.value) || 0;
-            const harga = parseFloat(selectedCard.dataset.harga) || 0;
-            const stok = parseInt(selectedCard.dataset.stok) || 0;
-            
-            if (jumlah > stok) {
-                this.value = stok;
-                Swal.fire('Peringatan', 'Jumlah melebihi stok yang tersedia!', 'warning');
-                return;
-            }
-            
-            hitungTotal(jumlah, harga);
+        document.getElementById('jumlah_beli').addEventListener('input', function() {
+            hitungTotal();
         });
         
-        function hitungTotal(jumlah, harga) {
+        function hitungTotal() {
+            const jumlah = parseInt(document.getElementById('jumlah_beli').value) || 0;
+            const harga = parseFloat(document.getElementById('harga_persatuan').value) || 0;
             const total = jumlah * harga;
-            document.getElementById('total_harga').value = 'Rp ' + total.toLocaleString('id-ID');
+            
+            // Format total harga dengan pemisah ribuan
+            const formattedTotal = 'Rp ' + total.toLocaleString('id-ID');
+            document.getElementById('total_harga').value = formattedTotal;
         }
         
         // Submit form
@@ -195,7 +216,7 @@
                 return;
             }
             
-            const jumlah = parseInt(document.getElementById('jumlah_keluar').value) || 0;
+            const jumlah = parseInt(document.getElementById('jumlah_beli').value) || 0;
             if (jumlah <= 0) {
                 Swal.fire('Peringatan', 'Jumlah barang harus lebih dari 0!', 'warning');
                 return;
