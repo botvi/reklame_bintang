@@ -140,14 +140,9 @@
                             <th>No</th>
                             <th>Kode Barang</th>
                             <th>Nama Barang</th>
-                            <th>Satuan</th>
                             <th>Supplier</th>
-                            <th>Stok Awal</th>
-                            <th>Total Keluar</th>
-                            <th>Sisa Stok</th>
                             <th>Status</th>
                             <th>Tanggal Kadaluarsa</th>
-                            <th>Total Nilai Habis</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -162,23 +157,13 @@
                                 <td>{{ $key + 1 }}</td>
                                 <td>{{ $item->kode_barang }}</td>
                                 <td>{{ $item->nama_barang }}</td>
-                                <td>{{ $item->satuan->nama_satuan }}</td>
                                 <td>{{ $item->supplier->nama_supplier }}</td>
-                                <td>{{ $item->stok_awal }}</td>
-                                <td>{{ $totalKeluar }}</td>
-                                <td style="color: red; font-weight: bold;">{{ $sisaStok }}</td>
                                 <td style="color: red; font-weight: bold;">{{ $status }}</td>
                                 <td>{{ \Carbon\Carbon::parse($item->tanggal_kadaluarsa)->locale('id')->isoFormat('D MMMM Y') ?? '-' }}
                                 </td>
-                                <td>Rp. {{ number_format($nilaiHabis, 0, ',', '.') }}</td>
                             </tr>
                         @endforeach
-                            <tr class="very-bold">
-                                <td colspan="10" style="text-align: right;">Total Nilai Stok Habis
-                                    {{ $bulanList[$bulan] }} {{ $tahun }}:
-                                </td>
-                                <td>Rp. {{ number_format($totalNilai, 0, ',', '.') }}</td>
-                            </tr>
+
                     </tbody>
                 </table>
             @else

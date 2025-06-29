@@ -109,13 +109,7 @@
                                         <th>Kode Barang</th>
                                         <th>Nama Barang</th>
                                         <th>Supplier</th>
-                                        <th>Stok Awal</th>
-                                        <th>Total Keluar</th>
-                                        <th>Sisa Stok</th>
                                         <th>Status</th>
-                                        <th>Satuan</th>
-                                        <th>Harga Satuan</th>
-                                        <th>Total Nilai Habis</th>
                                         <th>Tanggal Kadaluarsa</th>
                                     </tr>
                                 </thead>
@@ -133,13 +127,7 @@
                                             <td>{{ $item->kode_barang }}</td>
                                             <td>{{ $item->nama_barang }}</td>
                                             <td>{{ $item->supplier->nama_supplier }}</td>
-                                            <td>{{ number_format($item->stok_awal) }}</td>
-                                            <td>{{ number_format($totalKeluar) }}</td>
-                                            <td class="text-danger fw-bold">{{ number_format($sisaStok) }}</td>
                                             <td><span class="badge bg-danger">{{ $status }}</span></td>
-                                            <td>{{ $item->satuan->nama_satuan }}</td>
-                                            <td>Rp {{ number_format($item->harga_persatuan, 0, ',', '.') }}</td>
-                                            <td>Rp {{ number_format($nilaiHabis, 0, ',', '.') }}</td>
                                             <td>{{ Carbon\Carbon::parse($item->tanggal_kadaluarsa)->format('d/m/Y') }}</td>
                                         </tr>
                                     @endforeach

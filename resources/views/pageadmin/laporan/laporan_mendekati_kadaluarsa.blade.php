@@ -128,8 +128,7 @@
                                         <th>Supplier</th>
                                         <th>Sisa Stok</th>
                                         <th>Satuan</th>
-                                        <th>Harga Satuan</th>
-                                        <th>Total Nilai</th>
+                                     
                                         <th>Tanggal Kadaluarsa</th>
                                         <th>Sisa Hari</th>
                                         <th>Status</th>
@@ -144,8 +143,7 @@
                                             <td>{{ $item->supplier->nama_supplier ?? '-' }}</td>
                                             <td>{{ number_format($item->sisa_stok) }}</td>
                                             <td>{{ $item->satuan->nama_satuan ?? '-' }}</td>
-                                            <td>Rp {{ number_format($item->harga_persatuan, 0, ',', '.') }}</td>
-                                            <td>Rp {{ number_format($item->total_nilai, 0, ',', '.') }}</td>
+                                           
                                             <td>{{ \Carbon\Carbon::parse($item->tanggal_kadaluarsa)->format('d/m/Y') }}</td>
                                             <td>
                                                 @if($item->sisa_hari < 0)
