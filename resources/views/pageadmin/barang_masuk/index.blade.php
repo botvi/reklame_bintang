@@ -45,7 +45,7 @@
                                 <td><img src="{{ asset('uploads/barang_masuk/' . $barang_masuk->gambar) }}" alt="Gambar" style="width: 100px; height: 100px;"></td>
                                 <td>{{ $barang_masuk->tanggal_kadaluarsa }}</td>
                                 <td>{{ $barang_masuk->stok_awal }}</td>
-                                <td>Rp. {{ number_format($barang_masuk->harga_persatuan, 0, ',', '.') }} / {{ $barang_masuk->satuan->nama_satuan }}</td>
+                                <td>Rp. {{ number_format($barang_masuk->harga_persatuan, 0, ',', '.') }} / {{ $barang_masuk->satuan->nama_satuan ?? 'Tidak Ada Satuan' }}</td>
                                 <td>
                                     <a href="{{ route('barang_masuk.edit', $barang_masuk->id) }}" class="btn btn-sm btn-warning">Edit</a>
                                     <form action="{{ route('barang_masuk.destroy', $barang_masuk->id) }}" method="POST" style="display:inline;" class="delete-form">

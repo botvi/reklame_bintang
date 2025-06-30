@@ -132,7 +132,7 @@
                                 <tr>
                                     <td>{{ $barang_keluar->barang_masuk->nama_barang }}</td>
                                     <td>{{ $barang_keluar->jumlah_beli }}</td>
-                                    <td>Rp {{ number_format($barang_keluar->harga_persatuan, 0, ',', '.') }} / {{ $barang_keluar->satuan->nama_satuan }}</td>
+                                    <td>Rp {{ number_format($barang_keluar->harga_persatuan, 0, ',', '.') }} / {{ $barang_keluar->satuan->nama_satuan ?? 'Tidak Ada Satuan' }}</td>
                                     <td>Rp {{ number_format($barang_keluar->total_harga, 0, ',', '.') }}</td>
                                   
                                 </tr>
