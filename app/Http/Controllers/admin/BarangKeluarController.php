@@ -44,15 +44,19 @@ class BarangKeluarController extends Controller
             $stok_dasar = $barangMasuk->stok_awal * $satuanMasuk->konversi_ke_dasar;
             $keluar_dasar = $request->jumlah_beli * $satuanKeluar->konversi_ke_dasar;
 
+            // Pastikan stok cukup
             if ($stok_dasar < $keluar_dasar) {
                 Alert::error('Gagal', 'Stok tidak mencukupi!');
                 return back()->withInput();
             }
 
-            // Kurangi stok
+            // Kurangi stok_awal (stok berjalan)
             $sisa_dasar = $stok_dasar - $keluar_dasar;
             $barangMasuk->stok_awal = $sisa_dasar / $satuanMasuk->konversi_ke_dasar;
             $barangMasuk->save();
+
+            // Hitung total harga di backend
+            $total_harga = $request->jumlah_beli * $request->harga_persatuan;
 
             // Simpan barang keluar
             BarangKeluar::create([
@@ -60,7 +64,7 @@ class BarangKeluarController extends Controller
                 'barang_masuk_id' => $request->barang_masuk_id,
                 'jumlah_beli' => $request->jumlah_beli,
                 'harga_persatuan' => $request->harga_persatuan,
-                'total_harga' => $request->jumlah_beli * $request->harga_persatuan,
+                'total_harga' => $total_harga,
                 'satuan_id' => $request->satuan_id,
             ]);
 

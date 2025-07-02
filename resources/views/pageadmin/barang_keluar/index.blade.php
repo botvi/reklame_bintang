@@ -74,14 +74,14 @@
 
                                 <div class="mb-3">
                                     <label class="form-label">Nama Barang</label>
-                                    <input type="text" class="form-control" id="nama_barang" readonly>
+                                    <input type="text" class="form-control bg-secondary text-white" id="nama_barang" readonly>
                                     <input type="hidden" id="barang_masuk_id" name="barang_masuk_id">
                                 </div>
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label">Harga Persatuan</label>
-                                            <input type="number" class="form-control" id="harga_persatuan" name="harga_persatuan" min="1">
+                                            <input type="number" class="form-control bg-secondary text-white" id="harga_persatuan" name="harga_persatuan" min="1" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -95,7 +95,7 @@
                                             <label class="form-label">Satuan</label>
                                             <select class="form-control" id="satuan_id" name="satuan_id">
                                                 @foreach($satuans as $satuan)
-                                                    <option value="{{ $satuan->id }}">
+                                                    <option value="{{ $satuan->id }}" data-jenis="{{ $satuan->jenis }}" data-konversi="{{ $satuan->konversi_ke_dasar }}">
                                                         {{ $satuan->nama_satuan }} ({{ $satuan->jenis }})
                                                     </option>
                                                 @endforeach
@@ -106,7 +106,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Total Harga</label>
-                                    <input type="text" class="form-control" id="total_harga" name="total_harga" readonly>
+                                    <input type="text" class="form-control bg-secondary text-white" id="total_harga" name="total_harga" readonly>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Simpan</button>
                             </form>
@@ -158,106 +158,165 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        document.getElementById('harga_persatuan').addEventListener('input', function() {
-    hitungTotal();
-});
+        // Data satuan dan barang masuk untuk JS
+        const satuans = @json($satuans);
+        const barangMasuks = @json($barang_masuks);
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Menangani klik pada card menggunakan event delegation
-        document.addEventListener('click', function(e) {
-            const card = e.target.closest('.barang-item');
-            if (!card) return;
-            
-            // Hapus kelas selected dari semua card
-            document.querySelectorAll('.barang-item').forEach(c => c.classList.remove('selected'));
-            
-            // Tambahkan kelas selected ke card yang diklik
-            card.classList.add('selected');
-            
-            const id = card.dataset.id;
-            const nama = card.dataset.nama;
-            const harga = card.dataset.harga;
-            const satuan = card.dataset.satuan;
-            // Isi form dengan data barang yang dipilih
-            document.getElementById('barang_masuk_id').value = id;
-            document.getElementById('nama_barang').value = nama;
-            document.getElementById('harga_persatuan').value = harga;
-            document.getElementById('satuan_id').value = satuan;
-            document.getElementById('jumlah_beli').value = 1;
-            
-            // Hitung total harga awal
-            hitungTotal();
-            
-            // Scroll ke form
-            document.getElementById('formBarangKeluar').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-        
-        // Hitung total saat jumlah berubah
-        document.getElementById('jumlah_beli').addEventListener('input', function() {
-            hitungTotal();
-        });
-        
-        function hitungTotal() {
-            const jumlah = parseInt(document.getElementById('jumlah_beli').value) || 0;
-            const harga = parseFloat(document.getElementById('harga_persatuan').value) || 0;
-            const total = jumlah * harga;
-            
-            // Format total harga dengan pemisah ribuan
-            const formattedTotal = 'Rp ' + total.toLocaleString('id-ID');
-            document.getElementById('total_harga').value = formattedTotal;
+        function filterSatuanByJenis(jenis) {
+            const satuanSelect = document.getElementById('satuan_id');
+            satuanSelect.innerHTML = '';
+            satuans.forEach(satuan => {
+                if (satuan.jenis === jenis) {
+                    const option = document.createElement('option');
+                    option.value = satuan.id;
+                    option.text = satuan.nama_satuan + ' (' + satuan.jenis + ')';
+                    option.setAttribute('data-jenis', satuan.jenis);
+                    option.setAttribute('data-konversi', satuan.konversi_ke_dasar);
+                    satuanSelect.appendChild(option);
+                }
+            });
         }
-        
-        // Submit form
-        document.getElementById('formBarangKeluar').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            if (!document.getElementById('barang_masuk_id').value) {
-                Swal.fire('Peringatan', 'Pilih barang terlebih dahulu!', 'warning');
-                return;
-            }
-            
-            const jumlah = parseInt(document.getElementById('jumlah_beli').value) || 0;
-            if (jumlah <= 0) {
-                Swal.fire('Peringatan', 'Jumlah barang harus lebih dari 0!', 'warning');
-                return;
-            }
 
-            // Ambil nilai total harga dan bersihkan format
-            const totalHargaText = document.getElementById('total_harga').value;
-            const totalHarga = parseInt(totalHargaText.replace(/[^0-9]/g, ''));
+        function getBarangMasukById(id) {
+            return barangMasuks.find(b => b.id == id);
+        }
+        function getSatuanById(id) {
+            return satuans.find(s => s.id == id);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Menangani klik pada card menggunakan event delegation
+            document.addEventListener('click', function(e) {
+                const card = e.target.closest('.barang-item');
+                if (!card) return;
+                
+                // Hapus kelas selected dari semua card
+                document.querySelectorAll('.barang-item').forEach(c => c.classList.remove('selected'));
+                
+                // Tambahkan kelas selected ke card yang diklik
+                card.classList.add('selected');
+                
+                const id = card.dataset.id;
+                const nama = card.dataset.nama;
+                const harga = card.dataset.harga;
+                const satuan = card.dataset.satuan;
+                // Isi form dengan data barang yang dipilih
+                document.getElementById('barang_masuk_id').value = id;
+                document.getElementById('nama_barang').value = nama;
+                document.getElementById('harga_persatuan').value = harga;
+                document.getElementById('satuan_id').value = satuan;
+                document.getElementById('jumlah_beli').value = 1;
+                
+                // Ambil jenis satuan dari barang masuk
+                const barang = getBarangMasukById(id);
+                const satuanBarangMasuk = getSatuanById(barang.satuan_id);
+                filterSatuanByJenis(satuanBarangMasuk.jenis);
+                // Set default satuan ke satuan barang masuk
+                document.getElementById('satuan_id').value = satuanBarangMasuk.id;
+                
+                // Hitung total harga awal
+                hitungTotal();
+                
+                // Scroll ke form
+                document.getElementById('formBarangKeluar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
             
-            // Buat FormData baru
-            const formData = new FormData(this);
-            formData.set('total_harga', totalHarga);
+            // Hitung total saat jumlah berubah
+            document.getElementById('jumlah_beli').addEventListener('input', function() {
+                hitungTotal();
+            });
             
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            function hitungTotal() {
+                const jumlah = parseInt(document.getElementById('jumlah_beli').value) || 0;
+                const harga = parseFloat(document.getElementById('harga_persatuan').value) || 0;
+                const total = jumlah * harga;
+                
+                // Format total harga dengan pemisah ribuan
+                const formattedTotal = 'Rp ' + total.toLocaleString('id-ID');
+                document.getElementById('total_harga').value = formattedTotal;
+            }
+            
+            // Submit form
+            document.getElementById('formBarangKeluar').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!document.getElementById('barang_masuk_id').value) {
+                    Swal.fire('Peringatan', 'Pilih barang terlebih dahulu!', 'warning');
+                    return;
                 }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                
+                const jumlah = parseInt(document.getElementById('jumlah_beli').value) || 0;
+                if (jumlah <= 0) {
+                    Swal.fire('Peringatan', 'Jumlah barang harus lebih dari 0!', 'warning');
+                    return;
                 }
-                return response.text();
-            })
-            .then(() => {
-                Swal.fire({
-                    title: 'Sukses!',
-                    text: 'Data berhasil disimpan!',
-                    icon: 'success'
-                }).then(() => {
-                    window.location.reload();
+
+                // --- VALIDASI STOK TIDAK MENCUKUPI ---
+                const barangMasukId = document.getElementById('barang_masuk_id').value;
+                const satuanKeluarId = parseInt(document.getElementById('satuan_id').value);
+                const barang = getBarangMasukById(barangMasukId);
+                const satuanMasuk = getSatuanById(barang.satuan_id);
+                const satuanKeluar = getSatuanById(satuanKeluarId);
+                if (barang && satuanMasuk && satuanKeluar) {
+                    const stok_dasar = barang.stok_awal * satuanMasuk.konversi_ke_dasar;
+                    const keluar_dasar = jumlah * satuanKeluar.konversi_ke_dasar;
+                    if (stok_dasar < keluar_dasar) {
+                        Swal.fire('Peringatan', 'Stok tidak mencukupi!', 'warning');
+                        return;
+                    }
+                }
+                // --- END VALIDASI ---
+
+                // Ambil nilai total harga dan bersihkan format
+                const totalHargaText = document.getElementById('total_harga').value;
+                const totalHarga = parseInt(totalHargaText.replace(/[^0-9]/g, ''));
+                
+                // Buat FormData baru
+                const formData = new FormData(this);
+                formData.set('total_harga', totalHarga);
+                
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(() => {
+                    Swal.fire({
+                        title: 'Sukses!',
+                        text: 'Data berhasil disimpan!',
+                        icon: 'success'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                })
+                .catch(error => {
+                    Swal.fire('Error', 'Terjadi kesalahan saat menyimpan data!', 'error');
+                    console.error('Error:', error);
                 });
-            })
-            .catch(error => {
-                Swal.fire('Error', 'Terjadi kesalahan saat menyimpan data!', 'error');
-                console.error('Error:', error);
+            });
+
+            // Otomatisasi harga persatuan berdasarkan konversi
+            document.getElementById('satuan_id').addEventListener('change', function() {
+                const barangMasukId = document.getElementById('barang_masuk_id').value;
+                const barang = getBarangMasukById(barangMasukId);
+                if (!barang) return;
+                const satuanBarangMasuk = getSatuanById(barang.satuan_id);
+                const satuanKeluar = getSatuanById(parseInt(this.value));
+                if (!satuanBarangMasuk || !satuanKeluar) return;
+                // Rumus konversi harga persatuan
+                let hargaBaru = barang.harga_persatuan * (satuanKeluar.konversi_ke_dasar / satuanBarangMasuk.konversi_ke_dasar);
+                document.getElementById('harga_persatuan').value = Math.round(hargaBaru);
+                hitungTotal();
             });
         });
-    });
     </script>
 
     <script>
