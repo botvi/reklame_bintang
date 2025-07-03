@@ -50,6 +50,7 @@ Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::group(['middleware' => ['role:admin']], function () {
+    Route::get('/delete-satuan', [SatuanController::class, 'deletealldata'])->name('satuan.deletealldata');
     Route::resource('satuan', SatuanController::class);
     Route::resource('supplier', SupplierController::class);
     Route::resource('barang_masuk', BarangMasukController::class);

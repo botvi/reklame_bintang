@@ -21,6 +21,7 @@
             <div class="card">
                 <div class="card-body">
                     <a href="/get-satuan" class="btn btn-primary mb-3">Ambil Data Satuan</a>
+                    <a href="/delete-satuan" class="btn btn-danger mb-3">Hapus Semua Data Satuan</a>
                     <div class="table-responsive">
                         <table id="example2" class="table table-striped table-bordered">
                             <thead>
@@ -28,17 +29,20 @@
                                     <th>Nama Satuan</th>
                                     <th>Konversi Ke Dasar</th>
                                     <th>Jenis</th>
-                                
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($satuans as $index => $satuan)
-                                <tr>
-                                    <td>{{ $satuan->nama_satuan }}</td>
-                                    <td>{{ $satuan->konversi_ke_dasar }}</td>
-                                    <td>{{ $satuan->jenis }}</td>
-                                  
-                                </tr>
+                                @foreach($satuansGrouped as $jenis => $satuans)
+                                    <tr class="table-primary">
+                                        <td colspan="3" class="fw-bold text-center">{{ strtoupper($jenis) }}</td>
+                                    </tr>
+                                    @foreach($satuans as $satuan)
+                                    <tr>
+                                        <td>{{ $satuan->nama_satuan }}</td>
+                                        <td>{{ $satuan->konversi_ke_dasar }}</td>
+                                        <td>{{ $satuan->jenis }}</td>
+                                    </tr>
+                                    @endforeach
                                 @endforeach
                             </tbody>
                             <tfoot>
