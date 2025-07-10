@@ -14,6 +14,12 @@ class DashboardController extends Controller
       $barang_keluar = BarangKeluar::count();
       $supplier = Supplier::count();
 
-    return view('pageadmin.dashboard.index', compact('barang_masuk', 'barang_keluar', 'supplier'));
+      // Cek stok awal yang menipis (minimal 20)
+      $stok_menipis = BarangMasuk::with('satuan')
+          ->where('stok_awal', '<=', 20)
+          ->where('stok_awal', '>', 0)
+          ->get();
+
+    return view('pageadmin.dashboard.index', compact('barang_masuk', 'barang_keluar', 'supplier', 'stok_menipis'));
  }
 }

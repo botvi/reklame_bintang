@@ -156,4 +156,33 @@ class BarangMasukController extends Controller
         
         return redirect()->route('barang_masuk.index');
     }
+
+    public function tambahstok($id, Request $request)
+    {
+        try {
+            $request->validate([
+                'stok_awal' => 'required|numeric|min:0',
+                'stok_tambah' => 'required|numeric|min:1',
+            ]);
+
+            $barang_masuk = BarangMasuk::findOrFail($id);
+            
+            // Ambil nilai stok awal dan stok tambah dari form
+            $stok_awal = $request->stok_awal;
+            $stok_tambah = $request->stok_tambah;
+            
+            // Hitung total stok baru
+            $total_stok = $stok_awal + $stok_tambah;
+            
+            // Update stok_awal dengan total baru
+            $barang_masuk->stok_awal = $total_stok;
+            $barang_masuk->save();
+            
+            Alert::toast('Stok berhasil ditambahkan! Total stok sekarang: ' . $total_stok, 'success')->position('top-end');
+        } catch (\Exception $e) {
+            Alert::error('Error', 'Terjadi kesalahan saat menambah stok: ' . $e->getMessage());
+        }
+        
+        return redirect()->route('barang_masuk.index');
+    }
 }

@@ -54,6 +54,7 @@ Route::group(['middleware' => ['role:admin']], function () {
     Route::resource('satuan', SatuanController::class);
     Route::resource('supplier', SupplierController::class);
     Route::resource('barang_masuk', BarangMasukController::class);
+    Route::post('/barang_masuk/{id}/tambah-stok', [BarangMasukController::class, 'tambahstok'])->name('barang_masuk.tambahstok');
     Route::resource('barang_keluar', BarangKeluarController::class);
     Route::resource('master_akun_pemilik', MasterAkunPemilikController::class);
 });
