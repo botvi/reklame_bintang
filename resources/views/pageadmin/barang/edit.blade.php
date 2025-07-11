@@ -52,6 +52,22 @@
                                     </small>
                                 </div>  
                                 <div class="col-md-12">
+                                    <label for="gambar" class="form-label">Gambar Barang</label>
+                                    @if($barang->gambar)
+                                        <div class="mb-2">
+                                            <img src="{{ asset('uploads/barang/' . $barang->gambar) }}" alt="Gambar Barang" class="img-thumbnail" style="max-width: 200px;">
+                                            <p class="text-muted small">Gambar saat ini: {{ $barang->gambar }}</p>
+                                        </div>
+                                    @endif
+                                    <input type="file" class="form-control" id="gambar" name="gambar">
+                                    <small class="text-muted">Kosongkan jika tidak ingin mengubah gambar</small>
+                                    <small class="text-danger">
+                                        @foreach ($errors->get('gambar') as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </small>
+                                </div>
+                                <div class="col-md-12">
                                     <label for="supplier_id" class="form-label">Supplier</label>
                                     <select name="supplier_id" id="supplier_id" class="form-control">
                                         @foreach ($suppliers as $supplier)

@@ -31,16 +31,16 @@
                                 @foreach($barang_masuks->take(4) as $barang)
                                 <div class="col-md-6 mb-3 barang-card">
                                     <div class="card barang-item" data-id="{{ $barang->id }}" 
-                                        data-nama="{{ $barang->nama_barang }}"
+                                        data-nama="{{ $barang->barang->nama_barang }}"
                                         data-harga="{{ $barang->harga_persatuan }}"
                                         data-satuan="{{ $barang->satuan_id }}">
                                         <div class="position-relative">
-                                            <img src="{{ asset('uploads/barang_masuk/'.$barang->gambar) }}" 
-                                                class="card-img-top" alt="{{ $barang->nama_barang }}"
+                                            <img src="{{ asset('uploads/barang/'.$barang->barang->gambar) }}" 
+                                                class="card-img-top" alt="{{ $barang->barang->nama_barang }}"
                                                 style="height: 150px; object-fit: cover;">
                                         </div>
                                         <div class="card-body">
-                                            <h6 class="card-title">{{ $barang->nama_barang }}</h6>
+                                            <h6 class="card-title">{{ $barang->barang->nama_barang }}</h6>
                                             <p class="card-text">STOK : {{ $barang->stok_awal }} {{ $barang->satuan->nama_satuan }}</p>
                                         </div>
                                     </div>
@@ -80,7 +80,7 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="mb-3">
-                                            <label class="form-label">Harga Persatuan</label>
+                                            <label class="form-label" id="harga_persatuan_label">Harga Per</label>
                                             <input type="number" class="form-control bg-secondary text-white" id="harga_persatuan" name="harga_persatuan" min="1" readonly>
                                         </div>
                                     </div>
@@ -130,7 +130,7 @@
                             <tbody>
                                 @foreach($barang_keluars as $index => $barang_keluar)
                                 <tr>
-                                    <td>{{ $barang_keluar->barang_masuk->nama_barang }}</td>
+                                    <td>{{ $barang_keluar->barang_masuk->barang->nama_barang }}</td>
                                     <td>{{ $barang_keluar->jumlah_beli }}</td>
                                     <td>Rp {{ number_format($barang_keluar->harga_persatuan, 0, ',', '.') }} / {{ $barang_keluar->satuan->nama_satuan ?? 'Tidak Ada Satuan' }}</td>
                                     <td>Rp {{ number_format($barang_keluar->total_harga, 0, ',', '.') }}</td>
@@ -184,6 +184,21 @@
             return satuans.find(s => s.id == id);
         }
 
+        // Fungsi untuk mengubah label harga sesuai satuan
+        function updateHargaLabel() {
+            const satuanSelect = document.getElementById('satuan_id');
+            const hargaLabel = document.getElementById('harga_persatuan_label');
+            const selectedOption = satuanSelect.options[satuanSelect.selectedIndex];
+            
+            if (selectedOption && selectedOption.text) {
+                // Ambil nama satuan saja (tanpa jenis dalam kurung)
+                const namaSatuan = selectedOption.text.split(' (')[0];
+                hargaLabel.textContent = 'Harga Per ' + namaSatuan;
+            } else {
+                hargaLabel.textContent = 'Harga Per';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Menangani klik pada card menggunakan event delegation
             document.addEventListener('click', function(e) {
@@ -213,6 +228,9 @@
                 filterSatuanByJenis(satuanBarangMasuk.jenis);
                 // Set default satuan ke satuan barang masuk
                 document.getElementById('satuan_id').value = satuanBarangMasuk.id;
+                
+                // Update label harga sesuai satuan
+                updateHargaLabel();
                 
                 // Hitung total harga awal
                 hitungTotal();
@@ -314,6 +332,10 @@
                 // Rumus konversi harga persatuan
                 let hargaBaru = barang.harga_persatuan * (satuanKeluar.konversi_ke_dasar / satuanBarangMasuk.konversi_ke_dasar);
                 document.getElementById('harga_persatuan').value = Math.round(hargaBaru);
+                
+                // Update label harga sesuai satuan
+                updateHargaLabel();
+                
                 hitungTotal();
             });
         });
@@ -339,9 +361,12 @@
                         form.submit();
                     }
                 });
+                            });
+                
+                // Update label harga saat halaman dimuat
+                updateHargaLabel();
             });
         });
-    });
     </script>
     @endsection
 

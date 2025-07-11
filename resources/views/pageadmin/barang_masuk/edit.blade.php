@@ -51,23 +51,7 @@
                                     </small>
                                 </div>
                                
-                                
-                                <div class="col-md-12">
-                                    <label for="gambar" class="form-label">Gambar Barang</label>
-                                    @if($barang_masuk->gambar)
-                                        <div class="mb-2">
-                                            <img src="{{ asset('uploads/barang_masuk/' . $barang_masuk->gambar) }}" alt="Gambar Barang" class="img-thumbnail" style="max-width: 200px;">
-                                            <p class="text-muted small">Gambar saat ini: {{ $barang_masuk->gambar }}</p>
-                                        </div>
-                                    @endif
-                                    <input type="file" class="form-control" id="gambar" name="gambar">
-                                    <small class="text-muted">Kosongkan jika tidak ingin mengubah gambar</small>
-                                    <small class="text-danger">
-                                        @foreach ($errors->get('gambar') as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </small>
-                                </div>
+                              
                                 <div class="col-md-12">
                                     <label for="tanggal_kadaluarsa" class="form-label">Tanggal Kadaluarsa</label>
                                     <p class="text-muted small">Kosongkan jika tidak ada tanggal kadaluarsa</p>
@@ -106,7 +90,7 @@
                                     </small>
                                 </div>
                                 <div class="col-md-12">
-                                    <label for="harga_persatuan" class="form-label">Harga Persatuan</label>
+                                    <label for="harga_persatuan" class="form-label" id="harga_persatuan_label">Harga Per </label>
                                     <input type="number" step="0.01" class="form-control" id="harga_persatuan" name="harga_persatuan" value="{{ $barang_masuk->harga_persatuan }}" required>
                                     <small class="text-danger">
                                         @foreach ($errors->get('harga_persatuan') as $error)
@@ -136,12 +120,30 @@
         let hargaAwal = parseFloat(document.getElementById('harga_persatuan').value) || 0;
         let satuanAwal = document.getElementById('satuan_id').value;
         
+        // Fungsi untuk mengubah label harga sesuai satuan
+        function updateHargaLabel() {
+            const satuanSelect = document.getElementById('satuan_id');
+            const hargaLabel = document.getElementById('harga_persatuan_label');
+            const selectedOption = satuanSelect.options[satuanSelect.selectedIndex];
+            
+            if (selectedOption && selectedOption.text) {
+                // Ambil nama satuan saja (tanpa jenis dalam kurung)
+                const namaSatuan = selectedOption.text.split(' (')[0];
+                hargaLabel.textContent = 'Harga Per ' + namaSatuan;
+            } else {
+                hargaLabel.textContent = 'Harga Per';
+            }
+        }
+        
         // Event listener untuk perubahan satuan
         document.getElementById('satuan_id').addEventListener('change', function() {
             const selectedOption = this.options[this.selectedIndex];
             const satuanBaru = this.value;
             const jenisSatuanBaru = selectedOption.getAttribute('data-jenis');
             const konversiSatuanBaru = parseFloat(selectedOption.getAttribute('data-konversi'));
+            
+            // Update label harga
+            updateHargaLabel();
             
             // Jika satuan berubah
             if (satuanBaru !== satuanAwal) {
@@ -191,6 +193,7 @@
                     } else {
                         // Kembalikan ke satuan sebelumnya
                         this.value = satuanAwal;
+                        updateHargaLabel(); // Update label kembali
                     }
                 });
             }
@@ -204,6 +207,9 @@
                 satuanAwal = document.getElementById('satuan_id').value;
             }, 100);
         });
+        
+        // Update label saat halaman dimuat
+        updateHargaLabel();
     });
 </script>
 @endsection

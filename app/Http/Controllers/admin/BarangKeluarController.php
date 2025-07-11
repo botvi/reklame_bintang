@@ -12,7 +12,7 @@ class BarangKeluarController extends Controller
 {
     public function index()
     {
-        $barang_keluars = BarangKeluar::with('barang_masuk', 'satuan')->get();
+        $barang_keluars = BarangKeluar::with('barang_masuk.barang', 'satuan')->get();
         $barang_masuks = BarangMasuk::with('satuan')->get();
         $satuans = Satuan::all();
 

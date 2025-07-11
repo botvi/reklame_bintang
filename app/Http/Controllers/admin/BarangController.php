@@ -29,8 +29,19 @@ class BarangController extends Controller
             'kode_barang' => 'required|string|max:255',
             'supplier_id' => 'required|exists:suppliers,id',
             'nama_barang' => 'required|string|max:255',
+            'gambar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-        Barang::create($request->all());
+        if ($request->hasFile('gambar')) {
+            $gambar = $request->file('gambar');
+            $namaFile = time() . '_' . $gambar->getClientOriginalName();
+            $gambar->move('uploads/barang', $namaFile);
+        }
+        Barang::create([
+            'kode_barang' => $request->kode_barang,
+            'supplier_id' => $request->supplier_id,
+            'nama_barang' => $request->nama_barang,
+            'gambar' => $namaFile,
+        ]);
         Alert::toast('Success', 'Barang berhasil ditambahkan' )->position('top-end');
         return redirect()->route('barang.index');
     }
@@ -48,16 +59,40 @@ class BarangController extends Controller
             'kode_barang' => 'required|string|max:255',
             'supplier_id' => 'required|exists:suppliers,id',
             'nama_barang' => 'required|string|max:255',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+
         $barang = Barang::find($id);
-        $barang->update($request->all());
-        Alert::toast('Success', 'Barang berhasil diubah' )->position('top-end');
+
+        $data = [
+            'kode_barang' => $request->kode_barang,
+            'supplier_id' => $request->supplier_id,
+            'nama_barang' => $request->nama_barang,
+        ];
+
+        if ($request->hasFile('gambar')) {
+            // Hapus gambar lama jika ada
+            if ($barang->gambar && file_exists('uploads/barang/' . $barang->gambar)) {
+                unlink('uploads/barang/' . $barang->gambar);
+            }
+            $gambar = $request->file('gambar');
+            $namaFile = time() . '_' . $gambar->getClientOriginalName();
+            $gambar->move('uploads/barang', $namaFile);
+            $data['gambar'] = $namaFile;
+        }
+
+        $barang->update($data);
+
+        Alert::toast('Success', 'Barang berhasil diubah')->position('top-end');
         return redirect()->route('barang.index');
     }
 
     public function destroy($id)
     {
         $barang = Barang::find($id);
+        if ($barang->gambar) {
+            unlink('uploads/barang/' . $barang->gambar);
+        }
         $barang->delete();
         Alert::toast('Success', 'Barang berhasil dihapus' )->position('top-end');
         return redirect()->route('barang.index');

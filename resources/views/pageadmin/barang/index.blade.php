@@ -26,6 +26,7 @@
                             <thead>
                                 <tr>
                                     <th>Kode Barang</th>
+                                    <th>Gambar</th>
                                     <th>Nama Barang</th>
                                     <th>Supplier</th>
                                     <th>Aksi</th>
@@ -35,7 +36,8 @@
                                 @foreach($barangs as $barang)
                                     <tr>
                                         <td>{{ $barang->kode_barang }}</td>
-                                        <td>{{ $barang->nama_barang }}</td>
+                                        <td><img src="{{ asset('uploads/barang/' . $barang->gambar) }}" alt="Gambar Barang" width="100"></td>
+                                            <td>{{ $barang->nama_barang }}</td>
                                         <td>{{ $barang->supplier->nama_supplier }}</td>
                                         <td>
                                             <a href="{{ route('barang.edit', $barang->id) }}" class="btn btn-warning">Edit</a>
@@ -52,6 +54,7 @@
                             <tfoot>
                                 <tr>
                                     <th>Kode Barang</th>
+                                    <th>Gambar</th>
                                     <th>Nama Barang</th>
                                     <th>Supplier</th>
                                     <th>Aksi</th>

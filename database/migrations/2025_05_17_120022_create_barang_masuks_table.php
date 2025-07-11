@@ -19,7 +19,6 @@ return new class extends Migration
             $table->float('harga_persatuan');
             $table->foreignId('satuan_id')->constrained('satuans')->cascadeOnDelete()->cascadeOnUpdate();
             $table->date('tanggal_kadaluarsa')->nullable();
-            $table->string('gambar')->nullable();
             $table->timestamps();
         });
     }

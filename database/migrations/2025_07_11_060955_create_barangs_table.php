@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('kode_barang');
             $table->foreignId('supplier_id')->constrained('suppliers')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('nama_barang');
+            $table->string('gambar')->nullable();
             $table->timestamps();
         });
     }

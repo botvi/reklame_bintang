@@ -31,7 +31,6 @@ class BarangMasukController extends Controller
         try {
             $request->validate([
                 'barang_id' => 'required|exists:barangs,id',
-                'gambar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'tanggal_kadaluarsa' => 'nullable|date',
                 'stok_awal' => 'required|numeric',
                 'satuan_id' => 'required|exists:satuans,id',
@@ -50,15 +49,7 @@ class BarangMasukController extends Controller
                 'stok_awal' => $request->stok_awal,
                 'satuan_id' => $request->satuan_id,
                 'harga_persatuan' => $request->harga_persatuan,
-                ]);
-
-            if ($request->hasFile('gambar')) {
-                $gambar = $request->file('gambar');
-                $namaFile = time() . '_' . $gambar->getClientOriginalName();
-                $gambar->move('uploads/barang_masuk', $namaFile);
-                $barang_masuk->gambar = $namaFile;
-                $barang_masuk->save();
-            }
+            ]);
 
             Alert::toast('Barang Masuk berhasil ditambahkan!', 'success')->position('top-end');
             return redirect()->route('barang_masuk.index');
@@ -90,7 +81,6 @@ class BarangMasukController extends Controller
         try {
             $request->validate([
                 'barang_id' => 'required|exists:barangs,id',
-                'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'tanggal_kadaluarsa' => 'nullable|date',
                 'stok_awal' => 'required|numeric',
                 'satuan_id' => 'required|exists:satuans,id',
@@ -114,18 +104,7 @@ class BarangMasukController extends Controller
                 ]);
 
             // Handle upload gambar
-            if ($request->hasFile('gambar')) {
-                // Hapus gambar lama jika ada
-                if ($barang_masuk->gambar && file_exists(public_path('uploads/barang_masuk/' . $barang_masuk->gambar))) {
-                    unlink(public_path('uploads/barang_masuk/' . $barang_masuk->gambar));
-                }
-
-                $gambar = $request->file('gambar');
-                $namaFile = time() . '_' . $gambar->getClientOriginalName();
-                $gambar->move('uploads/barang_masuk', $namaFile);
-                $barang_masuk->gambar = $namaFile;
-                $barang_masuk->save();
-            }
+            
 
             Alert::toast('Barang Masuk berhasil diubah!', 'success')->position('top-end');
             return redirect()->route('barang_masuk.index');
@@ -139,12 +118,6 @@ class BarangMasukController extends Controller
     {
         try {
             $barang_masuk = BarangMasuk::findOrFail($id);
-            
-            // Hapus gambar jika ada
-            if ($barang_masuk->gambar && file_exists(public_path('uploads/barang_masuk/' . $barang_masuk->gambar))) {
-                unlink(public_path('uploads/barang_masuk/' . $barang_masuk->gambar));
-            }
-            
             $barang_masuk->delete();
             Alert::toast('Barang Masuk berhasil dihapus!', 'success')->position('top-end');
         } catch (\Exception $e) {

@@ -48,15 +48,6 @@
                                 </div>
                                 
                                 
-                              
-                                <div class="col-md-12">
-                                    <input type="file" class="form-control" id="gambar" name="gambar">
-                                    <small class="text-danger">
-                                        @foreach ($errors->get('gambar') as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </small>
-                                </div>
                                 <div class="col-md-12">
                                     <label for="tanggal_kadaluarsa" class="form-label">Tanggal Kadaluarsa</label>
                                     <p class="text-muted small">Kosongkan jika tidak ada tanggal kadaluarsa</p>
@@ -90,7 +81,7 @@
                                     </small>
                                 </div>
                                 <div class="col-md-12">
-                                    <label for="harga_persatuan" class="form-label">Harga Persatuan</label>
+                                    <label for="harga_persatuan" class="form-label" id="harga_persatuan_label">Harga Per</label>
                                     <input type="number" step="0.01" class="form-control" id="harga_persatuan" name="harga_persatuan" required>
                                     <small class="text-danger">
                                         @foreach ($errors->get('harga_persatuan') as $error)
@@ -109,4 +100,29 @@
         </div>
     </div>
 
+@endsection
+
+@section('script')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const satuanSelect = document.getElementById('satuan_id');
+    const hargaLabel = document.getElementById('harga_persatuan_label');
+    
+    // Fungsi untuk mengubah label
+    function updateHargaLabel() {
+        const selectedOption = satuanSelect.options[satuanSelect.selectedIndex];
+        if (selectedOption && selectedOption.text) {
+            hargaLabel.textContent = 'Harga Per ' + selectedOption.text;
+        } else {
+            hargaLabel.textContent = 'Harga Per';
+        }
+    }
+    
+    // Event listener untuk perubahan pada select satuan
+    satuanSelect.addEventListener('change', updateHargaLabel);
+    
+    // Update label saat halaman dimuat
+    updateHargaLabel();
+});
+</script>
 @endsection

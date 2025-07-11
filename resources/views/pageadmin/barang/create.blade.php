@@ -48,6 +48,15 @@
                                     </small>
                                 </div>
                                 <div class="col-md-12">
+                                    <label for="gambar" class="form-label">Gambar Barang</label>
+                                    <input type="file" class="form-control" id="gambar" name="gambar" accept="image/*" required>
+                                    <small class="text-danger">
+                                        @foreach ($errors->get('gambar') as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </small>
+                                </div>
+                                <div class="col-md-12">
                                     <label for="supplier_id" class="form-label">Supplier</label>
                                     <select name="supplier_id" id="supplier_id" class="form-control">
                                         @foreach ($suppliers as $supplier)

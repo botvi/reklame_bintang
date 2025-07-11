@@ -42,7 +42,7 @@
                                 <td>{{ $barang_masuk->barang->kode_barang }}</td>
                                 <td>{{ $barang_masuk->barang->nama_barang }}</td>
                                 <td>{{ $barang_masuk->barang->supplier->nama_supplier }}</td>
-                                <td><img src="{{ asset('uploads/barang_masuk/' . $barang_masuk->gambar) }}" alt="Gambar" style="width: 100px; height: 100px;"></td>
+                                <td><img src="{{ asset('uploads/barang/' . $barang_masuk->barang->gambar) }}" alt="Gambar" style="width: 100px; height: 100px;"></td>
                                 <td>{{ $barang_masuk->tanggal_kadaluarsa }}</td>
                                 <td>{{ $barang_masuk->stok_awal }}</td>
                                 <td>Rp. {{ number_format($barang_masuk->harga_persatuan, 0, ',', '.') }} / {{ $barang_masuk->satuan->nama_satuan ?? 'Tidak Ada Satuan' }}</td>
