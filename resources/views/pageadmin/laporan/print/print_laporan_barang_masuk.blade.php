@@ -129,9 +129,9 @@
                 <h4>Telp : {{ $pemilikToko->no_wa ?? '-' }}</h4>
                 <h4>Aur Duri, Kecamatan Kuantan Mudik</h4>
                 <h4>Tahun : {{ $tahun }}</h4>
-                <hr>
             </div>
         </div>
+        <div style="border-bottom: 3px solid black; margin-top: 10px; margin-bottom: 20px;"></div>
         <div class="info">
             @if($barangMasuk->count() > 0)
                 <table class="table table-bordered">

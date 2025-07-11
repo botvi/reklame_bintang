@@ -122,11 +122,12 @@
 </head>
 <body>
     <div class="header">
-        <h1>LAPORAN BARANG MENDEKATI & SUDAH KADALUARSA</h1>
-        <p>Toko Nadya</p>
-        <p>Periode: {{ \Carbon\Carbon::now()->format('d/m/Y') }} - {{ \Carbon\Carbon::now()->addWeek()->format('d/m/Y') }} (termasuk barang kadaluarsa)</p>
+        <div>
+            <h3 class="fw-bold">LAPORAN BARANG MENDEKATI & SUDAH KADALUARSA</h3>
+            <h4>Toko Nadya</h4>
+            <h4>Periode: {{ \Carbon\Carbon::now()->format('d/m/Y') }} - {{ \Carbon\Carbon::now()->addWeek()->format('d/m/Y') }} (termasuk barang kadaluarsa)</h4>
+        </div>
     </div>
-
     <div class="info-section">
         <table>
             <tr>
