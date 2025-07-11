@@ -48,6 +48,12 @@
             </a>
         </li>
         <li>
+            <a href="/barang">
+                <div class="parent-icon"><i class='bx bx-box text-white'></i></div>
+                <div class="menu-title text-white">DATA BARANG</div>
+            </a>
+        </li>
+        <li>
             <a href="/barang_masuk">
                 <div class="parent-icon"><i class='bx bx-up-arrow-alt text-success'></i></div>
                 <div class="menu-title text-white">DATA BARANG MASUK</div>
@@ -72,11 +78,11 @@
                 <div class="menu-title text-white">LAPORAN</div>
             </a>
         </li>
-        <li class="menu-label text-white">MASTER AKUN PEMILIK</li>
+        <li class="menu-label text-white">MASTER AKUN</li>
         <li>
             <a href="/master_akun_pemilik">
                 <div class="parent-icon"><i class='bx bx-user text-white'></i></div>
-                <div class="menu-title text-white">MASTER AKUN PEMILIK</div>
+                <div class="menu-title text-white">MASTER AKUN</div>
             </a>
         </li>
     @endif

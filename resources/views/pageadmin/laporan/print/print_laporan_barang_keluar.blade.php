@@ -152,8 +152,8 @@
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i') }}</td>
-                                <td>{{ $item->barang_masuk->kode_barang }}</td>
-                                <td>{{ $item->barang_masuk->nama_barang }}</td>
+                                <td>{{ $item->barang_masuk->barang->kode_barang }}</td>
+                                <td>{{ $item->barang_masuk->barang->nama_barang }}</td>
                                 <td>{{ $item->jumlah_beli }}</td>
                                 <td>{{ $item->satuan->nama_satuan }}</td>
                                 <td>Rp. {{ number_format($item->harga_persatuan, 0, ',', '.') }}</td>

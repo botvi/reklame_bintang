@@ -10,56 +10,50 @@
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-0 p-0">
                             <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Master Akun</li>
+                            <li class="breadcrumb-item active" aria-current="page">Barang</li>
                         </ol>
                     </nav>
                 </div>
             </div>
             <!--breadcrumb-->
-            <h6 class="mb-0 text-uppercase">Data Master Akun</h6>
+            <h6 class="mb-0 text-uppercase">Data Barang</h6>
             <hr/>
             <div class="card">
                 <div class="card-body">
-                        <a href="{{ route('master_akun_pemilik.create') }}" class="btn btn-primary mb-3">Tambah Data</a>
+                    <a href="{{ route('barang.create') }}" class="btn btn-primary mb-3">Tambah Barang</a>
                     <div class="table-responsive">
                         <table id="example2" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Profil</th>
-                                    <th>Nama</th>
-                                    <th>No. WA</th>
-                                    <th>Alamat</th>
-                                    <th>Role</th>
+                                    <th>Kode Barang</th>
+                                    <th>Nama Barang</th>
+                                    <th>Supplier</th>
                                     <th>Aksi</th>
-                                
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($data as $index => $data)
-                                <tr>
-                                    <td><img src="{{ asset('profil/' . $data->profil) }}" alt="Profil" style="width: 50px; height: 50px;"></td>
-                                    <td>{{ $data->nama }}</td>
-                                    <td>{{ $data->no_wa }}</td>
-                                    <td>{{ $data->alamat }}</td>
-                                    <td>{{ $data->role }}</td>
-                                    <td>
-                                        <a href="{{ route('master_akun_pemilik.edit', $data->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                        <form action="{{ route('master_akun_pemilik.destroy', $data->id) }}" method="POST" style="display:inline;" class="delete-form">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
-                                        </form>
-                                    </td>
-                                </tr>
+                                @foreach($barangs as $barang)
+                                    <tr>
+                                        <td>{{ $barang->kode_barang }}</td>
+                                        <td>{{ $barang->nama_barang }}</td>
+                                        <td>{{ $barang->supplier->nama_supplier }}</td>
+                                        <td>
+                                            <a href="{{ route('barang.edit', $barang->id) }}" class="btn btn-warning">Edit</a>
+                                            <form action="{{ route('barang.destroy', $barang->id) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger">Hapus</button>
+                                            </td>
+                                            </form>
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th>Profil</th>
-                                    <th>Nama</th>
-                                    <th>No. WA</th>
-                                    <th>Alamat</th>
-                                    <th>Role</th>
+                                    <th>Kode Barang</th>
+                                    <th>Nama Barang</th>
+                                    <th>Supplier</th>
                                     <th>Aksi</th>
                                 </tr>
                             </tfoot>

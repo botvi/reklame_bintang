@@ -10,7 +10,7 @@ use App\Models\BarangKeluar;
 class DashboardController extends Controller
 {
  public function index(){
-      $barang_masuk = BarangMasuk::count();
+      $barang_masuk = BarangMasuk::with('barang.supplier')->count();
       $barang_keluar = BarangKeluar::count();
       $supplier = Supplier::count();
 

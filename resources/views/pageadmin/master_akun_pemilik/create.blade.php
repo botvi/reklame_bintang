@@ -10,8 +10,8 @@
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-0 p-0">
                             <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Master Akun Pemilik</li>
-                            <li class="breadcrumb-item active" aria-current="page">Tambah Akun Pemilik</li>
+                            <li class="breadcrumb-item active" aria-current="page">Master Akun</li>
+                            <li class="breadcrumb-item active" aria-current="page">Tambah Akun</li>
                         </ol>
                     </nav>
                 </div>
@@ -25,7 +25,7 @@
                         <div class="card-body p-5">
                             <div class="card-title d-flex align-items-center">
                                 <div><i class="bx bx-plus-circle me-1 font-22 text-primary"></i></div>
-                                <h5 class="mb-0 text-primary">Tambah Akun Pemilik</h5>
+                                <h5 class="mb-0 text-primary">Tambah Akun</h5>
                             </div>
                             <hr>
                             <form action="{{ route('master_akun_pemilik.store') }}" method="POST" class="row g-3" enctype="multipart/form-data">
@@ -92,6 +92,13 @@
                                             <li>{{ $error }}</li>
                                         @endforeach
                                     </small>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="role" class="form-label">Role</label>
+                                    <select class="form-control" id="role" name="role" required>
+                                        <option value="pemilik_toko">Pemilik Toko</option>
+                                        <option value="admin">Admin</option>
+                                    </select>
                                 </div>
                                 <div class="col-12">
                                     <button type="submit" class="btn btn-primary px-5">Simpan</button>

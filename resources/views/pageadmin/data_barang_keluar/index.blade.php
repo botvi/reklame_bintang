@@ -37,12 +37,10 @@
                                 @foreach($barang_keluars as $index => $barang_keluar)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $barang_keluar->barang_masuk->nama_barang }}</td>
-                                    <td>{{ $barang_keluar->barang_masuk->supplier->nama_supplier }}</td>    
+                                    <td>{{ $barang_keluar->barang_masuk->barang->nama_barang ?? 'N/A' }}</td>
+                                    <td>{{ $barang_keluar->barang_masuk->barang->supplier->nama_supplier ?? 'N/A' }}</td>    
                                     <td>{{ $barang_keluar->jumlah_beli }} {{ $barang_keluar->satuan->nama_satuan ?? 'Tidak Ada Satuan' }}</td>
                                     <td>Rp. {{ number_format($barang_keluar->total_harga, 0, ',', '.') ?? '-' }}</td>
-        
-                                  
                                 </tr>
                                 @endforeach
                             </tbody>

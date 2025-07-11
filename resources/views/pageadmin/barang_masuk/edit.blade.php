@@ -32,40 +32,25 @@
                                 @csrf
                                 @method('PUT')
                                 <div class="col-md-12">
-                                    <label for="kode_barang" class="form-label">Kode Barang</label>
-                                    <input type="text" class="form-control" id="kode_barang" name="kode_barang" value="{{ $barang_masuk->kode_barang }}" required>
-                                    <small class="text-danger">
-                                        @foreach ($errors->get('kode_barang') as $error)
-                                            <li>{{ $error }}</li>
+                                    <label for="barang_id" class="form-label">Barang</label>
+                                    <br>
+                                    <a href="{{ route('barang.create') }}" class="btn btn-primary btn-sm mb-2">Tambah Barang Baru</a>
+                                    <select class="form-control" id="barang_id" name="barang_id">
+                                        <option value="">Pilih Barang</option>
+                                      
+                                        @foreach ($barangs as $barang)
+                                            <option value="{{ $barang->id }}" {{ $barang_masuk->barang_id == $barang->id ? 'selected' : '' }}>
+                                                {{ $barang->nama_barang }}
+                                            </option>
                                         @endforeach
-                                    </small>
-                                </div>
-                                <div class="col-md-12">
-                                    <label for="nama_barang" class="form-label">Nama Barang</label>
-                                    <input type="text" class="form-control" id="nama_barang" name="nama_barang" value="{{ $barang_masuk->nama_barang }}" required>
+                                    </select>
                                     <small class="text-danger">
-                                        @foreach ($errors->get('nama_barang') as $error)
+                                        @foreach ($errors->get('barang_id') as $error)
                                             <li>{{ $error }}</li>
                                         @endforeach
                                     </small>
                                 </div>
                                
-                                <div class="col-md-12">
-                                    <label for="supplier_id" class="form-label">Supplier</label>
-                                    <select class="form-control" id="supplier_id" name="supplier_id" required>
-                                        <option value="">Pilih Supplier</option>
-                                        @foreach ($suppliers as $supplier)
-                                            <option value="{{ $supplier->id }}" {{ $barang_masuk->supplier_id == $supplier->id ? 'selected' : '' }}>
-                                                {{ $supplier->nama_supplier }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    <small class="text-danger">
-                                        @foreach ($errors->get('supplier_id') as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </small>
-                                </div>
                                 
                                 <div class="col-md-12">
                                     <label for="gambar" class="form-label">Gambar Barang</label>
@@ -106,8 +91,11 @@
                                     <label for="satuan_id" class="form-label">Satuan</label>
                                     <select class="form-control" id="satuan_id" name="satuan_id">
                                         @foreach ($satuans as $satuan)
-                                            <option value="{{ $satuan->id }}" {{ $barang_masuk->satuan_id == $satuan->id ? 'selected' : '' }}>
-                                                {{ $satuan->nama_satuan }}
+                                            <option value="{{ $satuan->id }}" 
+                                                {{ $barang_masuk->satuan_id == $satuan->id ? 'selected' : '' }}
+                                                data-jenis="{{ $satuan->jenis }}" 
+                                                data-konversi="{{ $satuan->konversi_ke_dasar }}">
+                                                {{ $satuan->nama_satuan }} ({{ $satuan->jenis }})
                                             </option>
                                         @endforeach
                                     </select>
@@ -138,4 +126,84 @@
         </div>
     </div>
 
+@endsection
+
+@section('script')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Simpan harga awal untuk perbandingan
+        let hargaAwal = parseFloat(document.getElementById('harga_persatuan').value) || 0;
+        let satuanAwal = document.getElementById('satuan_id').value;
+        
+        // Event listener untuk perubahan satuan
+        document.getElementById('satuan_id').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const satuanBaru = this.value;
+            const jenisSatuanBaru = selectedOption.getAttribute('data-jenis');
+            const konversiSatuanBaru = parseFloat(selectedOption.getAttribute('data-konversi'));
+            
+            // Jika satuan berubah
+            if (satuanBaru !== satuanAwal) {
+                // Ambil data satuan lama
+                const satuanLamaOption = document.querySelector(`#satuan_id option[value="${satuanAwal}"]`);
+                const jenisSatuanLama = satuanLamaOption.getAttribute('data-jenis');
+                const konversiSatuanLama = parseFloat(satuanLamaOption.getAttribute('data-konversi'));
+                
+                // Hitung harga baru berdasarkan konversi
+                let hargaBaru = hargaAwal;
+                if (konversiSatuanLama > 0 && konversiSatuanBaru > 0) {
+                    hargaBaru = hargaAwal * (konversiSatuanBaru / konversiSatuanLama);
+                }
+                
+                // Tampilkan peringatan dengan SweetAlert
+                Swal.fire({
+                    title: 'Perubahan Satuan',
+                    html: `
+                        <div class="text-start">
+                            <p><strong>Satuan diubah dari:</strong></p>
+                            <p>${satuanLamaOption.textContent}</p>
+                            <p><strong>Menjadi:</strong></p>
+                            <p>${selectedOption.textContent}</p>
+                            <p><strong>Harga akan disesuaikan otomatis:</strong></p>
+                            <p>Rp ${hargaAwal.toLocaleString('id-ID')} → Rp ${Math.round(hargaBaru).toLocaleString('id-ID')}</p>
+                        </div>
+                    `,
+                    icon: 'info',
+                    confirmButtonText: 'Ya, Sesuaikan Harga',
+                    cancelButtonText: 'Batal',
+                    showCancelButton: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Update harga
+                        document.getElementById('harga_persatuan').value = Math.round(hargaBaru);
+                        hargaAwal = Math.round(hargaBaru);
+                        satuanAwal = satuanBaru;
+                        
+                        // Tampilkan notifikasi sukses
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: 'Harga telah disesuaikan dengan satuan baru',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        // Kembalikan ke satuan sebelumnya
+                        this.value = satuanAwal;
+                    }
+                });
+            }
+        });
+        
+        // Event listener untuk perubahan barang
+        document.getElementById('barang_id').addEventListener('change', function() {
+            // Reset harga awal ketika barang berubah
+            setTimeout(() => {
+                hargaAwal = parseFloat(document.getElementById('harga_persatuan').value) || 0;
+                satuanAwal = document.getElementById('satuan_id').value;
+            }, 100);
+        });
+    });
+</script>
 @endsection

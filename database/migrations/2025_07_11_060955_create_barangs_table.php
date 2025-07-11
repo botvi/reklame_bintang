@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('satuans', function (Blueprint $table) {
+        Schema::create('barangs', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_satuan'); // Contoh: kg, ons, pcs
-            $table->double('konversi_ke_dasar', 15, 4); // Misal: 1000.0000 gram untuk kg, bisa berkoma
-            $table->string('jenis'); // berat = gram, volume = ml, unit = pcs
+            $table->string('kode_barang');
+            $table->foreignId('supplier_id')->constrained('suppliers')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('nama_barang');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('satuans');
+        Schema::dropIfExists('barangs');
     }
 };

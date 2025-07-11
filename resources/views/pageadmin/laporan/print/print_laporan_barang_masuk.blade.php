@@ -151,10 +151,10 @@
                         @foreach ($barangMasuk as $key => $item)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
-                                <td>{{ $item->kode_barang }}</td>
-                                <td>{{ $item->nama_barang }}</td>
+                                <td>{{ $item->barang->kode_barang }}</td>
+                                <td>{{ $item->barang->nama_barang }}</td>
                                 <td>{{ $item->satuan->nama_satuan }}</td>
-                                <td>{{ $item->supplier->nama_supplier }}</td>
+                                <td>{{ $item->barang->supplier->nama_supplier }}</td>
                                 <td>{{ $item->stok_awal }} {{ $item->satuan->nama_satuan }}</td>
                                 <td>{{ \Carbon\Carbon::parse($item->tanggal_kadaluarsa)->locale('id')->isoFormat('D MMMM Y') ?? '-' }}
                                 </td>

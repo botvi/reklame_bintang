@@ -31,33 +31,22 @@
                             <form action="{{ route('barang_masuk.store') }}" method="POST" class="row g-3" enctype="multipart/form-data">
                                 @csrf
                                 <div class="col-md-12">
-                                    <label for="kode_barang" class="form-label">Kode Barang</label>
-                                    <input type="text" class="form-control" id="kode_barang" name="kode_barang" required>
-                                    <small class="text-danger">
-                                        @foreach ($errors->get('kode_barang') as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </small>
-                                </div>
-                                <div class="col-md-12">
-                                    <label for="nama_barang" class="form-label">Nama Barang</label>
-                                    <input type="text" class="form-control" id="nama_barang" name="nama_barang"
-                                        required></input>
-                                    <small class="text-danger">
-                                        @foreach ($errors->get('keterangan') as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </small>
-                                </div>
-                               
-                                <div class="col-md-12">
-                                    <label for="supplier_id" class="form-label">Supplier</label>
-                                    <select class="form-control" id="supplier_id" name="supplier_id">
-                                        @foreach ($suppliers as $supplier)
-                                            <option value="{{ $supplier->id }}">{{ $supplier->nama_supplier }}</option>
+                                    <label for="barang_id" class="form-label">Barang</label>
+                                    <br>
+                                    <a href="{{ route('barang.create') }}" class="btn btn-primary btn-sm mb-2">Tambah Barang Baru</a>
+                                    <select class="form-control" id="barang_id" name="barang_id">
+                                        <option value="">Pilih Barang</option>
+                                        @foreach ($barangs as $barang)
+                                            <option value="{{ $barang->id }}">{{ $barang->nama_barang }}</option>
                                         @endforeach
                                     </select>
+                                    <small class="text-danger">
+                                        @foreach ($errors->get('barang_id') as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </small>
                                 </div>
+                                
                                 
                               
                                 <div class="col-md-12">
@@ -94,6 +83,11 @@
                                             <option value="{{ $satuan->id }}">{{ $satuan->nama_satuan }}</option>
                                         @endforeach
                                     </select>
+                                    <small class="text-danger">
+                                        @foreach ($errors->get('satuan_id') as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </small>
                                 </div>
                                 <div class="col-md-12">
                                     <label for="harga_persatuan" class="form-label">Harga Persatuan</label>

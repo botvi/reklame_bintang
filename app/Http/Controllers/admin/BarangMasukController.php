@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Models\BarangMasuk;
-use App\Models\Supplier;
+use App\Models\Barang;
 use App\Models\Satuan;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -14,24 +14,23 @@ class BarangMasukController extends Controller
 {
     public function index()
     {
-        $barang_masuks = BarangMasuk::with('supplier', 'satuan')->get();
-        return view('pageadmin.barang_masuk.index', compact('barang_masuks'));
+        $barang_masuks = BarangMasuk::with('barang', 'satuan')->get();
+        $satuans = Satuan::all();
+        return view('pageadmin.barang_masuk.index', compact('barang_masuks', 'satuans'));
     }
 
     public function create()
     {
-        $suppliers = Supplier::all();
+        $barangs = Barang::all();
         $satuans = Satuan::all();
-        return view('pageadmin.barang_masuk.create', compact('suppliers', 'satuans'));
+        return view('pageadmin.barang_masuk.create', compact('barangs', 'satuans'));
     }
 
     public function store(Request $request)
     {
         try {
             $request->validate([
-                'nama_barang' => 'required|string|max:255',
-                'supplier_id' => 'required|exists:suppliers,id',
-                'kode_barang' => 'required|string|max:255 |unique:barang_masuks',
+                'barang_id' => 'required|exists:barangs,id',
                 'gambar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'tanggal_kadaluarsa' => 'nullable|date',
                 'stok_awal' => 'required|numeric',
@@ -46,9 +45,7 @@ class BarangMasukController extends Controller
         try {
             $barang_masuk = BarangMasuk::create([
                 'user_id' => Auth::user()->id,
-                'supplier_id' => $request->supplier_id,
-                'kode_barang' => $request->kode_barang,
-                'nama_barang' => $request->nama_barang,
+                'barang_id' => $request->barang_id,
                 'tanggal_kadaluarsa' => $request->tanggal_kadaluarsa,
                 'stok_awal' => $request->stok_awal,
                 'satuan_id' => $request->satuan_id,
@@ -75,9 +72,13 @@ class BarangMasukController extends Controller
     {
         try {
             $barang_masuk = BarangMasuk::findOrFail($id);
-            $suppliers = Supplier::all();
-            $satuans = Satuan::all();
-            return view('pageadmin.barang_masuk.edit', compact('barang_masuk', 'suppliers', 'satuans'));
+            $barangs = Barang::all();
+
+            // Ambil satuan dengan jenis yang sama seperti satuan_id pada barang_masuk saat ini
+            $satuanSaatIni = Satuan::find($barang_masuk->satuan_id);
+            $satuans = Satuan::where('jenis', $satuanSaatIni ? $satuanSaatIni->jenis : null)->get();
+
+            return view('pageadmin.barang_masuk.edit', compact('barang_masuk', 'barangs', 'satuans'));
         } catch (\Exception $e) {
             Alert::error('Error', 'Data tidak ditemukan');
             return redirect()->route('barang_masuk.index');
@@ -88,9 +89,7 @@ class BarangMasukController extends Controller
     {
         try {
             $request->validate([
-                'nama_barang' => 'required|string|max:255',
-                'supplier_id' => 'required|exists:suppliers,id',
-                'kode_barang' => 'required|string|max:255 |unique:barang_masuks,kode_barang,' . $id,
+                'barang_id' => 'required|exists:barangs,id',
                 'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'tanggal_kadaluarsa' => 'nullable|date',
                 'stok_awal' => 'required|numeric',
@@ -107,9 +106,7 @@ class BarangMasukController extends Controller
             
             // Update data dasar
             $barang_masuk->update([
-                'nama_barang' => $request->nama_barang,
-                'supplier_id' => $request->supplier_id,
-                'kode_barang' => $request->kode_barang,
+                'barang_id' => $request->barang_id,
                 'tanggal_kadaluarsa' => $request->tanggal_kadaluarsa,
                 'stok_awal' => $request->stok_awal,
                 'satuan_id' => $request->satuan_id,
@@ -163,6 +160,7 @@ class BarangMasukController extends Controller
             $request->validate([
                 'stok_awal' => 'required|numeric|min:0',
                 'stok_tambah' => 'required|numeric|min:1',
+                'satuan_id' => 'required|exists:satuans,id',
             ]);
 
             $barang_masuk = BarangMasuk::findOrFail($id);
@@ -170,12 +168,14 @@ class BarangMasukController extends Controller
             // Ambil nilai stok awal dan stok tambah dari form
             $stok_awal = $request->stok_awal;
             $stok_tambah = $request->stok_tambah;
+            $satuan_id = $request->satuan_id;
             
             // Hitung total stok baru
             $total_stok = $stok_awal + $stok_tambah;
             
             // Update stok_awal dengan total baru
             $barang_masuk->stok_awal = $total_stok;
+            $barang_masuk->satuan_id = $satuan_id;
             $barang_masuk->save();
             
             Alert::toast('Stok berhasil ditambahkan! Total stok sekarang: ' . $total_stok, 'success')->position('top-end');

@@ -14,9 +14,7 @@ return new class extends Migration
         Schema::create('barang_masuks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId('supplier_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('kode_barang');
-            $table->string('nama_barang');
+            $table->foreignId('barang_id')->constrained('barangs')->cascadeOnDelete()->cascadeOnUpdate();
             $table->float('stok_awal'); // jumlah dalam satuan asli
             $table->float('harga_persatuan');
             $table->foreignId('satuan_id')->constrained('satuans')->cascadeOnDelete()->cascadeOnUpdate();

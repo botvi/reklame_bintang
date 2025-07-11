@@ -17,6 +17,7 @@ use App\Http\Controllers\admin\{
     LaporanController,
     MasterAkunPemilikController,    
     DataBarangKeluarController,
+    BarangController,
 };
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,7 @@ Route::group(['middleware' => ['role:admin']], function () {
     Route::get('/delete-satuan', [SatuanController::class, 'deletealldata'])->name('satuan.deletealldata');
     Route::resource('satuan', SatuanController::class);
     Route::resource('supplier', SupplierController::class);
+    Route::resource('barang', BarangController::class);
     Route::resource('barang_masuk', BarangMasukController::class);
     Route::post('/barang_masuk/{id}/tambah-stok', [BarangMasukController::class, 'tambahstok'])->name('barang_masuk.tambahstok');
     Route::resource('barang_keluar', BarangKeluarController::class);

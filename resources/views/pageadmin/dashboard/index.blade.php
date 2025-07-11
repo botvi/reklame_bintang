@@ -34,6 +34,7 @@
                                             <th>No</th>
                                             <th>Kode Barang</th>
                                             <th>Nama Barang</th>
+                                            <th>Supplier</th>
                                             <th>Stok Awal</th>
                                             <th>Satuan</th>
                                             <th>Status</th>
@@ -43,8 +44,9 @@
                                         @foreach($stok_menipis as $index => $barang)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
-                                            <td>{{ $barang->kode_barang }}</td>
-                                            <td>{{ $barang->nama_barang }}</td>
+                                            <td>{{ $barang->barang->kode_barang }}</td>
+                                            <td>{{ $barang->barang->nama_barang }}</td>
+                                            <td>{{ $barang->barang->supplier->nama_supplier }}</td>
                                             <td>
                                                 <span class="badge bg-warning text-dark">{{ $barang->stok_awal }}</span>
                                             </td>

@@ -138,9 +138,9 @@
                                     @foreach($barangMasuk as $index => $item)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
-                                            <td>{{ $item->kode_barang }}</td>
-                                            <td>{{ $item->nama_barang }}</td>
-                                            <td>{{ $item->supplier->nama_supplier ?? '-' }}</td>
+                                            <td>{{ $item->barang->kode_barang }}</td>
+                                            <td>{{ $item->barang->nama_barang }}</td>
+                                            <td>{{ $item->barang->supplier->nama_supplier ?? '-' }}</td>
                                             <td>{{ number_format($item->sisa_stok) }}</td>
                                             <td>{{ $item->satuan->nama_satuan ?? '-' }}</td>
                                            

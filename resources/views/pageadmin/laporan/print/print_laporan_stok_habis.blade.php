@@ -155,9 +155,9 @@
                             @endphp
                             <tr>
                                 <td>{{ $key + 1 }}</td>
-                                <td>{{ $item->kode_barang }}</td>
-                                <td>{{ $item->nama_barang }}</td>
-                                <td>{{ $item->supplier->nama_supplier }}</td>
+                                <td>{{ $item->barang->kode_barang }}</td>
+                                <td>{{ $item->barang->nama_barang }}</td>
+                                <td>{{ $item->barang->supplier->nama_supplier }}</td>
                                 <td style="color: red; font-weight: bold;">{{ $status }}</td>
                                 <td>{{ \Carbon\Carbon::parse($item->tanggal_kadaluarsa)->locale('id')->isoFormat('D MMMM Y') ?? '-' }}
                                 </td>

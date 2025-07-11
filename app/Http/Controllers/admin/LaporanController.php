@@ -23,7 +23,7 @@ class LaporanController extends Controller
         $bulan = $request->get('bulan', Carbon::now()->month);
         $tahun = $request->get('tahun', Carbon::now()->year);
         
-        $barangMasuk = BarangMasuk::with(['supplier', 'satuan', 'user'])
+        $barangMasuk = BarangMasuk::with(['barang', 'satuan', 'user'])
             ->whereMonth('created_at', $bulan)
             ->whereYear('created_at', $tahun)
             ->orderBy('created_at', 'desc')
@@ -58,7 +58,7 @@ class LaporanController extends Controller
         $bulan = $request->get('bulan', Carbon::now()->month);
         $tahun = $request->get('tahun', Carbon::now()->year);
         
-        $barangMasuk = BarangMasuk::with(['supplier', 'satuan', 'user'])
+        $barangMasuk = BarangMasuk::with(['barang', 'barang.supplier', 'satuan', 'user'])
             ->whereMonth('created_at', $bulan)
             ->whereYear('created_at', $tahun)
             ->orderBy('created_at', 'desc')
@@ -178,7 +178,7 @@ class LaporanController extends Controller
         $tahun = $request->get('tahun', Carbon::now()->year);
         
         // Ambil semua barang masuk yang stoknya habis
-        $barangMasuk = BarangMasuk::with(['supplier', 'satuan', 'user', 'barangKeluar'])
+        $barangMasuk = BarangMasuk::with(['barang', 'barang.supplier', 'satuan', 'user', 'barangKeluar'])
             ->get()
             ->filter(function($item) {
                 // Hitung total barang keluar untuk item ini
@@ -234,7 +234,7 @@ class LaporanController extends Controller
         $tahun = $request->get('tahun', Carbon::now()->year);
         
         // Ambil semua barang masuk yang stoknya habis
-        $barangMasuk = BarangMasuk::with(['supplier', 'satuan', 'user', 'barangKeluar'])
+        $barangMasuk = BarangMasuk::with(['barang', 'barang.supplier', 'satuan', 'user', 'barangKeluar'])
             ->get()
             ->filter(function($item) {
                 $totalKeluar = $item->barangKeluar->sum('jumlah');
@@ -297,7 +297,7 @@ class LaporanController extends Controller
         $satuMingguKedepan = Carbon::now()->addWeek();
         
         // Ambil semua barang masuk yang memiliki tanggal kadaluarsa
-        $barangMasuk = BarangMasuk::with(['supplier', 'satuan', 'user', 'barangKeluar'])
+        $barangMasuk = BarangMasuk::with(['barang', 'barang.supplier', 'satuan', 'user', 'barangKeluar'])
             ->whereNotNull('tanggal_kadaluarsa')
             ->get()
             ->filter(function($item) use ($hariIni, $satuMingguKedepan) {
@@ -340,7 +340,7 @@ class LaporanController extends Controller
         $satuMingguKedepan = Carbon::now()->addWeek();
         
         // Ambil semua barang masuk yang memiliki tanggal kadaluarsa
-        $barangMasuk = BarangMasuk::with(['supplier', 'satuan', 'user', 'barangKeluar'])
+        $barangMasuk = BarangMasuk::with(['barang', 'barang.supplier', 'satuan', 'user', 'barangKeluar'])
             ->whereNotNull('tanggal_kadaluarsa')
             ->get()
             ->filter(function($item) use ($hariIni, $satuMingguKedepan) {

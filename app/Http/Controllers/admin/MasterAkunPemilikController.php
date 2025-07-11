@@ -31,13 +31,14 @@ class MasterAkunPemilikController extends Controller
             'profil' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'alamat' => 'required',
             'password' => 'required|min:8|confirmed',
+            'role' => 'required',
         ]);
 
         $user = new User();
         $user->username = $request->username;
         $user->nama = $request->nama;
         $user->no_wa = $request->no_wa;
-        $user->role = 'pemilik_toko';
+        $user->role = $request->role;
         $user->alamat = $request->alamat;
         $user->password = Hash::make($request->password);
         $user->save();
@@ -75,7 +76,7 @@ class MasterAkunPemilikController extends Controller
         $user->username = $request->username;
         $user->nama = $request->nama;
         $user->no_wa = $request->no_wa;
-        $user->role = 'pemilik_toko';
+        $user->role = $request->role;
         $user->alamat = $request->alamat;
 
         // Update password hanya jika diisi

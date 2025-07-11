@@ -124,9 +124,9 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}</td>
-                                            <td>{{ $item->kode_barang }}</td>
-                                            <td>{{ $item->nama_barang }}</td>
-                                            <td>{{ $item->supplier->nama_supplier }}</td>
+                                            <td>{{ $item->barang->kode_barang }}</td>
+                                            <td>{{ $item->barang->nama_barang }}</td>
+                                            <td>{{ $item->barang->supplier->nama_supplier }}</td>
                                             <td><span class="badge bg-danger">{{ $status }}</span></td>
                                             <td>{{ Carbon\Carbon::parse($item->tanggal_kadaluarsa)->format('d/m/Y') }}</td>
                                         </tr>
