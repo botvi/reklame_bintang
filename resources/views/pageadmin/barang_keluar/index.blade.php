@@ -27,8 +27,8 @@
                             <div class="mb-3">
                                 <input type="text" class="form-control" id="searchBarang" placeholder="Cari nama barang...">
                             </div>
-                            <div class="row" id="daftarBarang">
-                                @foreach($barang_masuks->take(4) as $barang)
+                            <div class="row" id="daftarBarang" style="max-height: 400px; overflow-y: auto;">
+                                @foreach($barang_masuks as $barang)
                                 <div class="col-md-6 mb-3 barang-card">
                                     <div class="card barang-item" data-id="{{ $barang->id }}" 
                                         data-nama="{{ $barang->barang->nama_barang }}"
@@ -387,5 +387,30 @@
             border: 3px solid #0d6efd;
             background-color: #f8f9fa;
             box-shadow: 0 0 10px rgba(13, 110, 253, 0.2);
+        }
+
+        /* Custom scrollbar untuk daftar barang */
+        #daftarBarang::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #daftarBarang::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        #daftarBarang::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        #daftarBarang::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Untuk Firefox */
+        #daftarBarang {
+            scrollbar-width: thin;
+            scrollbar-color: #888 #f1f1f1;
         }
     </style>
