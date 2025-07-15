@@ -81,10 +81,28 @@
                                     </small>
                                 </div>
                                 <div class="col-md-12">
-                                    <label for="harga_persatuan" class="form-label" id="harga_persatuan_label">Harga Per</label>
+                                    <label for="harga_persatuan" class="form-label" id="harga_persatuan_label">Harga Dari Supplier Per</label>
                                     <input type="number" step="0.01" class="form-control" id="harga_persatuan" name="harga_persatuan" required>
                                     <small class="text-danger">
                                         @foreach ($errors->get('harga_persatuan') as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </small>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="harga_modal" class="form-label">Harga Modal</label>
+                                    <input type="number" step="0.01" class="form-control" id="harga_modal" name="harga_modal" required>
+                                    <small class="text-danger">
+                                        @foreach ($errors->get('harga_modal') as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </small>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="harga_jual" class="form-label">Harga Jual</label>
+                                    <input type="number" step="0.01" class="form-control" id="harga_jual" name="harga_jual" required>
+                                    <small class="text-danger">
+                                        @foreach ($errors->get('harga_jual') as $error)
                                             <li>{{ $error }}</li>
                                         @endforeach
                                     </small>
@@ -112,9 +130,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateHargaLabel() {
         const selectedOption = satuanSelect.options[satuanSelect.selectedIndex];
         if (selectedOption && selectedOption.text) {
-            hargaLabel.textContent = 'Harga Per ' + selectedOption.text;
+            hargaLabel.textContent = 'Harga Dari Supplier Per ' + selectedOption.text;
         } else {
-            hargaLabel.textContent = 'Harga Per';
+            hargaLabel.textContent = 'Harga Dari Supplier Per';
         }
     }
     
@@ -123,6 +141,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update label saat halaman dimuat
     updateHargaLabel();
+
+    // --- Script untuk menghitung harga modal ---
+    const stokAwalInput = document.getElementById('stok_awal');
+    const hargaPersatuanInput = document.getElementById('harga_persatuan');
+    const hargaModalInput = document.getElementById('harga_modal');
+
+    function updateHargaModal() {
+        const stok = parseFloat(stokAwalInput.value) || 0;
+        const harga = parseFloat(hargaPersatuanInput.value) || 0;
+        hargaModalInput.value = (stok * harga).toFixed(2);
+    }
+
+    stokAwalInput.addEventListener('input', updateHargaModal);
+    hargaPersatuanInput.addEventListener('input', updateHargaModal);
+
+    // Inisialisasi saat halaman dimuat
+    updateHargaModal();
 });
 </script>
 @endsection

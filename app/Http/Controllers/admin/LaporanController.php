@@ -65,9 +65,7 @@ class LaporanController extends Controller
             ->get();
 
         $totalBarang = $barangMasuk->count();
-        $totalNilai = $barangMasuk->sum(function($item) {
-            return $item->stok_awal * $item->harga_persatuan;
-        });
+        $totalNilai = $barangMasuk->sum('harga_modal');
 
         // Ambil data pemilik toko
         $pemilikToko = User::where('role', 'pemilik_toko')->first();

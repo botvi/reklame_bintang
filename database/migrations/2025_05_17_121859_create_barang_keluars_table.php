@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('barang_masuk_id')->constrained('barang_masuks')->cascadeOnDelete()->cascadeOnUpdate();
             $table->float('jumlah_beli'); // dalam satuan yang digunakan saat keluar
-            $table->float('harga_persatuan');
+            $table->float('harga_jual');
             $table->float('total_harga');
             $table->foreignId('satuan_id')->constrained('satuans')->cascadeOnDelete()->cascadeOnUpdate(); // satuan saat keluar
             $table->timestamps();

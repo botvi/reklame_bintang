@@ -26,7 +26,7 @@ class BarangKeluarController extends Controller
                 'user_id' => 'required|exists:users,id',
                 'barang_masuk_id' => 'required|exists:barang_masuks,id',
                 'jumlah_beli' => 'required|numeric|min:1',
-                'harga_persatuan' => 'required|numeric|min:0',
+                'harga_jual' => 'required|numeric|min:0',
                 'satuan_id' => 'required|exists:satuans,id',
             ]);
 
@@ -56,14 +56,14 @@ class BarangKeluarController extends Controller
             $barangMasuk->save();
 
             // Hitung total harga di backend
-            $total_harga = $request->jumlah_beli * $request->harga_persatuan;
+            $total_harga = $request->jumlah_beli * $request->harga_jual;
 
             // Simpan barang keluar
             BarangKeluar::create([
                 'user_id' => $request->user_id,
                 'barang_masuk_id' => $request->barang_masuk_id,
                 'jumlah_beli' => $request->jumlah_beli,
-                'harga_persatuan' => $request->harga_persatuan,
+                'harga_jual' => $request->harga_jual,
                 'total_harga' => $total_harga,
                 'satuan_id' => $request->satuan_id,
             ]);

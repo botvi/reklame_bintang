@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Supplier;
 use App\Models\BarangMasuk;
 use App\Models\BarangKeluar;
-
+use Illuminate\Support\Facades\DB;
+        
 class DashboardController extends Controller
 {
  public function index(){
@@ -20,6 +21,19 @@ class DashboardController extends Controller
           ->where('stok_awal', '>', 0)
           ->get();
 
-    return view('pageadmin.dashboard.index', compact('barang_masuk', 'barang_keluar', 'supplier', 'stok_menipis'));
+      // Total harga modal (akumulasi modal barang masuk)
+      $total_harga_modal = BarangMasuk::sum(DB::raw('harga_modal'));
+
+      // Total harga jual (akumulasi penjualan barang keluar)
+      $total_harga_jual = BarangKeluar::sum(DB::raw('total_harga'));
+
+      // Total keuntungan
+      $total_keuntungan = $total_harga_jual - $total_harga_modal;
+
+    return view('pageadmin.dashboard.index', compact(
+        'barang_masuk', 'barang_keluar', 'supplier', 'stok_menipis',
+        'total_harga_modal', 'total_harga_jual', 'total_keuntungan'
+    ));
  }
 }
+

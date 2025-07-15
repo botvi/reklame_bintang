@@ -31,7 +31,9 @@
                                 <th>Gambar</th>
                                 <th>Tanggal Kadaluarsa</th>
                                 <th>Stok Awal</th>
-                                <th>Harga Persatuan</th>
+                                <th>Harga Persatuan Dari Supplier</th>
+                                <th>Harga Modal</th>
+                                <th>Harga Jual</th>
                                 <th>Aksi</th>
                               
                             </tr>
@@ -46,6 +48,8 @@
                                 <td>{{ $barang_masuk->tanggal_kadaluarsa }}</td>
                                 <td>{{ $barang_masuk->stok_awal }}</td>
                                 <td>Rp. {{ number_format($barang_masuk->harga_persatuan, 0, ',', '.') }} / {{ $barang_masuk->satuan->nama_satuan ?? 'Tidak Ada Satuan' }}</td>
+                                <td>Rp. {{ number_format($barang_masuk->harga_modal, 0, ',', '.') }}</td>
+                                <td>Rp. {{ number_format($barang_masuk->harga_jual, 0, ',', '.') }}</td>
                                 <td>
                                     <a href="{{ route('barang_masuk.edit', $barang_masuk->id) }}" class="btn btn-sm btn-warning">Edit</a>
                                     <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#tambahStokModal{{ $barang_masuk->id }}">Tambah Stok</button>
@@ -66,7 +70,9 @@
                                 <th>Gambar</th>
                                 <th>Tanggal Kadaluarsa</th>
                                 <th>Stok Awal</th>
-                                <th>Harga Persatuan</th>
+                                <th>Harga Persatuan Dari Supplier</th>
+                                <th>Harga Modal</th>
+                                <th>Harga Jual</th>
                                 <th>Aksi</th>
                             </tr>
                         </tfoot>
@@ -111,6 +117,22 @@
                         <small class="text-muted">Jumlah stok yang akan ditambahkan</small>
                     </div>
                     <div class="mb-3">
+                        <label for="harga_persatuan{{ $barang_masuk->id }}" class="form-label">Harga Persatuan</label>
+                        <input type="number" class="form-control" id="harga_persatuan{{ $barang_masuk->id }}" value="{{ $barang_masuk->harga_persatuan }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="harga_modal_lama{{ $barang_masuk->id }}" class="form-label">Harga Modal Lama</label>
+                        <input type="number" class="form-control" id="harga_modal_lama{{ $barang_masuk->id }}" value="{{ $barang_masuk->harga_modal }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="harga_modal_tambah{{ $barang_masuk->id }}" class="form-label">Harga Modal Tambahan</label>
+                        <input type="number" class="form-control" id="harga_modal_tambah{{ $barang_masuk->id }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="harga_modal{{ $barang_masuk->id }}" class="form-label">Harga Modal Setelah Penambahan</label>
+                        <input type="number" class="form-control" id="harga_modal{{ $barang_masuk->id }}" readonly>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">Total Stok Setelah Penambahan (<span class="label-satuan" id="labelTotalStok{{ $barang_masuk->id }}">{{ $barang_masuk->satuan->nama_satuan }}</span>)</label>
                         <input type="number" class="form-control" id="total_stok{{ $barang_masuk->id }}" readonly>
                         <small class="text-muted">Akan otomatis terhitung</small>
@@ -146,12 +168,25 @@
         let konversiAwal{{ $barang_masuk->id }} = parseFloat(satuanSelect{{ $barang_masuk->id }}.selectedOptions[0].getAttribute('data-konversi'));
         let stokAwalDasar{{ $barang_masuk->id }} = parseFloat(stokAwal{{ $barang_masuk->id }}.value) * konversiAwal{{ $barang_masuk->id }};
 
+        // Ambil harga persatuan dan harga modal lama
+        const hargaPersatuan{{ $barang_masuk->id }} = document.getElementById('harga_persatuan{{ $barang_masuk->id }}');
+        const hargaModalLama{{ $barang_masuk->id }} = document.getElementById('harga_modal_lama{{ $barang_masuk->id }}');
+        const hargaModalTambah{{ $barang_masuk->id }} = document.getElementById('harga_modal_tambah{{ $barang_masuk->id }}');
+        const hargaModal{{ $barang_masuk->id }} = document.getElementById('harga_modal{{ $barang_masuk->id }}');
+
         function updateTotalStok{{ $barang_masuk->id }}() {
             const tambah = parseFloat(stokTambah{{ $barang_masuk->id }}.value) || 0;
             const konversiBaru = parseFloat(satuanSelect{{ $barang_masuk->id }}.selectedOptions[0].getAttribute('data-konversi'));
             const stokAwalBaru = stokAwalDasar{{ $barang_masuk->id }} / konversiBaru;
             const total = stokAwalBaru + tambah;
             totalStok{{ $barang_masuk->id }}.value = total;
+
+            // Perhitungan harga modal tambahan dan harga modal setelah penambahan
+            const hargaPer = parseFloat(hargaPersatuan{{ $barang_masuk->id }}.value) || 0;
+            const hargaLama = parseFloat(hargaModalLama{{ $barang_masuk->id }}.value) || 0;
+            const hargaTambah = tambah * hargaPer;
+            hargaModalTambah{{ $barang_masuk->id }}.value = hargaTambah.toFixed(2);
+            hargaModal{{ $barang_masuk->id }}.value = (hargaLama + hargaTambah).toFixed(2);
         }
 
         stokTambah{{ $barang_masuk->id }}.addEventListener('input', updateTotalStok{{ $barang_masuk->id }});

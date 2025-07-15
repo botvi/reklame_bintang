@@ -35,6 +35,8 @@ class BarangMasukController extends Controller
                 'stok_awal' => 'required|numeric',
                 'satuan_id' => 'required|exists:satuans,id',
                 'harga_persatuan' => 'required|numeric',
+                'harga_modal' => 'required|numeric',
+                'harga_jual' => 'required|numeric',
             ]);
         } catch (\Exception $e) {
             Alert::error('Error', $e->getMessage());
@@ -49,6 +51,8 @@ class BarangMasukController extends Controller
                 'stok_awal' => $request->stok_awal,
                 'satuan_id' => $request->satuan_id,
                 'harga_persatuan' => $request->harga_persatuan,
+                'harga_modal' => $request->harga_modal,
+                'harga_jual' => $request->harga_jual,
             ]);
 
             Alert::toast('Barang Masuk berhasil ditambahkan!', 'success')->position('top-end');
@@ -85,6 +89,8 @@ class BarangMasukController extends Controller
                 'stok_awal' => 'required|numeric',
                 'satuan_id' => 'required|exists:satuans,id',
                 'harga_persatuan' => 'required|numeric',
+                'harga_modal' => 'required|numeric',
+                'harga_jual' => 'required|numeric',
                 ]);
         } catch (\Exception $e) {
             Alert::error('Error', $e->getMessage());
@@ -101,6 +107,8 @@ class BarangMasukController extends Controller
                 'stok_awal' => $request->stok_awal,
                 'satuan_id' => $request->satuan_id,
                 'harga_persatuan' => $request->harga_persatuan,
+                'harga_modal' => $request->harga_modal,
+                'harga_jual' => $request->harga_jual,
                 ]);
 
             // Handle upload gambar
@@ -134,6 +142,7 @@ class BarangMasukController extends Controller
                 'stok_awal' => 'required|numeric|min:0',
                 'stok_tambah' => 'required|numeric|min:1',
                 'satuan_id' => 'required|exists:satuans,id',
+                // 'harga_modal' => 'required|numeric', // Tidak perlu validasi harga_modal dari input
             ]);
 
             $barang_masuk = BarangMasuk::findOrFail($id);
@@ -142,13 +151,19 @@ class BarangMasukController extends Controller
             $stok_awal = $request->stok_awal;
             $stok_tambah = $request->stok_tambah;
             $satuan_id = $request->satuan_id;
-            
+            // Ambil harga persatuan dari database (bisa juga dari input jika ingin support perubahan harga)
+            $harga_persatuan = $barang_masuk->harga_persatuan;
+            $harga_modal_lama = $barang_masuk->harga_modal;
+
             // Hitung total stok baru
             $total_stok = $stok_awal + $stok_tambah;
+            // Hitung harga modal baru
+            $harga_modal_baru = $harga_modal_lama + ($stok_tambah * $harga_persatuan);
             
-            // Update stok_awal dengan total baru
+            // Update stok_awal, satuan_id, dan harga_modal dengan nilai baru
             $barang_masuk->stok_awal = $total_stok;
             $barang_masuk->satuan_id = $satuan_id;
+            $barang_masuk->harga_modal = $harga_modal_baru;
             $barang_masuk->save();
             
             Alert::toast('Stok berhasil ditambahkan! Total stok sekarang: ' . $total_stok, 'success')->position('top-end');

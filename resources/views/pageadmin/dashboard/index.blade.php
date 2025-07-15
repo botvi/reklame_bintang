@@ -137,6 +137,51 @@
                     </div>
                 </div>
             </div><!--end row-->
+
+            <div class="row row-cols-1 row-cols-md-3 mt-3">
+                <div class="col">
+                    <div class="card radius-10 border-start border-0 border-3 border-primary">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Total Harga Modal</p>
+                                    <h4 class="my-1 text-primary">Rp {{ number_format($total_harga_modal, 0, ',', '.') }}</h4>
+                                    <p class="mb-0 font-13">Akumulasi modal barang masuk</p>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-primary text-white ms-auto"><i class='bx bx-money'></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card radius-10 border-start border-0 border-3 border-success">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Total Harga Jual</p>
+                                    <h4 class="my-1 text-success">Rp {{ number_format($total_harga_jual, 0, ',', '.') }}</h4>
+                                    <p class="mb-0 font-13">Akumulasi penjualan</p>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-success text-white ms-auto"><i class='bx bx-cart'></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card radius-10 border-start border-0 border-3 border-warning">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Total Keuntungan</p>
+                                    <h4 class="my-1 text-warning">Rp {{ number_format($total_keuntungan, 0, ',', '.') }}</h4>
+                                    <p class="mb-0 font-13">Akumulasi keuntungan</p>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-warning text-white ms-auto"><i class='bx bx-line-chart'></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection

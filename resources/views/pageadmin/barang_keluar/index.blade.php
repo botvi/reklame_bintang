@@ -32,7 +32,7 @@
                                 <div class="col-md-6 mb-3 barang-card">
                                     <div class="card barang-item" data-id="{{ $barang->id }}" 
                                         data-nama="{{ $barang->barang->nama_barang }}"
-                                        data-harga="{{ $barang->harga_persatuan }}"
+                                        data-harga_jual="{{ $barang->harga_jual }}"
                                         data-satuan="{{ $barang->satuan_id }}">
                                         <div class="position-relative">
                                             <img src="{{ asset('uploads/barang/'.$barang->barang->gambar) }}" 
@@ -80,8 +80,8 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="mb-3">
-                                            <label class="form-label" id="harga_persatuan_label">Harga Per</label>
-                                            <input type="number" class="form-control bg-secondary text-white" id="harga_persatuan" name="harga_persatuan" min="1" readonly>
+                                            <label class="form-label" id="harga_jual_label">Harga Jual Per</label>
+                                            <input type="number" class="form-control bg-secondary text-white" id="harga_jual" name="harga_jual" min="1" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -123,7 +123,7 @@
                                 <tr>
                                     <th>Nama Barang</th>
                                     <th>Jumlah Beli</th>
-                                    <th>Harga Persatuan</th>
+                                    <th>Harga Jual Persatuan</th>
                                     <th>Total Harga</th>
                                 </tr>
                             </thead>
@@ -132,7 +132,7 @@
                                 <tr>
                                     <td>{{ $barang_keluar->barang_masuk->barang->nama_barang }}</td>
                                     <td>{{ $barang_keluar->jumlah_beli }}</td>
-                                    <td>Rp {{ number_format($barang_keluar->harga_persatuan, 0, ',', '.') }} / {{ $barang_keluar->satuan->nama_satuan ?? 'Tidak Ada Satuan' }}</td>
+                                    <td>Rp {{ number_format($barang_keluar->harga_jual, 0, ',', '.') }} / {{ $barang_keluar->satuan->nama_satuan ?? 'Tidak Ada Satuan' }}</td>
                                     <td>Rp {{ number_format($barang_keluar->total_harga, 0, ',', '.') }}</td>
                                   
                                 </tr>
@@ -142,7 +142,7 @@
                                 <tr>
                                     <th>Nama Barang</th>
                                     <th>Jumlah Beli</th>
-                                    <th>Harga Persatuan</th>
+                                    <th>Harga Jual Persatuan</th>
                                     <th>Total Harga</th>
                                 </tr>
                             </tfoot>
@@ -187,15 +187,15 @@
         // Fungsi untuk mengubah label harga sesuai satuan
         function updateHargaLabel() {
             const satuanSelect = document.getElementById('satuan_id');
-            const hargaLabel = document.getElementById('harga_persatuan_label');
+            const hargaLabel = document.getElementById('harga_jual_label');
             const selectedOption = satuanSelect.options[satuanSelect.selectedIndex];
             
             if (selectedOption && selectedOption.text) {
                 // Ambil nama satuan saja (tanpa jenis dalam kurung)
                 const namaSatuan = selectedOption.text.split(' (')[0];
-                hargaLabel.textContent = 'Harga Per ' + namaSatuan;
+                hargaLabel.textContent = 'Harga Jual Per ' + namaSatuan;
             } else {
-                hargaLabel.textContent = 'Harga Per';
+                hargaLabel.textContent = 'Harga Jual Per';
             }
         }
 
@@ -213,12 +213,12 @@
                 
                 const id = card.dataset.id;
                 const nama = card.dataset.nama;
-                const harga = card.dataset.harga;
+                const harga = card.dataset.harga_jual;
                 const satuan = card.dataset.satuan;
                 // Isi form dengan data barang yang dipilih
                 document.getElementById('barang_masuk_id').value = id;
                 document.getElementById('nama_barang').value = nama;
-                document.getElementById('harga_persatuan').value = harga;
+                document.getElementById('harga_jual').value = harga;
                 document.getElementById('satuan_id').value = satuan;
                 document.getElementById('jumlah_beli').value = 1;
                 
@@ -246,7 +246,7 @@
             
             function hitungTotal() {
                 const jumlah = parseInt(document.getElementById('jumlah_beli').value) || 0;
-                const harga = parseFloat(document.getElementById('harga_persatuan').value) || 0;
+                const harga = parseFloat(document.getElementById('harga_jual').value) || 0;
                 const total = jumlah * harga;
                 
                 // Format total harga dengan pemisah ribuan
@@ -321,7 +321,7 @@
                 });
             });
 
-            // Otomatisasi harga persatuan berdasarkan konversi
+            // Otomatisasi harga jual berdasarkan konversi
             document.getElementById('satuan_id').addEventListener('change', function() {
                 const barangMasukId = document.getElementById('barang_masuk_id').value;
                 const barang = getBarangMasukById(barangMasukId);
@@ -329,9 +329,9 @@
                 const satuanBarangMasuk = getSatuanById(barang.satuan_id);
                 const satuanKeluar = getSatuanById(parseInt(this.value));
                 if (!satuanBarangMasuk || !satuanKeluar) return;
-                // Rumus konversi harga persatuan
-                let hargaBaru = barang.harga_persatuan * (satuanKeluar.konversi_ke_dasar / satuanBarangMasuk.konversi_ke_dasar);
-                document.getElementById('harga_persatuan').value = Math.round(hargaBaru);
+                // Rumus konversi harga jual
+                let hargaBaru = barang.harga_jual * (satuanKeluar.konversi_ke_dasar / satuanBarangMasuk.konversi_ke_dasar);
+                document.getElementById('harga_jual').value = Math.round(hargaBaru);
                 
                 // Update label harga sesuai satuan
                 updateHargaLabel();

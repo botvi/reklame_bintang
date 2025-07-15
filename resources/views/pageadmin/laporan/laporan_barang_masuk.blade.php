@@ -111,8 +111,9 @@
                                         <th>Supplier</th>
                                         <th>Stok</th>
                                         <th>Satuan</th>
-                                        <th>Harga Satuan</th>
-                                        <th>Total Nilai</th>
+                                        <th>Harga Persatuan Dari Supplier</th>
+                                        <th>Harga Modal</th>
+                                        <th>Harga Jual</th>
                                         <th>Tanggal Kadaluarsa</th>
                                     </tr>
                                 </thead>
@@ -127,15 +128,16 @@
                                             <td>{{ number_format($item->stok_awal) }}</td>
                                             <td>{{ $item->satuan->nama_satuan }}</td>
                                             <td>Rp {{ number_format($item->harga_persatuan, 0, ',', '.') }}</td>
-                                            <td>Rp {{ number_format($item->stok_awal * $item->harga_persatuan, 0, ',', '.') }}</td>
+                                            <td>Rp {{ number_format($item->harga_modal, 0, ',', '.') }}</td>
+                                            <td>Rp {{ number_format($item->harga_jual, 0, ',', '.') }}</td>
                                             <td>{{ Carbon\Carbon::parse($item->tanggal_kadaluarsa)->format('d/m/Y') }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                                 <tfoot class="table-dark">
                                     <tr>
-                                        <th colspan="8" class="text-end">Total Nilai:</th>
-                                        <th colspan="2">Rp {{ number_format($totalNilai, 0, ',', '.') }}</th>
+                                        <th colspan="10" class="text-end">Total Nilai:</th>
+                                        <th>Rp {{ number_format($totalNilai, 0, ',', '.') }}</th>
                                     </tr>
                                 </tfoot>
                             </table>

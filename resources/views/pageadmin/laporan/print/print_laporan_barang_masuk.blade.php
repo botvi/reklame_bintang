@@ -144,7 +144,9 @@
                             <th>Supplier</th>
                             <th>Stok Barang</th>
                             <th>Tanggal Kadaluarsa</th>
-                            <th>Total Harga</th>
+                            <th>Harga Persatuan Dari Supplier</th>
+                            <th>Harga Modal</th>
+                            <th>Harga Jual</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -158,11 +160,13 @@
                                 <td>{{ $item->stok_awal }} {{ $item->satuan->nama_satuan }}</td>
                                 <td>{{ \Carbon\Carbon::parse($item->tanggal_kadaluarsa)->locale('id')->isoFormat('D MMMM Y') ?? '-' }}
                                 </td>
-                                <td>Rp. {{ number_format($item->stok_awal * $item->harga_persatuan, 0, ',', '.') }}</td>
+                                <td>Rp. {{ number_format($item->harga_persatuan, 0, ',', '.') }}</td>
+                                <td>Rp. {{ number_format($item->harga_modal, 0, ',', '.') }}</td>
+                                <td>Rp. {{ number_format($item->harga_jual, 0, ',', '.') }}</td>
                             </tr>
                         @endforeach
                             <tr class="very-bold">
-                                <td colspan="7" style="text-align: right;">Total
+                                <td colspan="10" style="text-align: right;">Total
                                     {{ $bulanList[$bulan] }} {{ $tahun }}:
                                 </td>
                                 <td>Rp. {{ number_format($totalNilai, 0, ',', '.') }}</td>

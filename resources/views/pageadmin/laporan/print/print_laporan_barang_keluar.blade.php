@@ -143,7 +143,7 @@
                             <th>Nama Barang</th>
                             <th>Jumlah Beli</th>
                             <th>Satuan</th>
-                            <th>Harga Satuan</th>
+                            <th>Harga Jual Persatuan</th>
                             <th>Total Harga</th>
                         </tr>
                     </thead>
@@ -156,7 +156,7 @@
                                 <td>{{ $item->barang_masuk->barang->nama_barang }}</td>
                                 <td>{{ $item->jumlah_beli }}</td>
                                 <td>{{ $item->satuan->nama_satuan }}</td>
-                                <td>Rp. {{ number_format($item->harga_persatuan, 0, ',', '.') }}</td>
+                                <td>Rp. {{ number_format($item->harga_jual, 0, ',', '.') }}</td>
                                 <td>Rp. {{ number_format($item->total_harga, 0, ',', '.') }}</td>
                             </tr>
                         @endforeach
