@@ -13,7 +13,7 @@ class MasterAkunPemilikController extends Controller
 {
     public function index()
     {
-        $data = User::where('role', 'pemilik_toko')->get();
+        $data = User::whereIn('role', ['pemilik_toko', 'admin'])->get();
         return view('pageadmin.master_akun_pemilik.index', compact('data'));
     }
 
