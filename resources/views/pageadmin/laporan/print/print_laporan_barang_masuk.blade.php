@@ -166,7 +166,7 @@
                             </tr>
                         @endforeach
                             <tr class="very-bold">
-                                <td colspan="10" style="text-align: right;">Total
+                                <td colspan="9" style="text-align: right;">Total
                                     {{ $bulanList[$bulan] }} {{ $tahun }}:
                                 </td>
                                 <td>Rp. {{ number_format($totalNilai, 0, ',', '.') }}</td>
