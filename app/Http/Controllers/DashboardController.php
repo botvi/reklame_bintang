@@ -37,14 +37,15 @@ class DashboardController extends Controller
           $nama_barang = ($first && $first->barang_masuk && $first->barang_masuk->barang) ? $first->barang_masuk->barang->nama_barang : '-';
           $total_harga_jual = $items->sum('total_harga');
           $total_jumlah_keluar = $items->sum('jumlah_beli');
-          // Ambil harga modal dari barang masuk terkait (asumsi: harga modal terakhir)
-          $harga_modal = ($first && $first->barang_masuk) ? $first->barang_masuk->harga_modal : 0;
-          $total_harga_modal = $harga_modal;
+          // Ambil harga persatuan dari barang masuk terkait
+          $harga_persatuan = ($first && $first->barang_masuk) ? $first->barang_masuk->harga_persatuan : 0;
+          // Total harga modal = jumlah barang keluar * harga persatuan
+          $total_harga_modal = $total_jumlah_keluar * $harga_persatuan;
           $keuntungan = $total_harga_jual - $total_harga_modal;
 
           $rekap_barang[] = [
               'nama_barang' => $nama_barang,
-              'harga_modal' => $harga_modal,
+              'harga_modal' => $harga_persatuan,
               'total_harga_modal' => $total_harga_modal,
               'total_harga_jual' => $total_harga_jual,
               'keuntungan' => $keuntungan,

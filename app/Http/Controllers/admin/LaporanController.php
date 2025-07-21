@@ -114,13 +114,16 @@ class LaporanController extends Controller
         $result = [];
         foreach ($grouped as $kode_barang => $items) {
             $first = $items->first();
+            $jumlah_beli = $items->sum('jumlah_beli');
+            $harga_persatuan = $first->barang_masuk->harga_persatuan;
             $result[] = [
                 'kode_barang' => $kode_barang,
                 'nama_barang' => $first->barang_masuk->barang->nama_barang,
-                'jumlah_beli' => $items->sum('jumlah_beli'),
+                'jumlah_beli' => $jumlah_beli,
                 'satuan' => $first->satuan->nama_satuan,
                 'harga_jual' => $first->harga_jual,
-                'harga_modal' => $first->barang_masuk->harga_modal ?? $first->barang_masuk->harga_persatuan,
+                'harga_modal' => $jumlah_beli * $harga_persatuan,
+                'harga_persatuan' => $harga_persatuan,
                 'total_harga' => $items->sum('total_harga'),
             ];
         }
@@ -166,13 +169,16 @@ class LaporanController extends Controller
         $result = [];
         foreach ($grouped as $kode_barang => $items) {
             $first = $items->first();
+            $jumlah_beli = $items->sum('jumlah_beli');
+            $harga_persatuan = $first->barang_masuk->harga_persatuan;
             $result[] = [
                 'kode_barang' => $kode_barang,
                 'nama_barang' => $first->barang_masuk->barang->nama_barang,
-                'jumlah_beli' => $items->sum('jumlah_beli'),
+                'jumlah_beli' => $jumlah_beli,
                 'satuan' => $first->satuan->nama_satuan,
                 'harga_jual' => $first->harga_jual,
-                'harga_modal' => $first->barang_masuk->harga_modal ?? $first->barang_masuk->harga_persatuan,
+                'harga_modal' => $jumlah_beli * $harga_persatuan,
+                'harga_persatuan' => $harga_persatuan,
                 'total_harga' => $items->sum('total_harga'),
             ];
         }
