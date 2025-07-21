@@ -133,31 +133,31 @@
         </div>
         <div style="border-bottom: 3px solid black; margin-top: 10px; margin-bottom: 20px;"></div>
         <div class="info">
-            @if($barangKeluar->count() > 0)
+            @if(count($result) > 0)
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Tanggal</th>
                             <th>Kode Barang</th>
                             <th>Nama Barang</th>
                             <th>Jumlah Beli</th>
                             <th>Satuan</th>
+                            <th>Harga Modal</th>
                             <th>Harga Jual Persatuan</th>
                             <th>Total Harga</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($barangKeluar as $key => $item)
+                        @foreach ($result as $key => $item)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
-                                <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i') }}</td>
-                                <td>{{ $item->barang_masuk->barang->kode_barang }}</td>
-                                <td>{{ $item->barang_masuk->barang->nama_barang }}</td>
-                                <td>{{ $item->jumlah_beli }}</td>
-                                <td>{{ $item->satuan->nama_satuan }}</td>
-                                <td>Rp. {{ number_format($item->harga_jual, 0, ',', '.') }}</td>
-                                <td>Rp. {{ number_format($item->total_harga, 0, ',', '.') }}</td>
+                                <td>{{ $item['kode_barang'] }}</td>
+                                <td>{{ $item['nama_barang'] }}</td>
+                                <td>{{ number_format($item['jumlah_beli']) }}</td>
+                                <td>{{ $item['satuan'] }}</td>
+                                <td>Rp. {{ number_format($item['harga_modal'], 0, ',', '.') }}</td>
+                                <td>Rp. {{ number_format($item['harga_jual'], 0, ',', '.') }}</td>
+                                <td>Rp. {{ number_format($item['total_harga'], 0, ',', '.') }}</td>
                             </tr>
                         @endforeach
                             <tr class="very-bold">

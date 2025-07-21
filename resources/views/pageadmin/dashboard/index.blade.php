@@ -183,6 +183,48 @@
                 </div>
             </div>
         </div>
+        <!-- Tabel Rekap Barang Keluar -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Rekap Barang Keluar (Berdasarkan Barang yang Sudah Keluar)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama Barang</th>
+                                        <th>Total Modal</th>
+                                        <th>Total Penjualan</th>
+                                        <th>Keuntungan</th>
+                                        <th>Jumlah Barang Keluar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($rekap_barang as $i => $row)
+                                    <tr>
+                                        <td>{{ $i+1 }}</td>
+                                        <td>{{ $row['nama_barang'] }}</td>
+                                        <td>Rp {{ number_format($row['total_harga_modal'], 0, ',', '.') }}</td>
+                                        <td>Rp {{ number_format($row['total_harga_jual'], 0, ',', '.') }}</td>
+                                        <td>Rp {{ number_format($row['keuntungan'], 0, ',', '.') }}</td>
+                                        <td>{{ $row['total_keluar'] }}</td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center">Tidak ada data barang keluar.</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 

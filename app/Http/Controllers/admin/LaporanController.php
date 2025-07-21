@@ -100,14 +100,33 @@ class LaporanController extends Controller
         $bulan = $request->get('bulan', Carbon::now()->month);
         $tahun = $request->get('tahun', Carbon::now()->year);
         
-        $barangKeluar = BarangKeluar::with(['barang_masuk', 'satuan', 'user'])
+        $barangKeluar = BarangKeluar::with(['barang_masuk.barang', 'satuan', 'user', 'barang_masuk'])
             ->whereMonth('created_at', $bulan)
             ->whereYear('created_at', $tahun)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $totalBarang = $barangKeluar->count();
-        $totalNilai = $barangKeluar->sum('total_harga');
+        // Kelompokkan berdasarkan kode_barang
+        $grouped = $barangKeluar->groupBy(function($item) {
+            return $item->barang_masuk->barang->kode_barang;
+        });
+
+        $result = [];
+        foreach ($grouped as $kode_barang => $items) {
+            $first = $items->first();
+            $result[] = [
+                'kode_barang' => $kode_barang,
+                'nama_barang' => $first->barang_masuk->barang->nama_barang,
+                'jumlah_beli' => $items->sum('jumlah_beli'),
+                'satuan' => $first->satuan->nama_satuan,
+                'harga_jual' => $first->harga_jual,
+                'harga_modal' => $first->barang_masuk->harga_modal ?? $first->barang_masuk->harga_persatuan,
+                'total_harga' => $items->sum('total_harga'),
+            ];
+        }
+
+        $totalBarang = collect($result)->sum('jumlah_beli');
+        $totalNilai = collect($result)->sum('total_harga');
 
         $bulanList = [
             1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
@@ -118,7 +137,7 @@ class LaporanController extends Controller
         $tahunList = range(Carbon::now()->year - 5, Carbon::now()->year + 1);
 
         return view('pageadmin.laporan.laporan_barang_keluar', compact(
-            'barangKeluar', 
+            'result', 
             'bulan', 
             'tahun', 
             'bulanList', 
@@ -133,14 +152,33 @@ class LaporanController extends Controller
         $bulan = $request->get('bulan', Carbon::now()->month);
         $tahun = $request->get('tahun', Carbon::now()->year);
         
-        $barangKeluar = BarangKeluar::with(['barang_masuk', 'satuan', 'user'])
+        $barangKeluar = BarangKeluar::with(['barang_masuk.barang', 'satuan', 'user', 'barang_masuk'])
             ->whereMonth('created_at', $bulan)
             ->whereYear('created_at', $tahun)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $totalBarang = $barangKeluar->count();
-        $totalNilai = $barangKeluar->sum('total_harga');
+        // Kelompokkan berdasarkan kode_barang
+        $grouped = $barangKeluar->groupBy(function($item) {
+            return $item->barang_masuk->barang->kode_barang;
+        });
+
+        $result = [];
+        foreach ($grouped as $kode_barang => $items) {
+            $first = $items->first();
+            $result[] = [
+                'kode_barang' => $kode_barang,
+                'nama_barang' => $first->barang_masuk->barang->nama_barang,
+                'jumlah_beli' => $items->sum('jumlah_beli'),
+                'satuan' => $first->satuan->nama_satuan,
+                'harga_jual' => $first->harga_jual,
+                'harga_modal' => $first->barang_masuk->harga_modal ?? $first->barang_masuk->harga_persatuan,
+                'total_harga' => $items->sum('total_harga'),
+            ];
+        }
+
+        $totalBarang = collect($result)->sum('jumlah_beli');
+        $totalNilai = collect($result)->sum('total_harga');
 
         // Ambil data pemilik toko
         $pemilikToko = User::where('role', 'pemilik_toko')->first();
@@ -160,7 +198,7 @@ class LaporanController extends Controller
         ];
 
         return view('pageadmin.laporan.print.print_laporan_barang_keluar', compact(
-            'barangKeluar', 
+            'result', 
             'bulan', 
             'tahun', 
             'bulanList',
