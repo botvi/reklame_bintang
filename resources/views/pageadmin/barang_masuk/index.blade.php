@@ -34,6 +34,7 @@
                                 <th>Harga Persatuan Dari Supplier</th>
                                 <th>Harga Modal</th>
                                 <th>Harga Jual</th>
+                                <th>Penginput</th>
                                 <th>Aksi</th>
                               
                             </tr>
@@ -50,6 +51,7 @@
                                 <td>Rp. {{ number_format($barang_masuk->harga_persatuan, 0, ',', '.') }} / {{ $barang_masuk->satuan->nama_satuan ?? 'Tidak Ada Satuan' }}</td>
                                 <td>Rp. {{ number_format($barang_masuk->harga_modal, 0, ',', '.') }}</td>
                                 <td>Rp. {{ number_format($barang_masuk->harga_jual, 0, ',', '.') }}</td>
+                                <td>{{ $barang_masuk->user->nama }}</td>
                                 <td>
                                     <a href="{{ route('barang_masuk.edit', $barang_masuk->id) }}" class="btn btn-sm btn-warning">Edit</a>
                                     <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#tambahStokModal{{ $barang_masuk->id }}">Tambah Stok</button>
@@ -73,6 +75,7 @@
                                 <th>Harga Persatuan Dari Supplier</th>
                                 <th>Harga Modal</th>
                                 <th>Harga Jual</th>
+                                <th>Penginput</th>
                                 <th>Aksi</th>
                             </tr>
                         </tfoot>

@@ -24,9 +24,10 @@
                 </div>
                 <div class="card-body">
                     <form method="GET" action="{{ route('laporan.stok_habis') }}" class="row g-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="bulan" class="form-label">Bulan</label>
-                            <select class="form-select" id="bulan" name="bulan" required>
+                            <select class="form-select" id="bulan" name="bulan">
+                                <option value="">Pilih Bulan</option>
                                 @foreach($bulanList as $key => $namaBulan)
                                     <option value="{{ $key }}" {{ $bulan == $key ? 'selected' : '' }}>
                                         {{ $namaBulan }}
@@ -34,9 +35,10 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="tahun" class="form-label">Tahun</label>
-                            <select class="form-select" id="tahun" name="tahun" required>
+                            <select class="form-select" id="tahun" name="tahun">
+                                <option value="">Pilih Tahun</option>
                                 @foreach($tahunList as $tahunOption)
                                     <option value="{{ $tahunOption }}" {{ $tahun == $tahunOption ? 'selected' : '' }}>
                                         {{ $tahunOption }}
@@ -44,11 +46,21 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4 d-flex align-items-end">
+                        <div class="col-md-3">
+                            <label for="tanggal_awal" class="form-label">Tanggal Awal</label>
+                            <input type="date" class="form-control" id="tanggal_awal" name="tanggal_awal" 
+                                   value="{{ $tanggal_awal ?? '' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="tanggal_akhir" class="form-label">Tanggal Akhir</label>
+                            <input type="date" class="form-control" id="tanggal_akhir" name="tanggal_akhir" 
+                                   value="{{ $tanggal_akhir ?? '' }}">
+                        </div>
+                        <div class="col-12 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary me-2">
                                 <i class="bx bx-search"></i> Tampilkan
                             </button>
-                            <a href="{{ route('laporan.stok_habis.print', ['bulan' => $bulan, 'tahun' => $tahun]) }}" 
+                            <a href="{{ route('laporan.stok_habis.print', ['bulan' => $bulan, 'tahun' => $tahun, 'tanggal_awal' => $tanggal_awal, 'tanggal_akhir' => $tanggal_akhir]) }}" 
                                class="btn btn-success" target="_blank">
                                 <i class="bx bx-printer"></i> Cetak
                             </a>
@@ -95,7 +107,11 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title mb-0">
-                        Laporan Stok Habis - {{ $bulanList[$bulan] }} {{ $tahun }}
+                        @if($tanggal_awal && $tanggal_akhir)
+                            Laporan Stok Habis - {{ \Carbon\Carbon::parse($tanggal_awal)->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse($tanggal_akhir)->format('d/m/Y') }}
+                        @else
+                            Laporan Stok Habis - {{ $bulanList[$bulan] ?? '' }} {{ $tahun ?? '' }}
+                        @endif
                     </h5>
                 </div>
                 <div class="card-body">
@@ -111,6 +127,7 @@
                                         <th>Supplier</th>
                                         <th>Status</th>
                                         <th>Tanggal Kadaluarsa</th>
+                                        <th>Penginput</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -129,6 +146,7 @@
                                             <td>{{ $item->barang->supplier->nama_supplier }}</td>
                                             <td><span class="badge bg-danger">{{ $status }}</span></td>
                                             <td>{{ Carbon\Carbon::parse($item->tanggal_kadaluarsa)->format('d/m/Y') }}</td>
+                                            <td>{{ $item->user->nama }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

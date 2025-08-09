@@ -125,7 +125,13 @@
         <div>
             <h3 class="fw-bold">LAPORAN BARANG MENDEKATI & SUDAH KADALUARSA</h3>
             <h4>Toko Nadya</h4>
-            <h4>Periode: {{ \Carbon\Carbon::now()->format('d/m/Y') }} - {{ \Carbon\Carbon::now()->addWeek()->format('d/m/Y') }} (termasuk barang kadaluarsa)</h4>
+            <h4>
+                @if($tanggal_awal && $tanggal_akhir)
+                    Periode: {{ \Carbon\Carbon::parse($tanggal_awal)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($tanggal_akhir)->format('d/m/Y') }}
+                @else
+                    Periode: {{ \Carbon\Carbon::now()->format('d/m/Y') }} - {{ \Carbon\Carbon::now()->addWeek()->format('d/m/Y') }} (termasuk barang kadaluarsa)
+                @endif
+            </h4>
         </div>
     </div>
     <div class="info-section">
@@ -187,6 +193,7 @@
                 <th width="80">Tanggal Kadaluarsa</th>
                 <th width="60">Sisa Hari</th>
                 <th width="60">Status</th>
+                <th width="60">Penginput</th>
             </tr>
         </thead>
         <tbody>
@@ -226,6 +233,7 @@
                         <span class="badge badge-info">AMAN</span>
                     @endif
                 </td>
+                <td>{{ $item->user->nama }}</td>
             </tr>
             @empty
             <tr>

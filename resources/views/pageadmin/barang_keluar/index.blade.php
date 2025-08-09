@@ -125,6 +125,7 @@
                                     <th>Jumlah Beli</th>
                                     <th>Harga Jual Persatuan</th>
                                     <th>Total Harga</th>
+                                    <th>Penginput</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -134,7 +135,7 @@
                                     <td>{{ $barang_keluar->jumlah_beli }}</td>
                                     <td>Rp {{ number_format($barang_keluar->harga_jual, 0, ',', '.') }} / {{ $barang_keluar->satuan->nama_satuan ?? 'Tidak Ada Satuan' }}</td>
                                     <td>Rp {{ number_format($barang_keluar->total_harga, 0, ',', '.') }}</td>
-                                  
+                                    <td>{{ $barang_keluar->user->nama }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -144,6 +145,7 @@
                                     <th>Jumlah Beli</th>
                                     <th>Harga Jual Persatuan</th>
                                     <th>Total Harga</th>
+                                    <th>Penginput</th>
                                 </tr>
                             </tfoot>
                         </table>

@@ -19,18 +19,60 @@
                 </div>
             </div>
 
+            <!-- Filter Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Filter Laporan Barang Mendekati & Sudah Kadaluarsa</h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{{ route('laporan.mendekati_kadaluarsa') }}" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="tanggal_awal" class="form-label">Tanggal Awal</label>
+                            <input type="date" class="form-control" id="tanggal_awal" name="tanggal_awal" 
+                                   value="{{ $tanggal_awal ?? '' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="tanggal_akhir" class="form-label">Tanggal Akhir</label>
+                            <input type="date" class="form-control" id="tanggal_akhir" name="tanggal_akhir" 
+                                   value="{{ $tanggal_akhir ?? '' }}">
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="bx bx-search"></i> Tampilkan
+                            </button>
+                            <a href="{{ route('laporan.mendekati_kadaluarsa.print', ['tanggal_awal' => $tanggal_awal, 'tanggal_akhir' => $tanggal_akhir]) }}" 
+                               class="btn btn-success" target="_blank">
+                                <i class="bx bx-printer"></i> Cetak
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <!-- Header Section -->
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Laporan Barang Mendekati & Sudah Kadaluarsa</h5>
+                    <h5 class="card-title mb-0">
+                        @if($tanggal_awal && $tanggal_akhir)
+                            Laporan Barang Mendekati & Sudah Kadaluarsa - {{ \Carbon\Carbon::parse($tanggal_awal)->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse($tanggal_akhir)->format('d/m/Y') }}
+                        @else
+                            Laporan Barang Mendekati & Sudah Kadaluarsa
+                        @endif
+                    </h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <p class="text-muted mb-0">Menampilkan barang yang akan kadaluarsa dalam 7 hari ke depan dan barang yang sudah kadaluarsa</p>
+                            <p class="text-muted mb-0">
+                                @if($tanggal_awal && $tanggal_akhir)
+                                    Menampilkan barang yang kadaluarsa dalam rentang tanggal yang dipilih
+                                @else
+                                    Menampilkan barang yang akan kadaluarsa dalam 7 hari ke depan dan barang yang sudah kadaluarsa
+                                @endif
+                            </p>
                         </div>
                         <div class="col-md-6 text-end">
-                            <a href="{{ route('laporan.mendekati_kadaluarsa.print') }}" 
+                            <a href="{{ route('laporan.mendekati_kadaluarsa.print', ['tanggal_awal' => $tanggal_awal, 'tanggal_akhir' => $tanggal_akhir]) }}" 
                                target="_blank" 
                                class="btn btn-success">
                                 <i class="bx bx-printer"></i> Cetak Laporan
@@ -132,6 +174,7 @@
                                         <th>Tanggal Kadaluarsa</th>
                                         <th>Sisa Hari</th>
                                         <th>Status</th>
+                                        <th>Penginput</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -171,13 +214,14 @@
                                                     <span class="badge bg-info">AMAN</span>
                                                 @endif
                                             </td>
+                                            <td>{{ $item->user->nama }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                                 <tfoot class="table-dark">
                                     <tr>
-                                        <th colspan="7" class="text-end">Total Nilai:</th>
-                                        <th colspan="4">Rp {{ number_format($totalNilai, 0, ',', '.') }}</th>
+                                        <th colspan="10" class="text-end">Total Nilai:</th>
+                                        <th colspan="2">Rp {{ number_format($totalNilai, 0, ',', '.') }}</th>
                                     </tr>
                                 </tfoot>
                             </table>

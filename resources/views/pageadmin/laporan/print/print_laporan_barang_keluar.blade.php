@@ -124,11 +124,22 @@
     <div class="pages">
         <div class="header">
             <div>
-                <h3 class="fw-bold">LAPORAN BARANG KELUAR {{ strtoupper($bulanList[$bulan]) }}
+                <h3 class="fw-bold">LAPORAN BARANG KELUAR 
+                    @if($tanggal_awal && $tanggal_akhir)
+                        {{ \Carbon\Carbon::parse($tanggal_awal)->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse($tanggal_akhir)->format('d/m/Y') }}
+                    @else
+                        {{ strtoupper($bulanList[$bulan] ?? '') }} {{ $tahun ?? '' }}
+                    @endif
                     NADYA BANGUNAN</h3>
                 <h4>Telp : {{ $pemilikToko->no_wa ?? '-' }}</h4>
                 <h4>Aur Duri, Kecamatan Kuantan Mudik</h4>
-                <h4>Tahun : {{ $tahun }}</h4>
+                <h4>
+                    @if($tanggal_awal && $tanggal_akhir)
+                        Periode : {{ \Carbon\Carbon::parse($tanggal_awal)->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse($tanggal_akhir)->format('d/m/Y') }}
+                    @else
+                        Tahun : {{ $tahun ?? '' }}
+                    @endif
+                </h4>
             </div>
         </div>
         <div style="border-bottom: 3px solid black; margin-top: 10px; margin-bottom: 20px;"></div>
@@ -162,7 +173,11 @@
                         @endforeach
                             <tr class="very-bold">
                                 <td colspan="7" style="text-align: right;">Total Pendapatan
-                                    {{ $bulanList[$bulan] }} {{ $tahun }}:
+                                    @if($tanggal_awal && $tanggal_akhir)
+                                        {{ \Carbon\Carbon::parse($tanggal_awal)->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse($tanggal_akhir)->format('d/m/Y') }}:
+                                    @else
+                                        {{ $bulanList[$bulan] ?? '' }} {{ $tahun ?? '' }}:
+                                    @endif
                                 </td>
                                 <td>Rp. {{ number_format($totalNilai, 0, ',', '.') }}</td>
                             </tr>
@@ -171,7 +186,13 @@
             @else
                 <div style="text-align: center; padding: 50px;">
                     <h4>Tidak ada data barang keluar</h4>
-                    <p>Untuk periode {{ $bulanList[$bulan] }} {{ $tahun }}</p>
+                    <p>Untuk periode 
+                        @if($tanggal_awal && $tanggal_akhir)
+                            {{ \Carbon\Carbon::parse($tanggal_awal)->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse($tanggal_akhir)->format('d/m/Y') }}
+                        @else
+                            {{ $bulanList[$bulan] ?? '' }} {{ $tahun ?? '' }}
+                        @endif
+                    </p>
                 </div>
             @endif
         </div>

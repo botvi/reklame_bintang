@@ -31,6 +31,7 @@
                                     <th>Supplier</th>
                                     <th>Jumlah Keluar</th>
                                     <th>Total Harga</th>
+                                    <th>Penginput</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -41,6 +42,7 @@
                                     <td>{{ $barang_keluar->barang_masuk->barang->supplier->nama_supplier ?? 'N/A' }}</td>    
                                     <td>{{ $barang_keluar->jumlah_beli }} {{ $barang_keluar->satuan->nama_satuan ?? 'Tidak Ada Satuan' }}</td>
                                     <td>Rp. {{ number_format($barang_keluar->total_harga, 0, ',', '.') ?? '-' }}</td>
+                                    <td>{{ $barang_keluar->user->nama }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -51,6 +53,7 @@
                                     <th>Supplier</th>
                                     <th>Jumlah Keluar</th>
                                     <th>Total Harga</th>
+                                    <th>Penginput</th>
                                 </tr>
                             </tfoot>
                         </table>

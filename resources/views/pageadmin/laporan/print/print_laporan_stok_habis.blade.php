@@ -124,11 +124,22 @@
     <div class="pages">
         <div class="header">
             <div>
-                <h3 class="fw-bold">LAPORAN STOK HABIS {{ strtoupper($bulanList[$bulan]) }}
+                <h3 class="fw-bold">LAPORAN STOK HABIS 
+                    @if($tanggal_awal && $tanggal_akhir)
+                        {{ \Carbon\Carbon::parse($tanggal_awal)->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse($tanggal_akhir)->format('d/m/Y') }}
+                    @else
+                        {{ strtoupper($bulanList[$bulan] ?? '') }} {{ $tahun ?? '' }}
+                    @endif
                     NADYA BANGUNAN</h3>
                 <h4>Telp : {{ $pemilikToko->no_wa ?? '-' }}</h4>
                 <h4>Aur Duri, Kecamatan Kuantan Mudik</h4>
-                <h4>Tahun : {{ $tahun }}</h4>
+                <h4>
+                    @if($tanggal_awal && $tanggal_akhir)
+                        Periode : {{ \Carbon\Carbon::parse($tanggal_awal)->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse($tanggal_akhir)->format('d/m/Y') }}
+                    @else
+                        Tahun : {{ $tahun ?? '' }}
+                    @endif
+                </h4>
             </div>
         </div>
         <div style="border-bottom: 3px solid black; margin-top: 10px; margin-bottom: 20px;"></div>
@@ -143,6 +154,7 @@
                             <th>Supplier</th>
                             <th>Status</th>
                             <th>Tanggal Kadaluarsa</th>
+                            <th>Penginput</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -161,6 +173,7 @@
                                 <td style="color: red; font-weight: bold;">{{ $status }}</td>
                                 <td>{{ \Carbon\Carbon::parse($item->tanggal_kadaluarsa)->locale('id')->isoFormat('D MMMM Y') ?? '-' }}
                                 </td>
+                                <td>{{ $item->user->nama }}</td>
                             </tr>
                         @endforeach
 
@@ -169,7 +182,13 @@
             @else
                 <div style="text-align: center; padding: 50px;">
                     <h4>Tidak ada data stok habis</h4>
-                    <p>Untuk periode {{ $bulanList[$bulan] }} {{ $tahun }}</p>
+                    <p>Untuk periode 
+                        @if($tanggal_awal && $tanggal_akhir)
+                            {{ \Carbon\Carbon::parse($tanggal_awal)->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse($tanggal_akhir)->format('d/m/Y') }}
+                        @else
+                            {{ $bulanList[$bulan] ?? '' }} {{ $tahun ?? '' }}
+                        @endif
+                    </p>
                 </div>
             @endif
         </div>

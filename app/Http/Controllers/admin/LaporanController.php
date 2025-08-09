@@ -22,12 +22,21 @@ class LaporanController extends Controller
     {
         $bulan = $request->get('bulan', Carbon::now()->month);
         $tahun = $request->get('tahun', Carbon::now()->year);
+        $tanggal_awal = $request->get('tanggal_awal', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $tanggal_akhir = $request->get('tanggal_akhir', Carbon::now()->endOfMonth()->format('Y-m-d'));
         
-        $barangMasuk = BarangMasuk::with(['barang', 'satuan', 'user'])
-            ->whereMonth('created_at', $bulan)
-            ->whereYear('created_at', $tahun)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = BarangMasuk::with(['barang', 'satuan', 'user']);
+        
+        // Filter berdasarkan tanggal jika ada
+        if ($tanggal_awal && $tanggal_akhir) {
+            $query->whereBetween('created_at', [$tanggal_awal . ' 00:00:00', $tanggal_akhir . ' 23:59:59']);
+        } else {
+            // Fallback ke filter bulan dan tahun
+            $query->whereMonth('created_at', $bulan)
+                  ->whereYear('created_at', $tahun);
+        }
+        
+        $barangMasuk = $query->orderBy('created_at', 'desc')->get();
 
         $totalBarang = $barangMasuk->count();
         $totalNilai = $barangMasuk->sum(function($item) {
@@ -49,7 +58,9 @@ class LaporanController extends Controller
             'bulanList', 
             'tahunList',
             'totalBarang',
-            'totalNilai'
+            'totalNilai',
+            'tanggal_awal',
+            'tanggal_akhir'
         ));
     }
 
@@ -57,12 +68,21 @@ class LaporanController extends Controller
     {
         $bulan = $request->get('bulan', Carbon::now()->month);
         $tahun = $request->get('tahun', Carbon::now()->year);
+        $tanggal_awal = $request->get('tanggal_awal', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $tanggal_akhir = $request->get('tanggal_akhir', Carbon::now()->endOfMonth()->format('Y-m-d'));
         
-        $barangMasuk = BarangMasuk::with(['barang', 'barang.supplier', 'satuan', 'user'])
-            ->whereMonth('created_at', $bulan)
-            ->whereYear('created_at', $tahun)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = BarangMasuk::with(['barang', 'barang.supplier', 'satuan', 'user']);
+        
+        // Filter berdasarkan tanggal jika ada
+        if ($tanggal_awal && $tanggal_akhir) {
+            $query->whereBetween('created_at', [$tanggal_awal . ' 00:00:00', $tanggal_akhir . ' 23:59:59']);
+        } else {
+            // Fallback ke filter bulan dan tahun
+            $query->whereMonth('created_at', $bulan)
+                  ->whereYear('created_at', $tahun);
+        }
+        
+        $barangMasuk = $query->orderBy('created_at', 'desc')->get();
 
         $totalBarang = $barangMasuk->count();
         $totalNilai = $barangMasuk->sum('harga_modal');
@@ -91,7 +111,9 @@ class LaporanController extends Controller
             'bulanList',
             'totalBarang',
             'totalNilai',
-            'pemilikToko'
+            'pemilikToko',
+            'tanggal_awal',
+            'tanggal_akhir'
         ));
     }
 
@@ -99,12 +121,21 @@ class LaporanController extends Controller
     {
         $bulan = $request->get('bulan', Carbon::now()->month);
         $tahun = $request->get('tahun', Carbon::now()->year);
+        $tanggal_awal = $request->get('tanggal_awal', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $tanggal_akhir = $request->get('tanggal_akhir', Carbon::now()->endOfMonth()->format('Y-m-d'));
         
-        $barangKeluar = BarangKeluar::with(['barang_masuk.barang', 'satuan', 'user', 'barang_masuk'])
-            ->whereMonth('created_at', $bulan)
-            ->whereYear('created_at', $tahun)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = BarangKeluar::with(['barang_masuk.barang', 'satuan', 'user', 'barang_masuk']);
+        
+        // Filter berdasarkan tanggal jika ada
+        if ($tanggal_awal && $tanggal_akhir) {
+            $query->whereBetween('created_at', [$tanggal_awal . ' 00:00:00', $tanggal_akhir . ' 23:59:59']);
+        } else {
+            // Fallback ke filter bulan dan tahun
+            $query->whereMonth('created_at', $bulan)
+                  ->whereYear('created_at', $tahun);
+        }
+        
+        $barangKeluar = $query->orderBy('created_at', 'desc')->get();
 
         // Kelompokkan berdasarkan kode_barang
         $grouped = $barangKeluar->groupBy(function($item) {
@@ -146,7 +177,9 @@ class LaporanController extends Controller
             'bulanList', 
             'tahunList',
             'totalBarang',
-            'totalNilai'
+            'totalNilai',
+            'tanggal_awal',
+            'tanggal_akhir'
         ));
     }
 
@@ -154,12 +187,21 @@ class LaporanController extends Controller
     {
         $bulan = $request->get('bulan', Carbon::now()->month);
         $tahun = $request->get('tahun', Carbon::now()->year);
+        $tanggal_awal = $request->get('tanggal_awal', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $tanggal_akhir = $request->get('tanggal_akhir', Carbon::now()->endOfMonth()->format('Y-m-d'));
         
-        $barangKeluar = BarangKeluar::with(['barang_masuk.barang', 'satuan', 'user', 'barang_masuk'])
-            ->whereMonth('created_at', $bulan)
-            ->whereYear('created_at', $tahun)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = BarangKeluar::with(['barang_masuk.barang', 'satuan', 'user', 'barang_masuk']);
+        
+        // Filter berdasarkan tanggal jika ada
+        if ($tanggal_awal && $tanggal_akhir) {
+            $query->whereBetween('created_at', [$tanggal_awal . ' 00:00:00', $tanggal_akhir . ' 23:59:59']);
+        } else {
+            // Fallback ke filter bulan dan tahun
+            $query->whereMonth('created_at', $bulan)
+                  ->whereYear('created_at', $tahun);
+        }
+        
+        $barangKeluar = $query->orderBy('created_at', 'desc')->get();
 
         // Kelompokkan berdasarkan kode_barang
         $grouped = $barangKeluar->groupBy(function($item) {
@@ -210,7 +252,9 @@ class LaporanController extends Controller
             'bulanList',
             'totalBarang',
             'totalNilai',
-            'pemilikToko'
+            'pemilikToko',
+            'tanggal_awal',
+            'tanggal_akhir'
         ));
     }
 
@@ -218,6 +262,8 @@ class LaporanController extends Controller
     {
         $bulan = $request->get('bulan', Carbon::now()->month);
         $tahun = $request->get('tahun', Carbon::now()->year);
+        $tanggal_awal = $request->get('tanggal_awal', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $tanggal_akhir = $request->get('tanggal_akhir', Carbon::now()->endOfMonth()->format('Y-m-d'));
         
         // Ambil semua barang masuk yang stoknya habis
         $barangMasuk = BarangMasuk::with(['barang', 'barang.supplier', 'satuan', 'user', 'barangKeluar'])
@@ -228,20 +274,39 @@ class LaporanController extends Controller
                 // Stok habis jika stok_awal - total_keluar <= 0
                 return ($item->stok_awal - $totalKeluar) <= 0;
             })
-            ->filter(function($item) use ($bulan, $tahun) {
-                // Filter berdasarkan bulan dan tahun barang keluar terakhir
-                $barangKeluarTerakhir = $item->barangKeluar()
-                    ->whereMonth('created_at', $bulan)
-                    ->whereYear('created_at', $tahun)
-                    ->first();
-                
-                // Jika ada barang keluar di bulan/tahun tersebut yang menyebabkan stok habis
-                if ($barangKeluarTerakhir) {
-                    return true;
+            ->filter(function($item) use ($bulan, $tahun, $tanggal_awal, $tanggal_akhir) {
+                // Filter berdasarkan tanggal jika ada
+                if ($tanggal_awal && $tanggal_akhir) {
+                    $tanggalItem = Carbon::parse($item->created_at);
+                    $tanggalAwal = Carbon::parse($tanggal_awal);
+                    $tanggalAkhir = Carbon::parse($tanggal_akhir);
+                    
+                    // Cek apakah barang masuk dalam rentang tanggal
+                    if ($tanggalItem->between($tanggalAwal, $tanggalAkhir)) {
+                        return true;
+                    }
+                    
+                    // Cek apakah ada barang keluar dalam rentang tanggal yang menyebabkan stok habis
+                    $barangKeluarDalamRentang = $item->barangKeluar()
+                        ->whereBetween('created_at', [$tanggal_awal . ' 00:00:00', $tanggal_akhir . ' 23:59:59'])
+                        ->first();
+                    
+                    return $barangKeluarDalamRentang ? true : false;
+                } else {
+                    // Filter berdasarkan bulan dan tahun barang keluar terakhir
+                    $barangKeluarTerakhir = $item->barangKeluar()
+                        ->whereMonth('created_at', $bulan)
+                        ->whereYear('created_at', $tahun)
+                        ->first();
+                    
+                    // Jika ada barang keluar di bulan/tahun tersebut yang menyebabkan stok habis
+                    if ($barangKeluarTerakhir) {
+                        return true;
+                    }
+                    
+                    // Atau jika barang masuk di bulan/tahun tersebut dan stoknya habis
+                    return $item->created_at->month == $bulan && $item->created_at->year == $tahun;
                 }
-                
-                // Atau jika barang masuk di bulan/tahun tersebut dan stoknya habis
-                return $item->created_at->month == $bulan && $item->created_at->year == $tahun;
             });
 
         $totalBarang = $barangMasuk->count();
@@ -266,7 +331,9 @@ class LaporanController extends Controller
             'bulanList', 
             'tahunList',
             'totalBarang',
-            'totalNilai'
+            'totalNilai',
+            'tanggal_awal',
+            'tanggal_akhir'
         ));
     }
 
@@ -274,6 +341,8 @@ class LaporanController extends Controller
     {
         $bulan = $request->get('bulan', Carbon::now()->month);
         $tahun = $request->get('tahun', Carbon::now()->year);
+        $tanggal_awal = $request->get('tanggal_awal', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $tanggal_akhir = $request->get('tanggal_akhir', Carbon::now()->endOfMonth()->format('Y-m-d'));
         
         // Ambil semua barang masuk yang stoknya habis
         $barangMasuk = BarangMasuk::with(['barang', 'barang.supplier', 'satuan', 'user', 'barangKeluar'])
@@ -282,20 +351,39 @@ class LaporanController extends Controller
                 $totalKeluar = $item->barangKeluar->sum('jumlah');
                 return ($item->stok_awal - $totalKeluar) <= 0;
             })
-            ->filter(function($item) use ($bulan, $tahun) {
-                // Filter berdasarkan bulan dan tahun barang keluar terakhir
-                $barangKeluarTerakhir = $item->barangKeluar()
-                    ->whereMonth('created_at', $bulan)
-                    ->whereYear('created_at', $tahun)
-                    ->first();
-                
-                // Jika ada barang keluar di bulan/tahun tersebut yang menyebabkan stok habis
-                if ($barangKeluarTerakhir) {
-                    return true;
+            ->filter(function($item) use ($bulan, $tahun, $tanggal_awal, $tanggal_akhir) {
+                // Filter berdasarkan tanggal jika ada
+                if ($tanggal_awal && $tanggal_akhir) {
+                    $tanggalItem = Carbon::parse($item->created_at);
+                    $tanggalAwal = Carbon::parse($tanggal_awal);
+                    $tanggalAkhir = Carbon::parse($tanggal_akhir);
+                    
+                    // Cek apakah barang masuk dalam rentang tanggal
+                    if ($tanggalItem->between($tanggalAwal, $tanggalAkhir)) {
+                        return true;
+                    }
+                    
+                    // Cek apakah ada barang keluar dalam rentang tanggal yang menyebabkan stok habis
+                    $barangKeluarDalamRentang = $item->barangKeluar()
+                        ->whereBetween('created_at', [$tanggal_awal . ' 00:00:00', $tanggal_akhir . ' 23:59:59'])
+                        ->first();
+                    
+                    return $barangKeluarDalamRentang ? true : false;
+                } else {
+                    // Filter berdasarkan bulan dan tahun barang keluar terakhir
+                    $barangKeluarTerakhir = $item->barangKeluar()
+                        ->whereMonth('created_at', $bulan)
+                        ->whereYear('created_at', $tahun)
+                        ->first();
+                    
+                    // Jika ada barang keluar di bulan/tahun tersebut yang menyebabkan stok habis
+                    if ($barangKeluarTerakhir) {
+                        return true;
+                    }
+                    
+                    // Atau jika barang masuk di bulan/tahun tersebut dan stoknya habis
+                    return $item->created_at->month == $bulan && $item->created_at->year == $tahun;
                 }
-                
-                // Atau jika barang masuk di bulan/tahun tersebut dan stoknya habis
-                return $item->created_at->month == $bulan && $item->created_at->year == $tahun;
             });
 
         $totalBarang = $barangMasuk->count();
@@ -329,12 +417,17 @@ class LaporanController extends Controller
             'bulanList',
             'totalBarang',
             'totalNilai',
-            'pemilikToko'
+            'pemilikToko',
+            'tanggal_awal',
+            'tanggal_akhir'
         ));
     }
 
-    public function laporanMendekatiKadaluarsa()
+    public function laporanMendekatiKadaluarsa(Request $request)
     {
+        $tanggal_awal = $request->get('tanggal_awal', Carbon::now()->format('Y-m-d'));
+        $tanggal_akhir = $request->get('tanggal_akhir', Carbon::now()->addWeek()->format('Y-m-d'));
+        
         $hariIni = Carbon::now();
         $satuMingguKedepan = Carbon::now()->addWeek();
         
@@ -342,11 +435,20 @@ class LaporanController extends Controller
         $barangMasuk = BarangMasuk::with(['barang', 'barang.supplier', 'satuan', 'user', 'barangKeluar'])
             ->whereNotNull('tanggal_kadaluarsa')
             ->get()
-            ->filter(function($item) use ($hariIni, $satuMingguKedepan) {
+            ->filter(function($item) use ($hariIni, $satuMingguKedepan, $tanggal_awal, $tanggal_akhir) {
                 $tanggalKadaluarsa = Carbon::parse($item->tanggal_kadaluarsa);
                 
-                // Filter barang yang kadaluarsa dalam 1 minggu ke depan atau sudah kadaluarsa
-                return $tanggalKadaluarsa->lte($satuMingguKedepan);
+                // Filter berdasarkan tanggal jika ada
+                if ($tanggal_awal && $tanggal_akhir) {
+                    $tanggalAwal = Carbon::parse($tanggal_awal);
+                    $tanggalAkhir = Carbon::parse($tanggal_akhir);
+                    
+                    // Cek apakah tanggal kadaluarsa dalam rentang yang dipilih
+                    return $tanggalKadaluarsa->between($tanggalAwal, $tanggalAkhir);
+                } else {
+                    // Filter barang yang kadaluarsa dalam 1 minggu ke depan atau sudah kadaluarsa
+                    return $tanggalKadaluarsa->lte($satuMingguKedepan);
+                }
             })
             ->map(function($item) {
                 // Hitung sisa stok
@@ -372,12 +474,17 @@ class LaporanController extends Controller
         return view('pageadmin.laporan.laporan_mendekati_kadaluarsa', compact(
             'barangMasuk',
             'totalBarang',
-            'totalNilai'
+            'totalNilai',
+            'tanggal_awal',
+            'tanggal_akhir'
         ));
     }
 
-    public function printLaporanMendekatiKadaluarsa()
+    public function printLaporanMendekatiKadaluarsa(Request $request)
     {
+        $tanggal_awal = $request->get('tanggal_awal', Carbon::now()->format('Y-m-d'));
+        $tanggal_akhir = $request->get('tanggal_akhir', Carbon::now()->addWeek()->format('Y-m-d'));
+        
         $hariIni = Carbon::now();
         $satuMingguKedepan = Carbon::now()->addWeek();
         
@@ -385,11 +492,20 @@ class LaporanController extends Controller
         $barangMasuk = BarangMasuk::with(['barang', 'barang.supplier', 'satuan', 'user', 'barangKeluar'])
             ->whereNotNull('tanggal_kadaluarsa')
             ->get()
-            ->filter(function($item) use ($hariIni, $satuMingguKedepan) {
+            ->filter(function($item) use ($hariIni, $satuMingguKedepan, $tanggal_awal, $tanggal_akhir) {
                 $tanggalKadaluarsa = Carbon::parse($item->tanggal_kadaluarsa);
                 
-                // Filter barang yang kadaluarsa dalam 1 minggu ke depan atau sudah kadaluarsa
-                return $tanggalKadaluarsa->lte($satuMingguKedepan);
+                // Filter berdasarkan tanggal jika ada
+                if ($tanggal_awal && $tanggal_akhir) {
+                    $tanggalAwal = Carbon::parse($tanggal_awal);
+                    $tanggalAkhir = Carbon::parse($tanggal_akhir);
+                    
+                    // Cek apakah tanggal kadaluarsa dalam rentang yang dipilih
+                    return $tanggalKadaluarsa->between($tanggalAwal, $tanggalAkhir);
+                } else {
+                    // Filter barang yang kadaluarsa dalam 1 minggu ke depan atau sudah kadaluarsa
+                    return $tanggalKadaluarsa->lte($satuMingguKedepan);
+                }
             })
             ->map(function($item) {
                 // Hitung sisa stok
@@ -427,7 +543,9 @@ class LaporanController extends Controller
             'barangMasuk',
             'totalBarang',
             'totalNilai',
-            'pemilikToko'
+            'pemilikToko',
+            'tanggal_awal',
+            'tanggal_akhir'
         ));
     }
 }
