@@ -1,62 +1,115 @@
-    @extends('template-admin.layout')
+@extends('template-admin.layout')
 
-    @section('content')
-    <div class="page-wrapper">
-        <div class="page-content">
-            <!--breadcrumb-->
-            <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-                <div class="breadcrumb-title pe-3">Forms</div>
-                <div class="ps-3">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb mb-0 p-0">
-                            <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Transaksi Barang Keluar</li>
-                        </ol>
-                    </nav>
-                </div>
+@section('content')
+<div class="page-wrapper">
+    <div class="page-content">
+        <!--breadcrumb-->
+        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+            <div class="breadcrumb-title pe-3">Kasir</div>
+            <div class="ps-3">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0 p-0">
+                        <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Point of Sale (POS)</li>
+                    </ol>
+                </nav>
             </div>
-            <!--breadcrumb-->
-            <h6 class="mb-0 text-uppercase">Data Transaksi Barang Keluar</h6>
-            <hr/>
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <!-- Daftar Barang di Sebelah Kiri -->
-                        <div class="col-md-6">
-                            <h5>Daftar Barang Tersedia</h5>
-                            <div class="mb-3">
-                                <input type="text" class="form-control" id="searchBarang" placeholder="Cari nama barang...">
+        </div>
+        <!--breadcrumb-->
+        
+        <!-- Header Kasir -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm bg-gradient-primary text-white">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h3 class="mb-1"><i class="bx bx-store me-2"></i>Point of Sale System</h3>
+                                <p class="mb-0 opacity-75">Sistem kasir modern untuk transaksi barang keluar</p>
                             </div>
-                            <div class="row" id="daftarBarang" style="max-height: 400px; overflow-y: auto;">
-                                @foreach($barang_masuks as $barang)
-                                <div class="col-md-6 mb-3 barang-card">
-                                    <div class="card barang-item" data-id="{{ $barang->id }}" 
-                                        data-nama="{{ $barang->barang->nama_barang }}"
-                                        data-harga_jual="{{ $barang->harga_jual }}"
-                                        data-satuan="{{ $barang->satuan_id }}">
-                                        <div class="position-relative">
-                                            <img src="{{ asset('uploads/barang/'.$barang->barang->gambar) }}" 
-                                                class="card-img-top" alt="{{ $barang->barang->nama_barang }}"
-                                                style="height: 150px; object-fit: cover;">
-                                        </div>
-                                        <div class="card-body">
-                                            <h6 class="card-title">{{ $barang->barang->nama_barang }}</h6>
-                                            <p class="card-text">STOK : {{ $barang->stok_awal }} {{ $barang->satuan->nama_satuan }}</p>
-                                            <p class="card-text">HARGA : Rp {{ number_format($barang->harga_jual, 0, ',', '.') }} / {{ $barang->satuan->nama_satuan }}</p>
-                                            @if($barang->max_pembelian_to_diskon && $barang->diskon)
-                                                <div class="alert alert-info p-2 mb-0">
-                                                    <small>
-                                                        <i class="bx bx-gift"></i> 
-                                                        Diskon {{ $barang->diskon }}% untuk pembelian minimal {{ $barang->max_pembelian_to_diskon }} {{ $barang->satuan->nama_satuan }}
-                                                    </small>
-                                                </div>
-                                            @endif
-                                        </div>
+                            <div class="col-md-4 text-end">
+                                <div class="d-flex align-items-center justify-content-end">
+                                    <div class="me-3">
+                                        <small class="d-block opacity-75">Tanggal</small>
+                                        <strong id="currentDate"></strong>
+                                    </div>
+                                    <div>
+                                        <small class="d-block opacity-75">Waktu</small>
+                                        <strong id="currentTime"></strong>
                                     </div>
                                 </div>
-                                @endforeach
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Daftar Barang di Sebelah Kiri -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-0 pb-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="bx bx-package me-2 text-primary"></i>Daftar Produk</h5>
+                            <div class="position-relative" style="width: 300px;">
+                                <input type="text" class="form-control form-control-lg" id="searchBarang" 
+                                       placeholder="🔍 Cari produk...">
+                                <div class="position-absolute top-50 end-0 translate-middle-y me-3">
+                                    <i class="bx bx-search text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="row" id="daftarBarang" style="max-height: 500px; overflow-y: auto;">
+                            @foreach($barang_masuks as $barang)
+                            <div class="col-lg-4 col-md-6 mb-3 barang-card">
+                                <div class="card barang-item h-100 border-0 shadow-sm" data-id="{{ $barang->id }}" 
+                                    data-nama="{{ $barang->barang->nama_barang }}"
+                                    data-harga_jual="{{ $barang->harga_jual }}"
+                                    data-satuan="{{ $barang->satuan_id }}">
+                                    <div class="position-relative overflow-hidden">
+                                        <img src="{{ asset('uploads/barang/'.$barang->barang->gambar) }}" 
+                                            class="card-img-top" alt="{{ $barang->barang->nama_barang }}"
+                                            style="height: 180px; object-fit: cover; transition: transform 0.3s ease;">
+                                        <div class="position-absolute top-0 end-0 m-2">
+                                            <span class="badge bg-success rounded-pill">
+                                                <i class="bx bx-check-circle me-1"></i>Stok: {{ $barang->stok_awal }}
+                                            </span>
+                                        </div>
+                                        @if($barang->max_pembelian_to_diskon && $barang->diskon)
+                                            <div class="position-absolute top-0 start-0 m-2">
+                                                <span class="badge bg-warning rounded-pill">
+                                                    <i class="bx bx-gift me-1"></i>{{ $barang->diskon }}% OFF
+                                                </span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <h6 class="card-title mb-2 text-truncate" title="{{ $barang->barang->nama_barang }}">
+                                            {{ $barang->barang->nama_barang }}
+                                        </h6>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="text-muted small">{{ $barang->satuan->nama_satuan }}</span>
+                                            <span class="fw-bold text-primary">
+                                                Rp {{ number_format($barang->harga_jual, 0, ',', '.') }}
+                                            </span>
+                                        </div>
+                                        @if($barang->max_pembelian_to_diskon && $barang->diskon)
+                                            <div class="alert alert-info p-2 mb-0 small">
+                                                <i class="bx bx-info-circle me-1"></i>
+                                                Min. {{ $barang->max_pembelian_to_diskon }} {{ $barang->satuan->nama_satuan }} untuk diskon
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
 
                         <script>
                         document.getElementById('searchBarang').addEventListener('keyup', function() {
@@ -74,74 +127,141 @@
                         });
                         </script>
 
-                        <!-- Form di Sebelah Kanan -->
-                        <div class="col-md-6">
-                            <h5>Form Transaksi Barang Keluar</h5>
-                            <form action="{{ route('barang_keluar.store') }}" method="POST" id="formBarangKeluar">
-                                @csrf
-                                <input type="hidden" name="user_id" value="{{ Auth::id() }}">
+            <!-- Form Kasir di Sebelah Kanan -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-gradient-success text-white border-0">
+                        <h5 class="mb-0"><i class="bx bx-shopping-cart me-2"></i>Keranjang Belanja</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <form action="{{ route('barang_keluar.store') }}" method="POST" id="formBarangKeluar">
+                            @csrf
+                            <input type="hidden" name="user_id" value="{{ Auth::id() }}">
 
-                                <div class="mb-3">
-                                    <label class="form-label">Pelanggan</label>
-                                    <select class="form-control" id="pelanggan_id" name="pelanggan_id" required>
-                                        @foreach($pelanggans as $pelanggan)
-                                        <option value="">Pilih Pelanggan</option>
-                                        <option value="{{ $pelanggan->id }}">{{ $pelanggan->kode_pelanggan }} - {{ $pelanggan->nama_pelanggan }}</option>
+                            <!-- Pelanggan -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">
+                                    <i class="bx bx-user me-1"></i>Pelanggan
+                                </label>
+                                <select class="form-select form-select-lg" id="pelanggan_id" name="pelanggan_id" required>
+                                    @foreach($pelanggans as $pelanggan)
+                                    <option value="">👤 Pilih Pelanggan</option>
+                                    <option value="{{ $pelanggan->id }}">{{ $pelanggan->kode_pelanggan }} - {{ $pelanggan->nama_pelanggan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Produk Terpilih -->
+                            <div class="mb-4" id="selectedProduct" style="display: none;">
+                                <label class="form-label fw-bold">
+                                    <i class="bx bx-package me-1"></i>Produk Terpilih
+                                </label>
+                                <div class="card border-0 bg-light">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-shrink-0 me-3">
+                                                <img id="selectedProductImage" src="" alt="" class="rounded" style="width: 60px; height: 60px; object-fit: cover;">
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-1" id="selectedProductName">-</h6>
+                                                <small class="text-muted" id="selectedProductPrice">-</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="barang_masuk_id" name="barang_masuk_id">
+                            </div>
+
+                            <!-- Detail Transaksi -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-12">
+                                    <label class="form-label fw-bold" id="harga_jual_label">
+                                        <i class="bx bx-dollar me-1"></i>Harga Jual Per
+                                    </label>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-text bg-primary text-white">Rp</span>
+                                        <input type="number" class="form-control form-control-lg" id="harga_jual" name="harga_jual" min="1" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label fw-bold">
+                                        <i class="bx bx-hash me-1"></i>Jumlah
+                                    </label>
+                                    <div class="input-group input-group-lg">
+                                        <button class="btn btn-outline-secondary" type="button" id="decreaseQty">
+                                            <i class="bx bx-minus"></i>
+                                        </button>
+                                        <input type="number" class="form-control text-center" id="jumlah_beli" name="jumlah_beli" min="1" value="1">
+                                        <button class="btn btn-outline-secondary" type="button" id="increaseQty">
+                                            <i class="bx bx-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label fw-bold">
+                                        <i class="bx bx-ruler me-1"></i>Satuan
+                                    </label>
+                                    <select class="form-select form-select-lg" id="satuan_id" name="satuan_id">
+                                        @foreach($satuans as $satuan)
+                                            <option value="{{ $satuan->id }}" data-jenis="{{ $satuan->jenis }}" data-konversi="{{ $satuan->konversi_ke_dasar }}">
+                                                {{ $satuan->nama_satuan }} ({{ $satuan->jenis }})
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Nama Barang</label>
-                                    <input type="text" class="form-control bg-secondary text-white" id="nama_barang" readonly>
-                                    <input type="hidden" id="barang_masuk_id" name="barang_masuk_id">
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label" id="harga_jual_label">Harga Jual Per</label>
-                                            <input type="number" class="form-control bg-secondary text-white" id="harga_jual" name="harga_jual" min="1" readonly>
-                                        </div>
+                            </div>
+
+                            <!-- Ringkasan Pembayaran -->
+                            <div class="card border-0 bg-light mb-4">
+                                <div class="card-body p-3">
+                                    <h6 class="fw-bold mb-3">
+                                        <i class="bx bx-receipt me-1"></i>Ringkasan Pembayaran
+                                    </h6>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span>Subtotal:</span>
+                                        <span class="fw-bold" id="subtotal_display">Rp 0</span>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">Jumlah Beli</label>
-                                            <input type="number" class="form-control" id="jumlah_beli" name="jumlah_beli" min="1">
-                                        </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center mb-2" id="diskon_display" style="display: none;">
+                                        <span class="text-success">
+                                            <i class="bx bx-gift me-1"></i>Diskon:
+                                        </span>
+                                        <span class="fw-bold text-success" id="diskon_amount_display">-Rp 0</span>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">Satuan</label>
-                                            <select class="form-control" id="satuan_id" name="satuan_id">
-                                                @foreach($satuans as $satuan)
-                                                    <option value="{{ $satuan->id }}" data-jenis="{{ $satuan->jenis }}" data-konversi="{{ $satuan->konversi_ke_dasar }}">
-                                                        {{ $satuan->nama_satuan }} ({{ $satuan->jenis }})
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            
-                                        </div>
+                                    
+                                    <hr class="my-2">
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold fs-5">Total:</span>
+                                        <span class="fw-bold fs-4 text-primary" id="total_display">Rp 0</span>
                                     </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Total Harga</label>
-                                    <input type="text" class="form-control bg-secondary text-white" id="total_harga" name="total_harga" readonly>
-                                </div>
-                                <div class="mb-3" id="diskon_info" style="display: none;">
-                                    <label class="form-label">Diskon</label>
-                                    <input type="text" class="form-control bg-success text-white" id="diskon_amount" readonly>
-                                </div>
-                                <div class="mb-3" id="total_setelah_diskon_info" style="display: none;">
-                                    <label class="form-label">Total Setelah Diskon</label>
-                                    <input type="text" class="form-control bg-success text-white" id="total_setelah_diskon" readonly>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </form>
-                        </div>
+                            </div>
+
+                            <!-- Hidden inputs untuk backend -->
+                            <input type="hidden" id="total_harga" name="total_harga">
+                            <input type="hidden" id="diskon_amount" name="diskon_amount">
+                            <input type="hidden" id="total_setelah_diskon" name="total_setelah_diskon">
+
+                            <!-- Tombol Aksi -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="bx bx-check-circle me-2"></i>Proses Transaksi
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="clearForm">
+                                    <i class="bx bx-refresh me-2"></i>Reset Form
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
                     </div>
                 </div>
             </div>
 
-            <div class="card">
+            {{-- <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
                         <table id="example2" class="table table-striped table-bordered">
@@ -198,7 +318,7 @@
                         </table>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
     @endsection
@@ -248,6 +368,29 @@
             }
         }
 
+        // Update waktu real-time
+        function updateDateTime() {
+            const now = new Date();
+            const dateOptions = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            const timeOptions = { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            };
+            
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('id-ID', dateOptions);
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('id-ID', timeOptions);
+        }
+
+        // Update waktu setiap detik
+        setInterval(updateDateTime, 1000);
+        updateDateTime(); // Panggil sekali saat halaman dimuat
+
         document.addEventListener('DOMContentLoaded', function() {
             // Menangani klik pada card menggunakan event delegation
             document.addEventListener('click', function(e) {
@@ -257,23 +400,31 @@
                 // Hapus kelas selected dari semua card
                 document.querySelectorAll('.barang-item').forEach(c => c.classList.remove('selected'));
                 
-                // Tambahkan kelas selected ke card yang diklik
+                // Tambahkan kelas selected ke card yang diklik dengan animasi
                 card.classList.add('selected');
                 
                 const id = card.dataset.id;
                 const nama = card.dataset.nama;
                 const harga = card.dataset.harga_jual;
                 const satuan = card.dataset.satuan;
+                
+                // Ambil data barang lengkap
+                const barang = getBarangMasukById(id);
+                const satuanBarangMasuk = getSatuanById(barang.satuan_id);
+                
+                // Update tampilan produk terpilih
+                document.getElementById('selectedProduct').style.display = 'block';
+                document.getElementById('selectedProductImage').src = card.querySelector('img').src;
+                document.getElementById('selectedProductName').textContent = nama;
+                document.getElementById('selectedProductPrice').textContent = `Rp ${parseInt(harga).toLocaleString('id-ID')} / ${satuanBarangMasuk.nama_satuan}`;
+                
                 // Isi form dengan data barang yang dipilih
                 document.getElementById('barang_masuk_id').value = id;
-                document.getElementById('nama_barang').value = nama;
                 document.getElementById('harga_jual').value = harga;
                 document.getElementById('satuan_id').value = satuan;
                 document.getElementById('jumlah_beli').value = 1;
                 
-                // Ambil jenis satuan dari barang masuk
-                const barang = getBarangMasukById(id);
-                const satuanBarangMasuk = getSatuanById(barang.satuan_id);
+                // Filter satuan berdasarkan jenis
                 filterSatuanByJenis(satuanBarangMasuk.jenis);
                 // Set default satuan ke satuan barang masuk
                 document.getElementById('satuan_id').value = satuanBarangMasuk.id;
@@ -284,13 +435,51 @@
                 // Hitung total harga awal
                 hitungTotal();
                 
-                // Scroll ke form
-                document.getElementById('formBarangKeluar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Animasi scroll ke form
+                document.getElementById('formBarangKeluar').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
             });
             
+            // Tombol increase/decrease quantity
+            document.getElementById('increaseQty').addEventListener('click', function() {
+                const qtyInput = document.getElementById('jumlah_beli');
+                const currentQty = parseInt(qtyInput.value) || 0;
+                qtyInput.value = currentQty + 1;
+                hitungTotal();
+            });
+
+            document.getElementById('decreaseQty').addEventListener('click', function() {
+                const qtyInput = document.getElementById('jumlah_beli');
+                const currentQty = parseInt(qtyInput.value) || 0;
+                if (currentQty > 1) {
+                    qtyInput.value = currentQty - 1;
+                    hitungTotal();
+                }
+            });
+
             // Hitung total saat jumlah berubah
             document.getElementById('jumlah_beli').addEventListener('input', function() {
                 hitungTotal();
+            });
+
+            // Tombol reset form
+            document.getElementById('clearForm').addEventListener('click', function() {
+                // Reset form
+                document.getElementById('formBarangKeluar').reset();
+                document.getElementById('selectedProduct').style.display = 'none';
+                document.querySelectorAll('.barang-item').forEach(c => c.classList.remove('selected'));
+                
+                // Reset display
+                document.getElementById('subtotal_display').textContent = 'Rp 0';
+                document.getElementById('diskon_display').style.display = 'none';
+                document.getElementById('total_display').textContent = 'Rp 0';
+                
+                // Reset hidden inputs
+                document.getElementById('total_harga').value = '';
+                document.getElementById('diskon_amount').value = '';
+                document.getElementById('total_setelah_diskon').value = '';
             });
             
             function hitungTotal() {
@@ -298,9 +487,13 @@
                 const harga = parseFloat(document.getElementById('harga_jual').value) || 0;
                 const total = jumlah * harga;
                 
-                // Format total harga dengan pemisah ribuan
+                // Update display
+                document.getElementById('subtotal_display').textContent = 'Rp ' + total.toLocaleString('id-ID');
+                document.getElementById('total_display').textContent = 'Rp ' + total.toLocaleString('id-ID');
+                
+                // Format total harga dengan pemisah ribuan untuk backend
                 const formattedTotal = 'Rp ' + total.toLocaleString('id-ID');
-                document.getElementById('total_harga').value = formattedTotal;
+                document.getElementById('total_harga').value = total; // Kirim angka murni ke backend
                 
                 // Cek diskon
                 const barangMasukId = document.getElementById('barang_masuk_id').value;
@@ -316,14 +509,21 @@
                         const totalSetelahDiskon = total - diskonAmount;
                         
                         // Tampilkan informasi diskon
-                        document.getElementById('diskon_amount').value = 'Rp ' + diskonAmount.toLocaleString('id-ID');
-                        document.getElementById('total_setelah_diskon').value = 'Rp ' + totalSetelahDiskon.toLocaleString('id-ID');
-                        document.getElementById('diskon_info').style.display = 'block';
-                        document.getElementById('total_setelah_diskon_info').style.display = 'block';
+                        document.getElementById('diskon_display').style.display = 'flex';
+                        document.getElementById('diskon_amount_display').textContent = '-Rp ' + diskonAmount.toLocaleString('id-ID');
+                        document.getElementById('total_display').textContent = 'Rp ' + totalSetelahDiskon.toLocaleString('id-ID');
+                        
+                        // Set hidden inputs untuk backend
+                        document.getElementById('diskon_amount').value = diskonAmount;
+                        document.getElementById('total_setelah_diskon').value = totalSetelahDiskon;
                     } else {
                         // Sembunyikan informasi diskon
-                        document.getElementById('diskon_info').style.display = 'none';
-                        document.getElementById('total_setelah_diskon_info').style.display = 'none';
+                        document.getElementById('diskon_display').style.display = 'none';
+                        document.getElementById('total_display').textContent = 'Rp ' + total.toLocaleString('id-ID');
+                        
+                        // Reset hidden inputs
+                        document.getElementById('diskon_amount').value = '';
+                        document.getElementById('total_setelah_diskon').value = '';
                     }
                 }
             }
@@ -445,22 +645,53 @@
     @endsection
 
     <style>
+        /* Animasi dan efek visual untuk kasir */
         .barang-item {
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: 2px solid transparent;
             position: relative;
+            overflow: hidden;
+        }
+        
+        .barang-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .barang-item:hover::before {
+            left: 100%;
         }
         
         .barang-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
         }
         
         .barang-item.selected {
-            border: 3px solid #0d6efd;
-            background-color: #f8f9fa;
-            box-shadow: 0 0 10px rgba(13, 110, 253, 0.2);
+            border: 3px solid #28a745;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .barang-item.selected .card-img-top {
+            transform: scale(1.1);
+        }
+
+        /* Gradient backgrounds */
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .bg-gradient-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         }
 
         /* Custom scrollbar untuk daftar barang */
@@ -474,17 +705,142 @@
         }
 
         #daftarBarang::-webkit-scrollbar-thumb {
-            background: #888;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 10px;
         }
 
         #daftarBarang::-webkit-scrollbar-thumb:hover {
-            background: #555;
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
         }
 
         /* Untuk Firefox */
         #daftarBarang {
             scrollbar-width: thin;
-            scrollbar-color: #888 #f1f1f1;
+            scrollbar-color: #667eea #f1f1f1;
+        }
+
+        /* Animasi untuk form */
+        .form-control:focus, .form-select:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+            transform: scale(1.02);
+            transition: all 0.3s ease;
+        }
+
+        /* Animasi untuk tombol */
+        .btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Animasi untuk card */
+        .card {
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        /* Loading animation */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* Badge animations */
+        .badge {
+            transition: all 0.3s ease;
+        }
+
+        .badge:hover {
+            transform: scale(1.1);
+        }
+
+        /* Input group animations */
+        .input-group .btn {
+            transition: all 0.3s ease;
+        }
+
+        .input-group .btn:hover {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: white;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .barang-item:hover {
+                transform: translateY(-4px) scale(1.01);
+            }
+            
+            .btn:hover {
+                transform: translateY(-1px);
+            }
+        }
+
+        /* Custom animations untuk selected product */
+        #selectedProduct {
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Animasi untuk ringkasan pembayaran */
+        .card.bg-light {
+            transition: all 0.3s ease;
+        }
+
+        .card.bg-light:hover {
+            background-color: #f8f9fa !important;
+            transform: scale(1.02);
+        }
+
+        /* Pulse effect untuk total */
+        #total_display {
+            transition: all 0.3s ease;
+        }
+
+        #total_display.updated {
+            animation: pulse 0.6s ease-in-out;
         }
     </style>
