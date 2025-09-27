@@ -31,7 +31,6 @@ class BarangMasukController extends Controller
         try {
             $request->validate([
                 'barang_id' => 'required|exists:barangs,id',
-                'tanggal_kadaluarsa' => 'nullable|date',
                 'stok_awal' => 'required|numeric',
                 'satuan_id' => 'required|exists:satuans,id',
                 'harga_persatuan' => 'required|numeric',
@@ -47,12 +46,13 @@ class BarangMasukController extends Controller
             $barang_masuk = BarangMasuk::create([
                 'user_id' => Auth::user()->id,
                 'barang_id' => $request->barang_id,
-                'tanggal_kadaluarsa' => $request->tanggal_kadaluarsa,
                 'stok_awal' => $request->stok_awal,
                 'satuan_id' => $request->satuan_id,
                 'harga_persatuan' => $request->harga_persatuan,
                 'harga_modal' => $request->harga_modal,
                 'harga_jual' => $request->harga_jual,
+                'max_pembelian_to_diskon' => $request->max_pembelian_to_diskon,
+                'diskon' => $request->diskon,
             ]);
 
             Alert::toast('Barang Masuk berhasil ditambahkan!', 'success')->position('top-end');
@@ -85,12 +85,13 @@ class BarangMasukController extends Controller
         try {
             $request->validate([
                 'barang_id' => 'required|exists:barangs,id',
-                'tanggal_kadaluarsa' => 'nullable|date',
                 'stok_awal' => 'required|numeric',
                 'satuan_id' => 'required|exists:satuans,id',
                 'harga_persatuan' => 'required|numeric',
                 'harga_modal' => 'required|numeric',
                 'harga_jual' => 'required|numeric',
+                'max_pembelian_to_diskon' => 'nullable|numeric',
+                'diskon' => 'nullable|numeric',
                 ]);
         } catch (\Exception $e) {
             Alert::error('Error', $e->getMessage());
@@ -103,13 +104,14 @@ class BarangMasukController extends Controller
             // Update data dasar
             $barang_masuk->update([
                 'barang_id' => $request->barang_id,
-                'tanggal_kadaluarsa' => $request->tanggal_kadaluarsa,
                 'stok_awal' => $request->stok_awal,
                 'satuan_id' => $request->satuan_id,
                 'harga_persatuan' => $request->harga_persatuan,
                 'harga_modal' => $request->harga_modal,
                 'harga_jual' => $request->harga_jual,
-                ]);
+                'max_pembelian_to_diskon' => $request->max_pembelian_to_diskon,
+                'diskon' => $request->diskon,
+                    ]);
 
             // Handle upload gambar
             

@@ -29,14 +29,14 @@
                                 <th>Nama Barang</th>
                                 <th>Supplier</th>
                                 <th>Gambar</th>
-                                <th>Tanggal Kadaluarsa</th>
                                 <th>Stok Awal</th>
                                 <th>Harga Persatuan Dari Supplier</th>
                                 <th>Harga Modal</th>
                                 <th>Harga Jual</th>
                                 <th>Penginput</th>
+                                <th>Max Pembelian untuk Diskon</th>
+                                <th>Diskon dalam %</th>
                                 <th>Aksi</th>
-                              
                             </tr>
                         </thead>
                         <tbody>
@@ -46,12 +46,25 @@
                                 <td>{{ $barang_masuk->barang->nama_barang }}</td>
                                 <td>{{ $barang_masuk->barang->supplier->nama_supplier }}</td>
                                 <td><img src="{{ asset('uploads/barang/' . $barang_masuk->barang->gambar) }}" alt="Gambar" style="width: 100px; height: 100px;"></td>
-                                <td>{{ $barang_masuk->tanggal_kadaluarsa }}</td>
                                 <td>{{ $barang_masuk->stok_awal }}</td>
                                 <td>Rp. {{ number_format($barang_masuk->harga_persatuan, 0, ',', '.') }} / {{ $barang_masuk->satuan->nama_satuan ?? 'Tidak Ada Satuan' }}</td>
                                 <td>Rp. {{ number_format($barang_masuk->harga_modal, 0, ',', '.') }}</td>
                                 <td>Rp. {{ number_format($barang_masuk->harga_jual, 0, ',', '.') }}</td>
                                 <td>{{ $barang_masuk->user->nama }}</td>
+                                <td>
+                                    @if($barang_masuk->max_pembelian_to_diskon)
+                                        <span class="badge bg-info">{{ $barang_masuk->max_pembelian_to_diskon }} {{ $barang_masuk->satuan->nama_satuan ?? 'Tidak Ada Satuan' }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($barang_masuk->diskon)
+                                        <span class="badge bg-success">{{ $barang_masuk->diskon }}%</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
                                 <td>
                                     <a href="{{ route('barang_masuk.edit', $barang_masuk->id) }}" class="btn btn-sm btn-warning">Edit</a>
                                     <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#tambahStokModal{{ $barang_masuk->id }}">Tambah Stok</button>
@@ -70,12 +83,13 @@
                                 <th>Nama Barang</th>
                                 <th>Supplier</th>
                                 <th>Gambar</th>
-                                <th>Tanggal Kadaluarsa</th>
                                 <th>Stok Awal</th>
                                 <th>Harga Persatuan Dari Supplier</th>
                                 <th>Harga Modal</th>
                                 <th>Harga Jual</th>
                                 <th>Penginput</th>
+                                <th>Max Pembelian untuk Diskon</th>
+                                <th>Diskon dalam %</th>
                                 <th>Aksi</th>
                             </tr>
                         </tfoot>
@@ -168,7 +182,7 @@
 
         // Simpan satuan awal dan konversi awal
         let satuanAwalId{{ $barang_masuk->id }} = {{ $barang_masuk->satuan_id }};
-        let konversiAwal{{ $barang_masuk->id }} = parseFloat(satuanSelect{{ $barang_masuk->id }}.selectedOptions[0].getAttribute('data-konversi'));
+        let konversiAwal{{ $barang_masuk->id }} = parseFloat(satuanSelect{{ $barang_masuk->id }}.selectedOptions[0]?.getAttribute('data-konversi') || 1);
         let stokAwalDasar{{ $barang_masuk->id }} = parseFloat(stokAwal{{ $barang_masuk->id }}.value) * konversiAwal{{ $barang_masuk->id }};
 
         // Ambil harga persatuan dan harga modal lama
@@ -179,7 +193,7 @@
 
         function updateTotalStok{{ $barang_masuk->id }}() {
             const tambah = parseFloat(stokTambah{{ $barang_masuk->id }}.value) || 0;
-            const konversiBaru = parseFloat(satuanSelect{{ $barang_masuk->id }}.selectedOptions[0].getAttribute('data-konversi'));
+            const konversiBaru = parseFloat(satuanSelect{{ $barang_masuk->id }}.selectedOptions[0]?.getAttribute('data-konversi') || 1);
             const stokAwalBaru = stokAwalDasar{{ $barang_masuk->id }} / konversiBaru;
             const total = stokAwalBaru + tambah;
             totalStok{{ $barang_masuk->id }}.value = total;
@@ -196,8 +210,8 @@
 
         satuanSelect{{ $barang_masuk->id }}.addEventListener('change', function() {
             const selectedOption = this.selectedOptions[0];
-            const satuanBaru = selectedOption.textContent;
-            const konversiBaru = parseFloat(selectedOption.getAttribute('data-konversi'));
+            const satuanBaru = selectedOption?.textContent || '';
+            const konversiBaru = parseFloat(selectedOption?.getAttribute('data-konversi') || 1);
             // Update label satuan
             labelStokAwal{{ $barang_masuk->id }}.textContent = satuanBaru;
             labelStokTambah{{ $barang_masuk->id }}.textContent = satuanBaru;
@@ -212,10 +226,12 @@
         document.getElementById('tambahStokModal{{ $barang_masuk->id }}').addEventListener('show.bs.modal', function () {
             // Reset ke satuan awal
             satuanSelect{{ $barang_masuk->id }}.value = satuanAwalId{{ $barang_masuk->id }};
-            labelStokAwal{{ $barang_masuk->id }}.textContent = satuanSelect{{ $barang_masuk->id }}.selectedOptions[0].textContent;
-            labelStokTambah{{ $barang_masuk->id }}.textContent = satuanSelect{{ $barang_masuk->id }}.selectedOptions[0].textContent;
-            labelTotalStok{{ $barang_masuk->id }}.textContent = satuanSelect{{ $barang_masuk->id }}.selectedOptions[0].textContent;
-            const konversiBaru = parseFloat(satuanSelect{{ $barang_masuk->id }}.selectedOptions[0].getAttribute('data-konversi'));
+            const selectedOption = satuanSelect{{ $barang_masuk->id }}.selectedOptions[0];
+            const satuanText = selectedOption?.textContent || '';
+            labelStokAwal{{ $barang_masuk->id }}.textContent = satuanText;
+            labelStokTambah{{ $barang_masuk->id }}.textContent = satuanText;
+            labelTotalStok{{ $barang_masuk->id }}.textContent = satuanText;
+            const konversiBaru = parseFloat(selectedOption?.getAttribute('data-konversi') || 1);
             stokAwal{{ $barang_masuk->id }}.value = stokAwalDasar{{ $barang_masuk->id }} / konversiBaru;
             updateTotalStok{{ $barang_masuk->id }}();
         });

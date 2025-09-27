@@ -103,7 +103,7 @@
                                     <label for="role" class="form-label">Role</label>
                                     <select class="form-control" id="role" name="role" required>
                                         <option value="pemilik_toko" {{ $pemilik->role == 'pemilik_toko' ? 'selected' : '' }}>Pemilik Toko</option>
-                                        <option value="admin" {{ $pemilik->role == 'admin' ? 'selected' : '' }}>Admin</option>
+                                        <option value="kasir_toko" {{ $pemilik->role == 'kasir_toko' ? 'selected' : '' }}>Kasir Toko</option>
                                     </select>
                                 </div>
                                 <div class="col-12">

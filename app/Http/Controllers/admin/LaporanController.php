@@ -124,7 +124,7 @@ class LaporanController extends Controller
         $tanggal_awal = $request->get('tanggal_awal', Carbon::now()->startOfMonth()->format('Y-m-d'));
         $tanggal_akhir = $request->get('tanggal_akhir', Carbon::now()->endOfMonth()->format('Y-m-d'));
         
-        $query = BarangKeluar::with(['barang_masuk.barang', 'satuan', 'user', 'barang_masuk']);
+        $query = BarangKeluar::with(['barang_masuk.barang', 'satuan', 'user', 'barang_masuk', 'pelanggan']);
         
         // Filter berdasarkan tanggal jika ada
         if ($tanggal_awal && $tanggal_akhir) {
@@ -156,6 +156,7 @@ class LaporanController extends Controller
                 'harga_modal' => $jumlah_beli * $harga_persatuan,
                 'harga_persatuan' => $harga_persatuan,
                 'total_harga' => $items->sum('total_harga'),
+                'pelanggan' => $first->pelanggan,
             ];
         }
 
@@ -190,7 +191,7 @@ class LaporanController extends Controller
         $tanggal_awal = $request->get('tanggal_awal', Carbon::now()->startOfMonth()->format('Y-m-d'));
         $tanggal_akhir = $request->get('tanggal_akhir', Carbon::now()->endOfMonth()->format('Y-m-d'));
         
-        $query = BarangKeluar::with(['barang_masuk.barang', 'satuan', 'user', 'barang_masuk']);
+        $query = BarangKeluar::with(['barang_masuk.barang', 'satuan', 'user', 'barang_masuk', 'pelanggan']);
         
         // Filter berdasarkan tanggal jika ada
         if ($tanggal_awal && $tanggal_akhir) {
@@ -222,6 +223,7 @@ class LaporanController extends Controller
                 'harga_modal' => $jumlah_beli * $harga_persatuan,
                 'harga_persatuan' => $harga_persatuan,
                 'total_harga' => $items->sum('total_harga'),
+                'pelanggan' => $first->pelanggan,
             ];
         }
 
@@ -415,132 +417,6 @@ class LaporanController extends Controller
             'bulan', 
             'tahun', 
             'bulanList',
-            'totalBarang',
-            'totalNilai',
-            'pemilikToko',
-            'tanggal_awal',
-            'tanggal_akhir'
-        ));
-    }
-
-    public function laporanMendekatiKadaluarsa(Request $request)
-    {
-        $tanggal_awal = $request->get('tanggal_awal', Carbon::now()->format('Y-m-d'));
-        $tanggal_akhir = $request->get('tanggal_akhir', Carbon::now()->addWeek()->format('Y-m-d'));
-        
-        $hariIni = Carbon::now();
-        $satuMingguKedepan = Carbon::now()->addWeek();
-        
-        // Ambil semua barang masuk yang memiliki tanggal kadaluarsa
-        $barangMasuk = BarangMasuk::with(['barang', 'barang.supplier', 'satuan', 'user', 'barangKeluar'])
-            ->whereNotNull('tanggal_kadaluarsa')
-            ->get()
-            ->filter(function($item) use ($hariIni, $satuMingguKedepan, $tanggal_awal, $tanggal_akhir) {
-                $tanggalKadaluarsa = Carbon::parse($item->tanggal_kadaluarsa);
-                
-                // Filter berdasarkan tanggal jika ada
-                if ($tanggal_awal && $tanggal_akhir) {
-                    $tanggalAwal = Carbon::parse($tanggal_awal);
-                    $tanggalAkhir = Carbon::parse($tanggal_akhir);
-                    
-                    // Cek apakah tanggal kadaluarsa dalam rentang yang dipilih
-                    return $tanggalKadaluarsa->between($tanggalAwal, $tanggalAkhir);
-                } else {
-                    // Filter barang yang kadaluarsa dalam 1 minggu ke depan atau sudah kadaluarsa
-                    return $tanggalKadaluarsa->lte($satuMingguKedepan);
-                }
-            })
-            ->map(function($item) {
-                // Hitung sisa stok
-                $totalKeluar = $item->barangKeluar->sum('jumlah');
-                $sisaStok = max(0, $item->stok_awal - $totalKeluar);
-                
-                // Hitung sisa hari sebelum kadaluarsa
-                $tanggalKadaluarsa = Carbon::parse($item->tanggal_kadaluarsa);
-                $hariIni = Carbon::now();
-                $sisaHari = $hariIni->diffInDays($tanggalKadaluarsa, false);
-                
-                $item->sisa_stok = $sisaStok;
-                $item->sisa_hari = $sisaHari;
-                $item->total_nilai = $sisaStok * $item->harga_persatuan;
-                
-                return $item;
-            })
-            ->sortBy('sisa_hari'); // Urutkan berdasarkan sisa hari (yang paling dekat kadaluarsa di atas)
-
-        $totalBarang = $barangMasuk->count();
-        $totalNilai = $barangMasuk->sum('total_nilai');
-
-        return view('pageadmin.laporan.laporan_mendekati_kadaluarsa', compact(
-            'barangMasuk',
-            'totalBarang',
-            'totalNilai',
-            'tanggal_awal',
-            'tanggal_akhir'
-        ));
-    }
-
-    public function printLaporanMendekatiKadaluarsa(Request $request)
-    {
-        $tanggal_awal = $request->get('tanggal_awal', Carbon::now()->format('Y-m-d'));
-        $tanggal_akhir = $request->get('tanggal_akhir', Carbon::now()->addWeek()->format('Y-m-d'));
-        
-        $hariIni = Carbon::now();
-        $satuMingguKedepan = Carbon::now()->addWeek();
-        
-        // Ambil semua barang masuk yang memiliki tanggal kadaluarsa
-        $barangMasuk = BarangMasuk::with(['barang', 'barang.supplier', 'satuan', 'user', 'barangKeluar'])
-            ->whereNotNull('tanggal_kadaluarsa')
-            ->get()
-            ->filter(function($item) use ($hariIni, $satuMingguKedepan, $tanggal_awal, $tanggal_akhir) {
-                $tanggalKadaluarsa = Carbon::parse($item->tanggal_kadaluarsa);
-                
-                // Filter berdasarkan tanggal jika ada
-                if ($tanggal_awal && $tanggal_akhir) {
-                    $tanggalAwal = Carbon::parse($tanggal_awal);
-                    $tanggalAkhir = Carbon::parse($tanggal_akhir);
-                    
-                    // Cek apakah tanggal kadaluarsa dalam rentang yang dipilih
-                    return $tanggalKadaluarsa->between($tanggalAwal, $tanggalAkhir);
-                } else {
-                    // Filter barang yang kadaluarsa dalam 1 minggu ke depan atau sudah kadaluarsa
-                    return $tanggalKadaluarsa->lte($satuMingguKedepan);
-                }
-            })
-            ->map(function($item) {
-                // Hitung sisa stok
-                $totalKeluar = $item->barangKeluar->sum('jumlah');
-                $sisaStok = max(0, $item->stok_awal - $totalKeluar);
-                
-                // Hitung sisa hari sebelum kadaluarsa
-                $tanggalKadaluarsa = Carbon::parse($item->tanggal_kadaluarsa);
-                $hariIni = Carbon::now();
-                $sisaHari = $hariIni->diffInDays($tanggalKadaluarsa, false);
-                
-                $item->sisa_stok = $sisaStok;
-                $item->sisa_hari = $sisaHari;
-                $item->total_nilai = $sisaStok * $item->harga_persatuan;
-                
-                return $item;
-            })
-            ->sortBy('sisa_hari'); // Urutkan berdasarkan sisa hari (yang paling dekat kadaluarsa di atas)
-
-        $totalBarang = $barangMasuk->count();
-        $totalNilai = $barangMasuk->sum('total_nilai');
-
-        // Ambil data pemilik toko
-        $pemilikToko = User::where('role', 'pemilik_toko')->first();
-        
-        // Jika tidak ada pemilik toko, buat data default
-        if (!$pemilikToko) {
-            $pemilikToko = (object) [
-                'nama' => 'Pemilik Toko',
-                'no_wa' => '-'
-            ];
-        }
-
-        return view('pageadmin.laporan.print.print_laporan_mendekati_kadaluarsa', compact(
-            'barangMasuk',
             'totalBarang',
             'totalNilai',
             'pemilikToko',

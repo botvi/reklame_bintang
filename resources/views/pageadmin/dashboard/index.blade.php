@@ -3,75 +3,8 @@
 @section('content')
     <div class="page-wrapper">
         <div class="page-content">
-            <!-- Notifikasi Stok Menipis -->
-            @if($stok_menipis->count() > 0)
-            <div class="row">
-                <div class="col-12">
-                    <div class="card radius-10 border-start border-0 border-3 border-warning">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="widgets-icons-2 rounded-circle bg-gradient-warning text-white me-3">
-                                    <i class='bx bxs-error-alt'></i>
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 text-warning">Peringatan Stok Menipis</h6>
-                                    <p class="mb-0 font-13">Berikut adalah daftar barang dengan stok awal yang menipis (≤ 20):</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped table-hover">
-                                    <thead class="table-warning">
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Kode Barang</th>
-                                            <th>Nama Barang</th>
-                                            <th>Supplier</th>
-                                            <th>Stok Awal</th>
-                                            <th>Satuan</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($stok_menipis as $index => $barang)
-                                        <tr>
-                                            <td>{{ $index + 1 }}</td>
-                                            <td>{{ $barang->barang->kode_barang }}</td>
-                                            <td>{{ $barang->barang->nama_barang }}</td>
-                                            <td>{{ $barang->barang->supplier->nama_supplier }}</td>
-                                            <td>
-                                                <span class="badge bg-warning text-dark">{{ $barang->stok_awal }}</span>
-                                            </td>
-                                            <td>{{ $barang->satuan->nama_satuan }}</td>
-                                            <td>
-                                                @if($barang->stok_awal <= 10)
-                                                    <span class="badge bg-danger">KRITIS</span>
-                                                @elseif($barang->stok_awal <= 15)
-                                                    <span class="badge bg-warning text-dark">MENIPIS</span>
-                                                @else
-                                                    <span class="badge bg-info">PERHATIAN</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endif
-
-            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3">
                 <div class="col">
                     <div class="card radius-10 border-start border-0 border-3 border-info">
                         <div class="card-body">
@@ -120,22 +53,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="card radius-10 border-start border-0 border-3 border-warning">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div>
-                                    <p class="mb-0 text-secondary">Stok Menipis</p>
-                                    <h4 class="my-1 text-warning">{{ $stok_menipis->count() }}</h4>
-                                    <p class="mb-0 font-13">Barang dengan stok ≤ 20</p>
-                                </div>
-                                <div class="widgets-icons-2 rounded-circle bg-gradient-warning text-white ms-auto"><i
-                                        class='bx bxs-error-alt'></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+               
             </div><!--end row-->
 
             <div class="row row-cols-1 row-cols-md-3 mt-3">
@@ -183,48 +101,7 @@
                 </div>
             </div>
         </div>
-        <!-- Tabel Rekap Barang Keluar -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">Rekap Barang Keluar (Berdasarkan Barang yang Sudah Keluar)</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
-                                <thead class="table-primary">
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Nama Barang</th>
-                                        <th>Total Modal</th>
-                                        <th>Total Penjualan</th>
-                                        <th>Keuntungan</th>
-                                        <th>Jumlah Barang Keluar</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($rekap_barang as $i => $row)
-                                    <tr>
-                                        <td>{{ $i+1 }}</td>
-                                        <td>{{ $row['nama_barang'] }}</td>
-                                        <td>Rp {{ number_format($row['total_harga_modal'], 0, ',', '.') }}</td>
-                                        <td>Rp {{ number_format($row['total_harga_jual'], 0, ',', '.') }}</td>
-                                        <td>Rp {{ number_format($row['keuntungan'], 0, ',', '.') }}</td>
-                                        <td>{{ $row['total_keluar'] }}</td>
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="7" class="text-center">Tidak ada data barang keluar.</td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      
     </div>
 @endsection
 

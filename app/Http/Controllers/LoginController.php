@@ -22,57 +22,7 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        $hariIni = Carbon::now();
-        $satuMingguKedepan = Carbon::now()->addWeek();
-        
-        // Ambil semua barang masuk yang memiliki tanggal kadaluarsa
-        $barangMasuk = BarangMasuk::with(['supplier', 'satuan', 'user', 'barangKeluar'])
-            ->whereNotNull('tanggal_kadaluarsa')
-            ->get()
-            ->filter(function($item) use ($hariIni, $satuMingguKedepan) {
-                $tanggalKadaluarsa = Carbon::parse($item->tanggal_kadaluarsa);
-                
-                // Filter barang yang kadaluarsa dalam 1 minggu ke depan atau sudah kadaluarsa
-                return $tanggalKadaluarsa->lte($satuMingguKedepan);
-            })
-            ->map(function($item) {
-                // Hitung sisa stok
-                $totalKeluar = $item->barangKeluar->sum('jumlah');
-                $sisaStok = max(0, $item->stok_awal - $totalKeluar);
-                
-                // Hitung sisa hari sebelum kadaluarsa
-                $tanggalKadaluarsa = Carbon::parse($item->tanggal_kadaluarsa);
-                $hariIni = Carbon::now();
-                $sisaHari = $hariIni->diffInDays($tanggalKadaluarsa, false);
-                
-                $item->sisa_stok = $sisaStok;
-                $item->sisa_hari = $sisaHari;
-                $item->total_nilai = $sisaStok * $item->harga_persatuan;
-                
-                return $item;
-            })
-            ->sortBy('sisa_hari'); // Urutkan berdasarkan sisa hari (yang paling dekat kadaluarsa di atas)
-
-        $totalBarang = $barangMasuk->count();
-        $totalNilai = $barangMasuk->sum('total_nilai');
-
-        // Ambil data pemilik toko
-        $pemilikToko = User::where('role', 'pemilik_toko')->first();
-        
-        // Jika tidak ada pemilik toko, buat data default
-        if (!$pemilikToko) {
-            $pemilikToko = (object) [
-                'nama' => 'Pemilik Toko',
-                'no_wa' => '-'
-            ];
-        }
-
-        // Tampilkan alert jika ada barang yang mendekati kadaluarsa
-        if ($totalBarang > 0) {
-            Alert::warning('Peringatan Kadaluarsa', "Ada {$totalBarang} barang yang mendekati atau sudah kadaluarsa dengan total nilai Rp " . number_format($totalNilai, 0, ',', '.'));
-        }
-
-        return view('auth.login', compact('totalBarang', 'totalNilai', 'barangMasuk', 'pemilikToko'));
+        return view('auth.login');
     }
 
     /**
@@ -98,6 +48,9 @@ class LoginController extends Controller
                 return redirect()->route('dashboard');
             } elseif ($user->role == 'pemilik_toko') {
                 Alert::success('Login Successful', 'Welcome back, Pemilik Toko!');
+                return redirect()->route('dashboard');
+            } elseif ($user->role == 'kasir_toko') {
+                Alert::success('Login Successful', 'Welcome back, Kasir Toko!');
                 return redirect()->route('dashboard');
             } else {
                 Auth::logout();

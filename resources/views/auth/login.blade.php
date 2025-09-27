@@ -20,7 +20,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link href="{{ asset('admin') }}/assets/css/app.css" rel="stylesheet">
     <link href="{{ asset('admin') }}/assets/css/icons.css" rel="stylesheet">
-    <title>Login - Nadia Bangunan</title>
+    <title>Login - Reklame Bintang</title>
     <style>
         .section-authentication-signin {
             min-height: 100vh;
@@ -105,76 +105,12 @@
                             <div class="card-body">
                                 <div class="border p-4 rounded">
                                     <div class="text-center">
-                                        <img src="{{ asset('env') }}/logo_text.png" width="300" alt="Logo Nadia Bangunan"
+                                        <img src="{{ asset('env') }}/logo_text.png" width="300" alt="Logo Reklame Bintang"
                                             class="img-fluid">
                                     </div>
 
                                     <!-- Informasi Kadaluarsa -->
-                                    @if($totalBarang > 0)
-                                    <div class="info-card">
-                                        <h5><i class="bx bx-warning"></i> Peringatan Kadaluarsa</h5>
-                                        <div class="number">{{ $totalBarang }}</div>
-                                        <small>Barang mendekati kadaluarsa</small>
-                                        <div class="mt-2">
-                                            <strong>Total Nilai: Rp {{ number_format($totalNilai, 0, ',', '.') }}</strong>
-                                        </div>
-                                    </div>
-
-                                    <!-- Detail Barang Kadaluarsa -->
-                                    {{-- <div class="card mb-3">
-                                        <div class="card-header bg-warning text-dark">
-                                            <h6 class="mb-0"><i class="bx bx-list-ul"></i> Detail Barang Kadaluarsa</h6>
-                                        </div>
-                                        <div class="card-body p-0">
-                                            <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
-                                                <table class="table table-sm table-hover mb-0">
-                                                    <thead class="table-light">
-                                                        <tr>
-                                                            <th>Nama Barang</th>
-                                                            <th>Sisa Stok</th>
-                                                            <th>Sisa Hari</th>
-                                                            <th>Nilai</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach($barangMasuk->take(5) as $barang)
-                                                        <tr class="{{ $barang->sisa_hari < 0 ? 'table-danger' : ($barang->sisa_hari <= 3 ? 'table-warning' : 'table-info') }}">
-                                                            <td>
-                                                                <small>{{ $barang->nama_barang }}</small>
-                                                                <br>
-                                                                <span class="badge bg-secondary">{{ $barang->supplier->nama_supplier ?? '-' }}</span>
-                                                            </td>
-                                                            <td>
-                                                                <span class="badge {{ $barang->sisa_stok > 0 ? 'bg-success' : 'bg-danger' }}">
-                                                                    {{ $barang->sisa_stok }}
-                                                                </span>
-                                                            </td>
-                                                            <td>
-                                                                @if($barang->sisa_hari < 0)
-                                                                    <span class="badge bg-danger">Kadaluarsa</span>
-                                                                @elseif($barang->sisa_hari <= 3)
-                                                                    <span class="badge bg-warning">{{ $barang->sisa_hari }} hari</span>
-                                                                @else
-                                                                    <span class="badge bg-info">{{ $barang->sisa_hari }} hari</span>
-                                                                @endif
-                                                            </td>
-                                                            <td>
-                                                                <small>Rp {{ number_format($barang->total_nilai, 0, ',', '.') }}</small>
-                                                            </td>
-                                                        </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            @if($barangMasuk->count() > 5)
-                                            <div class="card-footer text-center">
-                                                <small class="text-muted">Menampilkan 5 dari {{ $barangMasuk->count() }} barang</small>
-                                            </div>
-                                            @endif
-                                        </div>
-                                    </div> --}}
-                                    @endif
-
+                                  
                                     <div class="login-separater text-center mb-4">
                                         <span>MASUK MENGGUNAKAN USERNAME DAN PASSWORD</span>
                                         <hr />
@@ -213,15 +149,7 @@
 
                                     </div>
 
-                                    <!-- Informasi Kontak -->
-                                    @if(isset($pemilikToko) && $pemilikToko->no_wa != '-')
-                                    <div class="text-center mt-3">
-                                        <hr>
-                                        <small class="text-muted">
-                                            <i class="bx bx-phone"></i> Kontak: {{ $pemilikToko->nama }} - {{ $pemilikToko->no_wa }}
-                                        </small>
-                                    </div>
-                                    @endif
+                    
                                 </div>
                             </div>
                         </div>

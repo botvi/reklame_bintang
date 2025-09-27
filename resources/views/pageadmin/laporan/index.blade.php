@@ -24,10 +24,6 @@
                                         <i class="bx bx-x-circle me-2"></i>
                                         Laporan Stok Habis
                                     </a>
-                                    <a href="{{ route('laporan.mendekati_kadaluarsa') }}" class="btn btn-outline-info btn-lg">
-                                        <i class="bx bx-calendar-x me-2"></i>
-                                        Laporan Mendekati Kadaluarsa
-                                    </a>
                                 </div>
                             </div>
                         </div>

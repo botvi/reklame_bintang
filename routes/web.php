@@ -14,6 +14,7 @@ use App\Http\Controllers\admin\{
     ProfilAdminController,
     SatuanController,
     SupplierController,
+    PelangganController,
     LaporanController,
     MasterAkunPemilikController,    
     DataBarangKeluarController,
@@ -50,10 +51,11 @@ Route::get('/', [LoginController::class, 'showLoginForm'])->name('formlogin');
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::group(['middleware' => ['role:admin']], function () {
+Route::group(['middleware' => ['role:admin,kasir_toko']], function () {
     Route::get('/delete-satuan', [SatuanController::class, 'deletealldata'])->name('satuan.deletealldata');
     Route::resource('satuan', SatuanController::class);
     Route::resource('supplier', SupplierController::class);
+    Route::resource('pelanggan', PelangganController::class);
     Route::resource('barang', BarangController::class);
     Route::resource('barang_masuk', BarangMasukController::class);
     Route::post('/barang_masuk/{id}/tambah-stok', [BarangMasukController::class, 'tambahstok'])->name('barang_masuk.tambahstok');
@@ -61,7 +63,7 @@ Route::group(['middleware' => ['role:admin']], function () {
     Route::resource('master_akun_pemilik', MasterAkunPemilikController::class);
 });
 
-Route::group(['middleware' => ['role:admin,pemilik_toko']], function () {
+Route::group(['middleware' => ['role:admin,pemilik_toko,kasir_toko']], function () {
     Route::get('/profil-admin', [ProfilAdminController::class, 'index'])->name('admin.profil_admin');
     Route::put('/profil-admin', [ProfilAdminController::class, 'update'])->name('admin.update_profil_admin');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

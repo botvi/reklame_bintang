@@ -130,7 +130,6 @@
                                         <th>Harga Persatuan Dari Supplier</th>
                                         <th>Harga Modal</th>
                                         <th>Harga Jual</th>
-                                        <th>Tanggal Kadaluarsa</th>
                                         <th>Penginput</th>
                                     </tr>
                                 </thead>
@@ -147,15 +146,14 @@
                                             <td>Rp {{ number_format($item->harga_persatuan, 0, ',', '.') }}</td>
                                             <td>Rp {{ number_format($item->harga_modal, 0, ',', '.') }}</td>
                                             <td>Rp {{ number_format($item->harga_jual, 0, ',', '.') }}</td>
-                                            <td>{{ Carbon\Carbon::parse($item->tanggal_kadaluarsa)->format('d/m/Y') }}</td>
                                             <td>{{ $item->user->nama }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                                 <tfoot class="table-dark">
                                     <tr>
-                                        <th colspan="11" class="text-end">Total Nilai:</th>
-                                        <th>Rp {{ number_format($totalNilai, 0, ',', '.') }}</th>
+                                        <th colspan="9" class="text-end">Total Nilai:</th>
+                                        <th colspan="2">Rp {{ number_format($totalNilai, 0, ',', '.') }}</th>
                                     </tr>
                                 </tfoot>
                             </table>

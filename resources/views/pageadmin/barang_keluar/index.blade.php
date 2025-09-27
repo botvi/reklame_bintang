@@ -42,6 +42,15 @@
                                         <div class="card-body">
                                             <h6 class="card-title">{{ $barang->barang->nama_barang }}</h6>
                                             <p class="card-text">STOK : {{ $barang->stok_awal }} {{ $barang->satuan->nama_satuan }}</p>
+                                            <p class="card-text">HARGA : Rp {{ number_format($barang->harga_jual, 0, ',', '.') }} / {{ $barang->satuan->nama_satuan }}</p>
+                                            @if($barang->max_pembelian_to_diskon && $barang->diskon)
+                                                <div class="alert alert-info p-2 mb-0">
+                                                    <small>
+                                                        <i class="bx bx-gift"></i> 
+                                                        Diskon {{ $barang->diskon }}% untuk pembelian minimal {{ $barang->max_pembelian_to_diskon }} {{ $barang->satuan->nama_satuan }}
+                                                    </small>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -72,6 +81,15 @@
                                 @csrf
                                 <input type="hidden" name="user_id" value="{{ Auth::id() }}">
 
+                                <div class="mb-3">
+                                    <label class="form-label">Pelanggan</label>
+                                    <select class="form-control" id="pelanggan_id" name="pelanggan_id" required>
+                                        @foreach($pelanggans as $pelanggan)
+                                        <option value="">Pilih Pelanggan</option>
+                                        <option value="{{ $pelanggan->id }}">{{ $pelanggan->kode_pelanggan }} - {{ $pelanggan->nama_pelanggan }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <div class="mb-3">
                                     <label class="form-label">Nama Barang</label>
                                     <input type="text" class="form-control bg-secondary text-white" id="nama_barang" readonly>
@@ -108,6 +126,14 @@
                                     <label class="form-label">Total Harga</label>
                                     <input type="text" class="form-control bg-secondary text-white" id="total_harga" name="total_harga" readonly>
                                 </div>
+                                <div class="mb-3" id="diskon_info" style="display: none;">
+                                    <label class="form-label">Diskon</label>
+                                    <input type="text" class="form-control bg-success text-white" id="diskon_amount" readonly>
+                                </div>
+                                <div class="mb-3" id="total_setelah_diskon_info" style="display: none;">
+                                    <label class="form-label">Total Setelah Diskon</label>
+                                    <input type="text" class="form-control bg-success text-white" id="total_setelah_diskon" readonly>
+                                </div>
                                 <button type="submit" class="btn btn-primary">Simpan</button>
                             </form>
                         </div>
@@ -121,30 +147,51 @@
                         <table id="example2" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
+                                    <th>Pelanggan</th>
                                     <th>Nama Barang</th>
                                     <th>Jumlah Beli</th>
                                     <th>Harga Jual Persatuan</th>
                                     <th>Total Harga</th>
+                                    <th>Diskon</th>
+                                    <th>Total Setelah Diskon</th>
                                     <th>Penginput</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($barang_keluars as $index => $barang_keluar)
                                 <tr>
+                                    <td>{{ $barang_keluar->pelanggan->kode_pelanggan }} - {{ $barang_keluar->pelanggan->nama_pelanggan }}</td>
                                     <td>{{ $barang_keluar->barang_masuk->barang->nama_barang }}</td>
                                     <td>{{ $barang_keluar->jumlah_beli }}</td>
                                     <td>Rp {{ number_format($barang_keluar->harga_jual, 0, ',', '.') }} / {{ $barang_keluar->satuan->nama_satuan ?? 'Tidak Ada Satuan' }}</td>
                                     <td>Rp {{ number_format($barang_keluar->total_harga, 0, ',', '.') }}</td>
+                                    <td>
+                                        @if($barang_keluar->diskon_terpakai > 0)
+                                            <span class="badge bg-success">Rp. {{ number_format($barang_keluar->diskon_terpakai, 0, ',', '.') }}</span>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($barang_keluar->diskon_terpakai > 0)
+                                            <strong class="text-success">Rp. {{ number_format($barang_keluar->total_harga_setelah_diskon, 0, ',', '.') }}</strong>
+                                        @else
+                                            Rp. {{ number_format($barang_keluar->total_harga, 0, ',', '.') }}
+                                        @endif
+                                    </td>
                                     <td>{{ $barang_keluar->user->nama }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
                             <tfoot>
                                 <tr>
+                                    <th>Pelanggan</th>
                                     <th>Nama Barang</th>
                                     <th>Jumlah Beli</th>
                                     <th>Harga Jual Persatuan</th>
                                     <th>Total Harga</th>
+                                    <th>Diskon</th>
+                                    <th>Total Setelah Diskon</th>
                                     <th>Penginput</th>
                                 </tr>
                             </tfoot>
@@ -254,6 +301,31 @@
                 // Format total harga dengan pemisah ribuan
                 const formattedTotal = 'Rp ' + total.toLocaleString('id-ID');
                 document.getElementById('total_harga').value = formattedTotal;
+                
+                // Cek diskon
+                const barangMasukId = document.getElementById('barang_masuk_id').value;
+                const satuanKeluarId = parseInt(document.getElementById('satuan_id').value);
+                if (barangMasukId) {
+                    const barang = getBarangMasukById(barangMasukId);
+                    // Diskon hanya berlaku jika satuan_id sama dengan satuan barang masuk
+                    if (barang && barang.max_pembelian_to_diskon && barang.diskon && 
+                        jumlah >= barang.max_pembelian_to_diskon && 
+                        satuanKeluarId === barang.satuan_id) {
+                        // Hitung diskon
+                        const diskonAmount = (total * barang.diskon) / 100;
+                        const totalSetelahDiskon = total - diskonAmount;
+                        
+                        // Tampilkan informasi diskon
+                        document.getElementById('diskon_amount').value = 'Rp ' + diskonAmount.toLocaleString('id-ID');
+                        document.getElementById('total_setelah_diskon').value = 'Rp ' + totalSetelahDiskon.toLocaleString('id-ID');
+                        document.getElementById('diskon_info').style.display = 'block';
+                        document.getElementById('total_setelah_diskon_info').style.display = 'block';
+                    } else {
+                        // Sembunyikan informasi diskon
+                        document.getElementById('diskon_info').style.display = 'none';
+                        document.getElementById('total_setelah_diskon_info').style.display = 'none';
+                    }
+                }
             }
             
             // Submit form

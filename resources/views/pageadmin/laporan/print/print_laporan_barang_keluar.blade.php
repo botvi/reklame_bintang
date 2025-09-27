@@ -130,9 +130,11 @@
                     @else
                         {{ strtoupper($bulanList[$bulan] ?? '') }} {{ $tahun ?? '' }}
                     @endif
-                    NADYA BANGUNAN</h3>
-                <h4>Telp : {{ $pemilikToko->no_wa ?? '-' }}</h4>
-                <h4>Aur Duri, Kecamatan Kuantan Mudik</h4>
+                </h3>
+                <br>
+                <h3 class="fw-bold">BINTANG REKLAME</h3>
+                <h4>Telp : 0853-7456-9178</h4>
+                <h4>Jl. Perintis Kemerdekaan, Simpang Tiga, Kec. Kuantan Tengah, Kabupaten Kuantan Singingi, Riau 29516</h4>
                 <h4>
                     @if($tanggal_awal && $tanggal_akhir)
                         Periode : {{ \Carbon\Carbon::parse($tanggal_awal)->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse($tanggal_akhir)->format('d/m/Y') }}
@@ -148,7 +150,8 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>No</th>
+                            <th>No</th> 
+                            <th>Pelanggan</th>
                             <th>Kode Barang</th>
                             <th>Nama Barang</th>
                             <th>Jumlah Beli</th>
@@ -162,6 +165,7 @@
                         @foreach ($result as $key => $item)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
+                                <td>{{ $item['pelanggan'] ? $item['pelanggan']->kode_pelanggan . ' - ' . $item['pelanggan']->nama_pelanggan : '-' }}</td>
                                 <td>{{ $item['kode_barang'] }}</td>
                                 <td>{{ $item['nama_barang'] }}</td>
                                 <td>{{ number_format($item['jumlah_beli']) }}</td>
@@ -172,7 +176,7 @@
                             </tr>
                         @endforeach
                             <tr class="very-bold">
-                                <td colspan="7" style="text-align: right;">Total Pendapatan
+                                <td colspan="8" style="text-align: right;">Total Pendapatan
                                     @if($tanggal_awal && $tanggal_akhir)
                                         {{ \Carbon\Carbon::parse($tanggal_awal)->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse($tanggal_akhir)->format('d/m/Y') }}:
                                     @else
@@ -203,7 +207,7 @@
             {{-- <img src="{{ asset('env/ttd.png') }}" alt="Tanda Tangan" style="width: 150px; height: auto; margin-bottom: -30px; margin-top: -50px;"> --}}
             <br><br>
             <p style="text-decoration: underline;">{{ $pemilikToko->nama ?? '-' }}</p>
-            <p>Pemilik Nadya Bangunan</p>
+            <p>PIMPINAN</p>
         </div>
     </div>
     <script>

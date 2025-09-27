@@ -8,9 +8,9 @@ File: app.css
 
 body {
 	font-size: 14px;
-	color: #4c5258;
+	color: #000000;
 	letter-spacing: .5px;
-	background: #f2f2f2 url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhhc0QfA2HxsJqBdH2L1SdSZQHOjsrYMJsDBqvweDkBDrAvZoiC1R4-wzM1sFI5OJXzwQ&usqp=CAU') repeat;
+	background:  #ffffff;
 	overflow-x: hidden;
 	font-family: Roboto, sans-serif
 }
@@ -29,10 +29,10 @@ a {
 	height: 100%;
 	position: fixed;
 	top: 0;
-	color: #fff;
+	color: #000000;
 	bottom: 0;
 	left: 0;
-	background: #82b5e5;
+	background: #ffffff;
 	border-right: 0 solid #82b5e5;
 	z-index: 11;
 	box-shadow: 0 2px 6px 0 rgb(218 218 253 / 65%), 0 2px 6px 0 rgb(206 206 238 / 54%)!important;
@@ -49,7 +49,7 @@ a {
 	bottom: 0;
 	padding: 0 15px;
 	z-index: 5;
-	background: #82b5e5;
+	background: #ffffff;
 	background-clip: padding-box;
 	border-bottom: 1px solid #82b5e5
 }
@@ -78,7 +78,7 @@ a {
 	left: 250px;
 	right: 0;
 	height: 60px;
-	background: #82b5e5;
+	background: #ffffff;
 	border-bottom: 1px solid rgb(228 228 228 / 0%);
 	z-index: 10;
 	-webkit-box-shadow: 0 2px 6px 0 rgb(218 218 253 / 65%), 0 0px 6px 0 rgb(206 206 238 / 54%);
@@ -112,7 +112,7 @@ a {
 	text-align: center;
 	padding: 7px;
 	font-size: 14px;
-	border-top: 1px solid #82b5e5;
+	border-top: 1px solid #ffffff;
 	z-index: 3
 }
 
@@ -178,7 +178,7 @@ a {
 	justify-content: left;
 	padding: 8px 15px;
 	font-size: 15px;
-	color: #5f5f5f;
+	color: #000000;
 	outline-width: 0;
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -230,7 +230,7 @@ a {
 
 .menu-label {
 	padding: 20px 15px 5px 5px;
-	color: #b0afaf;
+	color: #000000;
 	text-transform: uppercase;
 	font-size: 12px;
 	letter-spacing: .5px
@@ -344,19 +344,19 @@ a {
 	border-radius: 10px;
 	bottom: 20px;
 	right: 12px;
-	background-color: #008cff;
+	background-color: #000000;
 	z-index: 5
 }
 
 .back-to-top:hover {
 	color: #fff;
-	background-color: #000;
+	background-color: #000000;
 	transition: all .5s
 }
 
 .breadcrumb-title {
 	font-size: 20px;
-	border-right: 1.5px solid #aaa4a4
+	border-right: 1.5px solid #000000
 }
 
 .page-breadcrumb .breadcrumb li.breadcrumb-item {
@@ -1777,7 +1777,8 @@ a {
 }
 
 .bg-login {
-	background: #82b5e5 url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhhc0QfA2HxsJqBdH2L1SdSZQHOjsrYMJsDBqvweDkBDrAvZoiC1R4-wzM1sFI5OJXzwQ&usqp=CAU') repeat;
+	background: #178dc1
+;
 
 }
 

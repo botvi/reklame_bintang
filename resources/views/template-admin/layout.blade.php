@@ -29,7 +29,7 @@
 	<link rel="stylesheet" href="{{ asset('admin') }}/assets/css/semi-dark.css"/>
 	<link rel="stylesheet" href="{{ asset('admin') }}/assets/css/header-colors.css"/>
     @yield('style')
-	<title>Dashboard - Nadia Bangunan</title>
+	<title>Dashboard - Reklame Bintang</title>
 </head>
 
 <body>
@@ -39,7 +39,7 @@
         <div class="sidebar-wrapper" data-simplebar="true">
 			<div class="sidebar-header">
 				<div>
-					<img src="{{ asset('env') }}/logo_text.png" class="logo-text" alt="logo icon" style="width: 150px; margin-left: 10px; filter: brightness(0) invert(1);">
+					<img src="{{ asset('env') }}/logo_text.png" class="logo-text" alt="logo icon" style="width: 200px; margin-left: 10px;">
 					<img src="{{ asset('env') }}/logo.png" class="logo-icon" alt="logo icon" style="width: 40px; display: none;">
 				</div>
 				<div class="toggle-icon ms-auto"><i class='bx bx-arrow-to-left'></i>
@@ -344,7 +344,7 @@
 							@if(Auth::user()->profil)
 								<img src="{{ asset('profil/'.Auth::user()->profil) }}" class="user-img" alt="user avatar">
 							@else
-								<img src="https://cdn-icons-png.flaticon.com/512/9187/9187604.png" class="user-img" alt="user avatar">
+								<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnpymVxEFcjFxVIye-qaeAsQI_YvmYcu02eyT9fVK9RfdzziJ_0_UVwn6KrKrm0RvQ9nc&usqp=CAU" class="user-img" alt="user avatar">
 							@endif
 						
 							<div class="user-info ps-3">
@@ -383,7 +383,7 @@
             $year = date('Y');
             ?>
 
-            <p class="mb-0">Copyright © <?php echo $year; ?> Nadia Bangunan.</p>
+            <p class="mb-0">Copyright © <?php echo $year; ?> Reklame Bintang.</p>
         </footer>
     </div>
     <!--end wrapper-->

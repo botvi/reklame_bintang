@@ -130,9 +130,11 @@
                     @else
                         {{ strtoupper($bulanList[$bulan] ?? '') }} {{ $tahun ?? '' }}
                     @endif
-                    NADYA BANGUNAN</h3>
-                <h4>Telp : {{ $pemilikToko->no_wa ?? '-' }}</h4>
-                <h4>Aur Duri, Kecamatan Kuantan Mudik</h4>
+                <h3 class="fw-bold">BINTANG REKLAME</h3>
+                </h3>
+                <br>
+                <h4>Telp : 0853-7456-9178</h4>
+                <h4>Jl. Perintis Kemerdekaan, Simpang Tiga, Kec. Kuantan Tengah, Kabupaten Kuantan Singingi, Riau 29516</h4>
                 <h4>
                     @if($tanggal_awal && $tanggal_akhir)
                         Periode : {{ \Carbon\Carbon::parse($tanggal_awal)->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse($tanggal_akhir)->format('d/m/Y') }}
@@ -153,7 +155,6 @@
                             <th>Nama Barang</th>
                             <th>Supplier</th>
                             <th>Status</th>
-                            <th>Tanggal Kadaluarsa</th>
                             <th>Penginput</th>
                         </tr>
                     </thead>
@@ -171,8 +172,7 @@
                                 <td>{{ $item->barang->nama_barang }}</td>
                                 <td>{{ $item->barang->supplier->nama_supplier }}</td>
                                 <td style="color: red; font-weight: bold;">{{ $status }}</td>
-                                <td>{{ \Carbon\Carbon::parse($item->tanggal_kadaluarsa)->locale('id')->isoFormat('D MMMM Y') ?? '-' }}
-                                </td>
+                            
                                 <td>{{ $item->user->nama }}</td>
                             </tr>
                         @endforeach
@@ -199,7 +199,7 @@
             {{-- <img src="{{ asset('env/ttd.png') }}" alt="Tanda Tangan" style="width: 150px; height: auto; margin-bottom: -30px; margin-top: -50px;"> --}}
             <br><br>
             <p style="text-decoration: underline;">{{ $pemilikToko->nama ?? '-' }}</p>
-            <p>Pemilik Nadya Bangunan</p>
+            <p>PIMPINAN</p>
         </div>
     </div>
     <script>

@@ -97,7 +97,7 @@
                                     <label for="role" class="form-label">Role</label>
                                     <select class="form-control" id="role" name="role" required>
                                         <option value="pemilik_toko">Pemilik Toko</option>
-                                        <option value="admin">Admin</option>
+                                        <option value="kasir_toko">Kasir Toko</option>
                                     </select>
                                 </div>
                                 <div class="col-12">

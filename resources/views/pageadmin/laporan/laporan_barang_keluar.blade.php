@@ -121,6 +121,7 @@
                                 <thead class="table-dark">
                                     <tr>
                                         <th>No</th>
+                                        <th>Pelanggan</th>
                                         <th>Kode Barang</th>
                                         <th>Nama Barang</th>
                                         <th>Jumlah Beli</th>
@@ -134,6 +135,7 @@
                                     @foreach($result as $index => $item)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
+                                            <td>{{ $item['pelanggan'] ? $item['pelanggan']->kode_pelanggan . ' - ' . $item['pelanggan']->nama_pelanggan : '-' }}</td>
                                             <td>{{ $item['kode_barang'] }}</td>
                                             <td>{{ $item['nama_barang'] }}</td>
                                             <td>{{ number_format($item['jumlah_beli']) }}</td>
@@ -146,7 +148,7 @@
                                 </tbody>
                                 <tfoot class="table-dark">
                                     <tr>
-                                        <th colspan="7" class="text-end">Total Pendapatan:</th>
+                                        <th colspan="8" class="text-end">Total Pendapatan:</th>
                                         <th colspan="2">Rp {{ number_format($totalNilai, 0, ',', '.') }}</th>
                                     </tr>
                                 </tfoot>

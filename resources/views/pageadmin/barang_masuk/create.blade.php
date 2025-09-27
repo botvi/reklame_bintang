@@ -48,16 +48,7 @@
                                 </div>
                                 
                                 
-                                <div class="col-md-12">
-                                    <label for="tanggal_kadaluarsa" class="form-label">Tanggal Kadaluarsa</label>
-                                    <p class="text-muted small">Kosongkan jika tidak ada tanggal kadaluarsa</p>
-                                    <input type="date" class="form-control" placeholder="Kosongkan jika tidak ingin mengubah tanggal kadaluarsa" id="tanggal_kadaluarsa" name="tanggal_kadaluarsa">
-                                    <small class="text-danger">
-                                        @foreach ($errors->get('tanggal_kadaluarsa') as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </small>
-                                </div>
+                           
                                 <div class="col-md-12">
                                     <label for="stok_awal" class="form-label">Stok Awal</label>
                                     <input type="number" step="0.01" class="form-control" id="stok_awal" name="stok_awal" required>
@@ -108,6 +99,36 @@
                                     </small>
                                 </div>
                                 <div class="col-12">
+                                    <div class="alert alert-info">
+                                        <h6 class="alert-heading"><i class="bx bx-info-circle"></i> Informasi Diskon</h6>
+                                        <p class="mb-0">Atur diskon untuk barang ini. Diskon akan otomatis diterapkan saat pembelian mencapai jumlah minimal yang ditentukan.</p>
+                                        <hr>
+                                        <small class="text-muted">
+                                            <strong>Contoh:</strong> Jika Max Pembelian = 10 dan Diskon = 15%, maka pembelian 10 unit atau lebih akan mendapat diskon 15%.
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="max_pembelian_to_diskon" class="form-label">Max Pembelian untuk diskon</label>
+                                    <input type="number" step="0.01" class="form-control" id="max_pembelian_to_diskon" name="max_pembelian_to_diskon" placeholder="Contoh: 10">
+                                    <small class="text-muted">Jumlah minimal pembelian untuk mendapatkan diskon (opsional)</small>
+                                    <small class="text-danger">
+                                        @foreach ($errors->get('max_pembelian_to_diskon') as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="diskon" class="form-label">Diskon dalam %</label>
+                                    <input type="number" step="0.01" class="form-control" id="diskon" name="diskon" placeholder="Contoh: 10">
+                                    <small class="text-muted">Persentase diskon yang akan diberikan (opsional)</small>
+                                    <small class="text-danger">
+                                        @foreach ($errors->get('diskon') as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </small>
+                                </div>
+                                <div class="col-12">
                                     <button type="submit" class="btn btn-primary px-5">Simpan</button>
                                 </div>
                             </form>
@@ -134,6 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             hargaLabel.textContent = 'Harga Dari Supplier Per';
         }
+
     }
     
     // Event listener untuk perubahan pada select satuan

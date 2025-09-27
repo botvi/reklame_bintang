@@ -16,11 +16,12 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('barang_id')->constrained('barangs')->cascadeOnDelete()->cascadeOnUpdate();
             $table->float('stok_awal'); // jumlah dalam satuan asli
-            $table->float('harga_persatuan');
-            $table->float('harga_modal');
-            $table->float('harga_jual');
+            $table->float('harga_persatuan', 20);
+            $table->float('harga_modal', 20);
+            $table->float('harga_jual', 20);
+            $table->float('max_pembelian_to_diskon', 20)->nullable();
+            $table->float('diskon', 20)->nullable();
             $table->foreignId('satuan_id')->constrained('satuans')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->date('tanggal_kadaluarsa')->nullable();
             $table->timestamps();
         });
     }

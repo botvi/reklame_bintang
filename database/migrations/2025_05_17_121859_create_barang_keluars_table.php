@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('barang_keluars', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('pelanggan_id')->constrained('pelanggans')->cascadeOnDelete()->cascadeOnUpdate()->nullable();
             $table->foreignId('barang_masuk_id')->constrained('barang_masuks')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->float('jumlah_beli'); // dalam satuan yang digunakan saat keluar
-            $table->float('harga_jual');
-            $table->float('total_harga');
+            $table->float('jumlah_beli', 20); // dalam satuan yang digunakan saat keluar
+            $table->float('harga_jual', 20);
+            $table->float('total_harga', 20);
             $table->foreignId('satuan_id')->constrained('satuans')->cascadeOnDelete()->cascadeOnUpdate(); // satuan saat keluar
             $table->timestamps();
         });

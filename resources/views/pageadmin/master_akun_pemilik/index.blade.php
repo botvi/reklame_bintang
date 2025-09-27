@@ -37,7 +37,7 @@
                             <tbody>
                                 @foreach($data as $index => $data)
                                 <tr>
-                                    <td><img src="{{ asset('profil/' . $data->profil) }}" alt="Profil" style="width: 50px; height: 50px;"></td>
+                                    <td><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnpymVxEFcjFxVIye-qaeAsQI_YvmYcu02eyT9fVK9RfdzziJ_0_UVwn6KrKrm0RvQ9nc&usqp=CAU" alt="Profil" style="width: 50px; height: 50px;"></td>
                                     <td>{{ $data->nama }}</td>
                                     <td>{{ $data->no_wa }}</td>
                                     <td>{{ $data->alamat }}</td>
