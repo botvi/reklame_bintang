@@ -60,6 +60,8 @@ Route::group(['middleware' => ['role:admin,kasir_toko']], function () {
     Route::resource('barang_masuk', BarangMasukController::class);
     Route::post('/barang_masuk/{id}/tambah-stok', [BarangMasukController::class, 'tambahstok'])->name('barang_masuk.tambahstok');
     Route::resource('barang_keluar', BarangKeluarController::class);
+    Route::get('/barang_keluar/{barang_keluar}/struk', [BarangKeluarController::class, 'struk'])->name('barang_keluar.struk');
+    Route::get('/transaksi/{transaksi_kode}/struk', [BarangKeluarController::class, 'strukTransaksi'])->name('transaksi.struk');
     Route::resource('master_akun_pemilik', MasterAkunPemilikController::class);
 });
 
